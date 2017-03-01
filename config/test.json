@@ -1,0 +1,13 @@
+{
+    "api": {
+        "port": 9999,
+        "token": "TOKEN_FOR_API"
+    },
+    "zen": [
+        "Joke shit"
+    ],
+    "geckoBoard": {
+        "apiKey": "GECKOBOARD_WIDGET_API_KEY"
+    }
+
+}

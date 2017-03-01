@@ -1,11 +1,14 @@
 {
-    "extends": "airbnb-base",
+    "extends": "eslint:recommended",
     "plugins": [
-       "chai-expect"
+        "chai-expect"
     ],
     "env": {
         "mocha": true,
         "es6": true,
         "node": true
+    },
+    "rules": {
+        "no-unused-expressions": "off"
     }
 }

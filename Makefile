@@ -16,19 +16,20 @@ start:
 
 
 lint:
-	./node_modules/.bin/eslint $(DIRTEST) $(DIRSRC) --color
+	@echo '****** Linting $(DIRSRC)'
+	@./node_modules/.bin/eslint \
+		--color \
+		--env mocha node \
+		$(DIRSRC)
 
-lint-watch:
-	$(MAKE) lint --watch
-
-test:
+test: lint
 	@NODE_ENV=test ./node_modules/.bin/mocha \
 		--bail \
 		--colors \
 		--reporter $(REPORTER) \
 		--timeout 5000 \
 		--growl \
-		$(DIRTEST)/*.spec.js
+		$(DIRTEST)/**/*.spec.js
 
 test-watch:
 	@NODE_ENV=test ./node_modules/.bin/mocha \

@@ -1,0 +1,9 @@
+{
+    "extends": "airbnb-base",
+    "plugins": [
+        "import"
+    ],
+    "eslint.nodePath" : "./node_modules/.bin/eslint"
+
+
+}

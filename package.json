@@ -17,6 +17,10 @@
     "api",
     "pipedrive"
   ],
+  "engineStrict" : true,
+  "engines": {
+    "node": ">=6.9.5"
+  },
   "author": "David A. <david.adegnon@apptweak.com>",
   "license": "MIT",
   "homepage": "https://bitbucket.org/DavidStage/dashboard-api-node#readme",

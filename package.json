@@ -17,7 +17,7 @@
     "api",
     "pipedrive"
   ],
-  "engineStrict" : true,
+  "engineStrict": true,
   "engines": {
     "node": ">=6.9.5"
   },

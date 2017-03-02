@@ -15,28 +15,39 @@ const expect = require('chai').expect;
 const Router = require('../src/components/router');
 
 
-class MockRouter extends Router {
+class BadMockRouter extends Router {
   constructor(url) {
     super(url);
   }
-
-  handler() {
-
-  }
-
 }
 
+class MockRouter extends Router{
+  constructor(url){
+    super(url);
+  }
+  handler(){
+    return "Handler implemented, So we good !";
+  }
+}
+
+
 describe('Component : Router', () => {
-  let myRouter;
-  beforeEach(() => myRouter = new MockRouter('/test/mocky'));
+  let badRouter, goodRouter ;
+  beforeEach(() => {
+    badRouter = new BadMockRouter('/mocky/router/bad');
+    goodRouter = new MockRouter('/mocky/router/good');
+  });
 
   it('should throws TypeError', () => {
-    expect(myRouter.handler).to.throw(new TypeError());
+    expect(badRouter.handler).to.throw(TypeError);
+  });
+
+  it('should not throws TypeError', () => {
+    expect(goodRouter.handler).to.not.throw(TypeError);
   });
 
   it('getURL', () => {
-    const url = myRouter.getURL();
-    expect(url).to.be.a('string')
-      .and.to.be.equal('/test/mocky');
+    expect(badRouter.getURL()).to.be.a('string').and.to.be.equal('/mocky/router/bad');
+    expect(goodRouter.getURL()).to.be.a('string').and.to.be.equal('/mocky/router/good');
   });
 });

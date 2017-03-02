@@ -99,7 +99,7 @@ module.exports = class Router {
    * @memberof Router
    */
   handler() {
-    throw new TypeError('You have to implement the method fctAbst!');
+    throw new TypeError('You have to implement the method fctAbst !');
   }
 
   /**

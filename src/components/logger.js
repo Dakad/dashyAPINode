@@ -1,10 +1,13 @@
 'use strict';
 
 /**
- * =============================
- *
  * Logger to log messages for the application.
+ *
  * This is a simple wrapper for the "winston" logger.
+ * Contains the same method accessible on Winston.loggerInstance
+ * @module  component/logger
+ * @requires config
+ * @requires winston
  *
  */
 
@@ -14,13 +17,16 @@
 // npm
 const Config = require('config');
 const Winston = require('winston');
-Winston.emitErrs = true;
 
 // Mine
 
 
+Winston.emitErrs = true;
+
+
 /**
  * Initialized Winston logger.
+ * @private
  */
 const logger = new Winston.Logger({
     transports: [
@@ -56,3 +62,4 @@ logger.stream = {
 // Modules exports
 
 module.exports = logger;
+

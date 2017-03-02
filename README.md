@@ -34,7 +34,7 @@ This API exploits the following technologies:
 | **Techno** | **Description**| **More infos**|
 |------------|----------------|---------------|
 | [Bluebird](https://www.npmjs.com/package/bluebird)| Full featured Promise Library to handle async operations |[Site web](http://bluebirdjs.com/docs/why-bluebird.html), [Promise]()|
-| [ECMAScript 6](https://www.npmjs.com/package/express)| New features added or improved to ECMAScript standard. Better way to code in JS. Only used some of them | [Site web](http://www.ecma-international.org/ecma-262/6.0/), [ES6 Features](http://es6-features.org/)|
+| [ECMAScript 6](https://www.npmjs.com/package/express)| New features added or improved to ECMAScript standard. Better way to code in JS. Only used some of them | [Site web](http://www.ecma-international.org/ecma-262/6.0/), [Overview](http://es6-features.org/)|
 | [Express](https://www.npmjs.com/package/express)| Light, fast & minimalist framework to build web apps. | [Site web](http://expressjs.com/)|
 | [ESLint](https://www.npmjs.com/package/eslint)| Lint JS. Reports syntax and style issues. |[Site web](http://eslint.org/)|
 | [Winston](https://www.npmjs.com/package/winston)| Logger library |[Site web](http://eslint.org/)|

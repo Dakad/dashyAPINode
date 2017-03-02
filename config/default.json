@@ -2,7 +2,7 @@
   "api": {
     "port": 8080,
     "token": "TOKEN_FOR_API",
-    "dirLogs": "./src/logs/",
+    "dirLogs": "./logs/",
     "msg": {
       "err": {
         "check": {

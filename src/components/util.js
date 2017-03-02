@@ -1,6 +1,8 @@
 /**
- * Util Conponents.
- *
+ * @fileOverview The Util Conponents.
+ * @module components/util
+ * @requires config
+ * @requires util
  */
 
 
@@ -19,6 +21,7 @@ const util = require('util');
 
 // -------------------------------------------------------------------
 // Module' Exports
+
 
 module.exports = class Util {
 
@@ -53,10 +56,10 @@ module.exports = class Util {
    *
    * @return  {Object} An array mapped by his keys or passed in args.
    */
-  static convertArrayToObject(arr) {
-    return Object.keys(arr).reduce((pms, p) => arr[p], {});
-    // const param = arr[p];
-  };
+  // static convertArrayToObject(arr) {
+  //   return Object.keys(arr).reduce((pms, p) => arr[p], {});
+  //   // const param = arr[p];
+  // };
 
 
   /**

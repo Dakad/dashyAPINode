@@ -2,7 +2,7 @@
 const exec = require('child_process').exec;
 const fs = require("fs");
 
-const dirConfig = './src/logs';
+const dirConfig = './logs';
 
 
 console.info("****** Checking Node version ....");

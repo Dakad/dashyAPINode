@@ -1,0 +1,25 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "source": {
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "systemName": "dashBoardAPINode",
+    "dateFormat": "ddd DD MMMM YYYY",
+    "navType": "inline",
+    "theme": "united",
+    "linenums": "true",
+    "collapseSymbols": "true",
+    "inverseNav": "false",
+    "outputSourceFiles": "true",
+    "outputSourcePath": "true",  
+    "syntaxTheme": "default",
+    "sort": "true",
+    "search": "true"
+  }
+}

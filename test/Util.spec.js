@@ -13,7 +13,7 @@ const expect = require('chai').expect;
 // Built-in
 
 // Mine
-const Util = require('../src/modules/Util');
+const Util = require('../src/modules/util');
 
 
 describe('Module : Util', () => {

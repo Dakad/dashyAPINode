@@ -1,6 +1,6 @@
 {
 
-    "editor.fontSize": 15,
+    "editor.fontSize": 16,
     "workbench.activityBar.visible": true,
     "editor.formatOnSave": false,
     "editor.tabCompletion": true,
@@ -8,5 +8,8 @@
     "eslint.workingDirectories": [
         "./src", "./test"
     ],
-    "eslint.autoFixOnSave": true
+    "eslint.autoFixOnSave": true,
+    "nodeTdd.buildOnCreate": true,
+    "nodeTdd.showCoverage": true,
+    "nodeTdd.buildOnActivation": true
 }

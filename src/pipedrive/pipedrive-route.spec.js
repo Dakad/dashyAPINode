@@ -7,18 +7,21 @@
 // Dependencies
 // Packages
 const expect = require('chai').expect;
-const httpMocks = require('node-mocks-http');
+// const httpMocks = require('node-mocks-http');
 
 // Built-in
 
 // Mine
+const MockPipeFeed = require('./pipedrive-feed-mock');
 const PipeDriveRouter = require('./pipedrive-route');
 
+
 describe('PipeDrive : Router', () => {
+  const pipeFeed = new MockPipeFeed();
   const url = '/piped/';
   let router;
 
-  beforeEach(() => router = new PipeDriveRouter(url));
+  beforeEach(() => router = new PipeDriveRouter(url, pipeFeed));
 
   it('should have a path(url) to be called on', () => {
     expect(router.getURL()).to.be.equal(url);
@@ -34,22 +37,17 @@ describe('PipeDrive : Router', () => {
   });
 
   describe('Middleware', () => {
-    const req = httpMocks.createRequest({
-      method: 'GET',
-      url: url + '/mocky',
-    });
-    const res = httpMocks.createResponse();
-    const cbNextHasConfigPipeline = () => {
-      expect(req).to.have.any.keys('config');
-      expect(req.config).to.have.all.keys('pipeline');
-      expect(req.config.pipeline).to.have.all.keys('id', 'name', 'stages');
-      expect(req.config.pipeline.stages)
-          .to.have.all.keys('id', 'name', 'pipeline_id');
-    };
+    // const req = httpMocks.createRequest({
+    //   method: 'GET',
+    //   url: url + '/mocky',
+    // });
+    // const res = httpMocks.createResponse();
+    // const cb = () => {
+    // };
 
 
     it(' should go into firstMiddleware', () => {
-      PipeDriveRouter.getPipeline(req, res, cbNextHasConfigPipeline);
+
     });
   });
 });

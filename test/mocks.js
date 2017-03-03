@@ -14,7 +14,7 @@
 // Mine
 const Router = require('../src/components/router');
 const Util = require('../src/components/util');
-
+const PipeDriveFeeder = require('../src/pipedrive/pipedrive-feed')
 
 class MockUtil extends Util{
   
@@ -37,11 +37,20 @@ class MockRouter extends Router{
 }
 
 
+class MockPipeFeed extends PipeDriveFeeder{
+    getPipeline(req, res, next) {
+      
+      next();
+    }
+
+}
+
 // -------------------------------------------------------------------
 // Exports
 
 module.exports = {
   MockUtil,
-  BadMockRouter, MockRouter
+  BadMockRouter, MockRouter,
+  MockPipeFeed
 
-}
+};

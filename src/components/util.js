@@ -1,5 +1,5 @@
 /**
- * @fileOverview The Util Conponents.
+ * @overview  The Util Conponent.
  * @module components/util
  * @requires config
  * @requires util

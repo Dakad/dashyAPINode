@@ -5,7 +5,7 @@
  *
  * This is a simple wrapper for the "winston" logger.
  * Contains the same method accessible on Winston.loggerInstance
- * @module  component/logger
+ * @module  components/logger
  * @requires config
  * @requires winston
  *

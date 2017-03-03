@@ -27,7 +27,7 @@ test: lint
 		--bail \
 		--colors \
 		--reporter $(REPORTER) \
-		--timeout 5000 \
+		--timeout 2000 \
 		--sort \
 		--growl \
 		$(DIR_SRC)/**/*.spec.js \

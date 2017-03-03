@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable new-cap */
 
 /**
  * @overview Router Handler
@@ -30,7 +31,7 @@ const express = require('express');
  * Express Router. The only to be exposed to the server component.
  * @private
  */
-const router = new express.Router();
+const router = express.Router();
 
 
 // -------------------------------------------------------------------
@@ -81,7 +82,7 @@ module.exports = class Router {
    */
   constructor(url) {
     this.url_ = url;
-    this.router_ = new express.Router();
+    this.router_ = express.Router();
   }
 
   /**
@@ -93,11 +94,19 @@ module.exports = class Router {
     return this.url_;
   }
 
-  /**
-   * @abstract
-   * @throws {TypeError} Must implement this method in the child.
-   * @memberof Router
-   */
+/**
+ * Here goes the jointure of the middle into the router.
+ *
+ * ** Only 2 rules must be observed and respected. **
+ *
+ *  1. The last middleware added, must be the error handler.
+ *  2. Before that, it's the middleware to send the response.
+ *  3. Otherwise, the middlewares defined on parent class will take over.
+ *
+ * @abstract
+ * @throws {TypeError} Must implement this method in the child.
+ * @memberof Router
+ */
   handler() {
     throw new TypeError('You have to implement the method fctAbst !');
   }
@@ -108,9 +117,9 @@ module.exports = class Router {
    * @return {express.Router} the router;
    */
   init() {
-   this.handler();
+    this.handler();
 
-   return this.router_;
+    return this.router_;
   }
 
   /**
@@ -119,7 +128,7 @@ module.exports = class Router {
    * @param {Router} router the new Route to add.
    */
   static add(router) {
-    router_.use(route.getURL(), route.init());
+    router.use(router.getURL(), router.init());
   };
 
 

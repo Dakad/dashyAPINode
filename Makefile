@@ -1,7 +1,7 @@
 DIR_SRC		= ./src
 DIR_TEST 	= ./test
 DIR_DOC		= ./doc
-DIR_COVER	= ./docs/specs
+DIR_COVER	= $(DIR_DOC)/specs
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
@@ -22,7 +22,7 @@ lint:
 	./node_modules/.bin/eslint --color $(DIR_SRC)
 
 test: lint
-	@echo "#####  Mocha Testing $(DIR_TEST)";
+	@echo "#####  Mocha Testing $(DIR_SRC) $(DIR_TEST)";
 	@NODE_ENV=test ./node_modules/.bin/mocha \
 		--bail \
 		--colors \
@@ -30,6 +30,7 @@ test: lint
 		--timeout 5000 \
 		--sort \
 		--growl \
+		$(DIR_SRC)/**/*.spec.js \
 		$(DIR_TEST)/*.spec.js
 
 test-watch:
@@ -41,6 +42,7 @@ test-watch:
 		--timeout 5000 \
 		--growl \
 		-- watch \
+		$(DIR_SRC)/**/*.spec.js \
 		$(DIR_TEST)/*.spec.js
 
 

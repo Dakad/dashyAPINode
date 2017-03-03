@@ -36,8 +36,7 @@ module.exports = class PipeDriveRouter extends Router {
    * @param {PipeDriveFeed} feeder The pipedrive Feeder.
    */
   constructor(url, feeder) {
-    super(url);
-    this.feed_ = feeder;
+    super(url, feeder);
   }
 
   /** @inheritdoc */

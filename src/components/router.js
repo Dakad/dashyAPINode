@@ -77,12 +77,16 @@ module.exports = class Router {
   /**
    * Creates an instance of Router.
    * @param {string|RegExp|Array<string>|Array<RegExp>} url The URL to handle
+   * @param {Feed} feeder The Feeder allocated to this router.
    *
    * @memberOf Router
    */
-  constructor(url) {
+  constructor(url, feeder) {
     this.url_ = url;
     this.router_ = express.Router();
+    this.feed_ = feeder;
+
+    // this.route_.use(this.feed_.checkParams());
   }
 
   /**
@@ -94,19 +98,19 @@ module.exports = class Router {
     return this.url_;
   }
 
-/**
- * Here goes the jointure of the middle into the router.
- *
- * ** Only 2 rules must be observed and respected. **
- *
- *  1. The last middleware added, must be the error handler.
- *  2. Before that, it's the middleware to send the response.
- *  3. Otherwise, the middlewares defined on parent class will take over.
- *
- * @abstract
- * @throws {TypeError} Must implement this method in the child.
- * @memberof Router
- */
+  /**
+   * Here goes the jointure of the middle into the router.
+   *
+   * ** Only 2 rules must be observed and respected. **
+   *
+   *  1. The last middleware added, must be the error handler.
+   *  2. Before that, it's the middleware to send the response.
+   *  3. Otherwise, the middlewares defined on parent class will take over.
+   *
+   * @abstract
+   * @throws {TypeError} Must implement this method in the child.
+   * @memberof Router
+   */
   handler() {
     throw new TypeError('You have to implement the method fctAbst !');
   }

@@ -32,13 +32,13 @@ class MockUtil extends Util {
       if (!destination) {
         return reject(new Error('Missing the destination to call PipeDrive'));
       }
-      if (Util.isEmptyOrNull(query) || !query.api_token || !query.pipeline) {
-        return reject(new Error('Missing the query : {apiToken, pipeline}'));
+      if (Util.isEmptyOrNull(query) || !query.api_token) {
+        return reject(new Error('Missing the query : {apiToken}'));
       }
       if (destination[0] !== '/') {
         destination = '/' + destination;
       }
-
+      // Just wait 2 sec to do your thing.
       const fct = setTimeout(() => {
         if (query.api_token !== 'PIPEDRIVE_API_TOKEN') {
           reject(new Error('Unauthorized - Unknown apiToken'));

@@ -193,7 +193,7 @@ describe('Component : Util', () => {
       expect(req.then).to.be.a('function');
       expect(req.catch).to.be.a('function');
       expect(req.then).to.be.a('function');
-      done();
+      return done();
     });
 
 

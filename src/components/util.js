@@ -128,12 +128,13 @@ module.exports = class Util {
       if (!destination) {
         return reject(new Error('Missing the destination to call PipeDrive'));
       }
-      if (Util.isEmptyOrNull(query) || !query.api_token || !query.pipeline) {
-        return reject(new Error('Missing the query : {apiToken, pipeline_id}'));
+      if (Util.isEmptyOrNull(query) || !query.api_token) {
+        return reject(new Error('Missing the query : {apiToken}'));
       }
       if (destination[0] !== '/') {
         destination = '/' + destination;
       }
+
       request.get(Config.pipeDrive.apiUrl + destination)
         .accept('json')
         .query(query)

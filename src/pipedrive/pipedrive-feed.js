@@ -9,11 +9,12 @@
 // Dependencies
 
 // Packages
+const Config = require('config');
 
 // Built-in
 
 // Mine
-// const Util = require('../components/util');
+const Util = require('../components/util');
 const Feeder = require('../components/feeder');
 
 // -------------------------------------------------------------------
@@ -38,27 +39,31 @@ module.exports = class PipeDriveFeed extends Feeder {
 
 
   /**
-* First middleware, to handle any request to /pipedrive,
-*  1. Go fetch te pipeline to PipedriveAPI
-*  2. Put the fetched pipeline in req.config;
-*  3. Put all stages in this pipeline
-*
-* @param {any} req The incoming request
-* @param {any} res The outgoing response.
-* @param {any} next The next middleware to call.
-*/
+   * First middleware, to handle any request to /pipedrive,
+   *  1. Go fetch te pipeline to PipedriveAPI
+   *  2. Put the fetched pipeline in req.config;
+   *  3. Put all stages in this pipeline
+   *
+   * @param {any} req The incoming request
+   * @param {any} res The outgoing response.
+   * @param {any} next The next middleware to call.
+   */
   getPipeline(req, res, next) {
-    req.config = {};
-    req.config.pipeline = {
-      id: 123,
-      name: 'Mein pipe',
-      stages: {
-        id: 123,
-        name: 'Step 1',
-        pipeline_id: 123,
-      },
+    req.config = {
+      'api_token': Config.pipeDrive.apiToken,
     };
-    next();
+
+    Util.requestPipeDriveFor('/pipelines', req.config)
+      .then((pipelines) => {
+        req.config.pipeline = pipelines.find((pipe) => {
+          return pipe.name === Config.pipeDrive.pipeline;
+        });
+        req.config.pipeline_id = req.config.pipeline.id;
+        return (Util.requestPipeDriveFor('/stages', req.config));
+      }).then((stages) => {
+        req.config.pipeline.stages = stages;
+        next();
+      }).catch((err) => next(err));
   }
 
 };

@@ -3,6 +3,8 @@
  * @module components/util
  * @requires config
  * @requires util
+ * @requires promise
+ * @requires superagent
  */
 
 
@@ -12,6 +14,8 @@
 
 // Import
 const Config = require('config');
+const Promise = require('bluebird');
+const request = require('superagent');
 
 // Built-in
 const util = require('util');
@@ -84,12 +88,12 @@ module.exports = class Util {
           switch (param) {
             default: // This params'value is enumerated;
               const validParam = validParams[param];
-              check.isValid = (validParam.indexOf(params[param]) !== -1);
-              break;
+            check.isValid = (validParam.indexOf(params[param]) !== -1);
+            break;
             case 'for': // param for must be a Number
-              if (typeof params.for === 'string') {
-                params.for = Number.parseInt(param.for, 10);
-              }
+                if (typeof params.for === 'string') {
+                  params.for = Number.parseInt(param.for, 10);
+                }
               check.isValid = (params.for > 0 && params.for <= 12);
               break;
           }
@@ -110,5 +114,36 @@ module.exports = class Util {
     return check;
   }
 
+
+  /**
+   * To send a
+   *
+   * @static
+   * @param {String} destination - The pipedrive endpoint
+   * @param {Object} query - Must Contains the apiToken and the pipeline_id
+   * @return {Bluebird.Promise}
+   */
+  static requestPipeDriveFor(destination, query = {}) {
+    return new Promise((resolve, reject) => {
+      if (!destination) {
+        return reject(new Error('Missing the destination to call PipeDrive'));
+      }
+      if (Util.isEmptyOrNull(query) || !query.api_token || !query.pipeline) {
+        return reject(new Error('Missing the query : {apiToken, pipeline_id}'));
+      }
+      if (destination[0] !== '/') {
+        destination = '/' + destination;
+      }
+      request.get(Config.pipeDrive.apiUrl + destination)
+        .accept('json')
+        .query(query)
+        .end((err, resp) => {
+          if (err)
+            reject(err);
+          else
+            resolve(resp.body.data);
+        });
+    });
+  }
 
 };

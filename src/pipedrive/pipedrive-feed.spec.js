@@ -21,7 +21,7 @@ const httpMocks = require('node-mocks-http');
 const PipeDriveFeed = require('./pipedrive-feed');
 const feed = new PipeDriveFeed();
 
-describe('Feeder : Pipedrive', () => {
+describe('Pipedrive : Feeder', () => {
   const url = '/pipedrive';
   const req = httpMocks.createRequest({
     method: 'GET',

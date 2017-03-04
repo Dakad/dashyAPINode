@@ -31,12 +31,10 @@ const Router = require('../components/router');
 module.exports = class PipeDriveRouter extends Router {
   /**
    * Creates an instance of PipeDriveRouter.
-   * @param {string|RegExp|Array<string>|Array<RegExp>} url -
-   *  the path to handle for this router.
    * @param {PipeDriveFeed} feeder The pipedrive Feeder.
    */
-  constructor(url, feeder) {
-    super(url, feeder);
+  constructor(feeder) {
+    super('/pipedrive', feeder);
   }
 
   /** @inheritdoc */

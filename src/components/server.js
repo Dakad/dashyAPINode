@@ -27,7 +27,8 @@ const morgan = require('morgan');
 
 // Mine
 const Logger = require('./logger');
-// const Router = require('./router');
+const Util = require('./util');
+
 
 // -------------------------------------------------------------------
 // Module' Exports
@@ -40,6 +41,7 @@ module.exports = class Server {
   constructor(port) {
     this.numPort_ = port;
     this.app_ = express();
+    this.getApp = () => this.app_;
   }
 
   /**
@@ -50,18 +52,30 @@ module.exports = class Server {
    */
   init(routers) {
     return new Promise((resolve, reject) => {
-      this.app_.use(morgan('short', {
-        skip: (req, res, next) => res.statusCode < 400,
+     this.app_.use(morgan('short'));
+      this.app_.use(morgan('combined', {
+        skip: (ctxt, next) => ctxt.statusCode < 400,
         stream: Logger.stream,
       }));
 
-      if(Array.isArray(routers)) {
-        routers.forEach((rt) => app.use(rt));
-      }else{
-        app.use(routers);
-      }
+      if (!Util.isEmptyOrNull(routers))
+        this.initRouters(routers);
       resolve();
     });
+  }
+
+
+  /**
+   * Init the routers for this server.
+   *
+   * @param {Array<Router>} routers
+   */
+  initRouters(routers) {
+    if (Array.isArray(routers)) {
+      routers.forEach((rt) => this.initRouters(rt));
+    } else {
+      this.app_.use(routers.url, routers.routes);
+    }
   }
 
 
@@ -93,13 +107,13 @@ module.exports = class Server {
         let errMsg = undefined;
         switch (err.code) {
           case 'EACCES':
-            errMsg ='Port :' + this.numPort_ + ' need to be admin';
+            errMsg = 'Port :' + this.numPort_ + ' need to be admin';
             break;
           case 'EADDRINUSE':
-            errMsg ='Port :' + this.numPort_ + ' is already in use.\n';
+            errMsg = 'Port :' + this.numPort_ + ' is already in use.\n';
             break;
           default:
-          errMsg = err.message;
+            errMsg = err.message;
         }
         reject(new Error(errMsg, err));
       });

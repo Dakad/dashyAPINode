@@ -39,19 +39,19 @@ describe('Pipedrive : Feeder', () => {
     });
   });
 
-  it(' should go into firstMiddleware - pipeline', () => {
-    feed.getPipeline(req, res, (request, res) => {
-      expect(req.config.pipeline).to.have.any.keys('id', 'name', 'stages');
-      expect(req.config.pipeline)
-        .to.have.any.keys('id', 'name', 'pipeline_id');
-    });
-  });
+  // it(' should go into firstMiddleware - pipeline', () => {
+  //   feed.getPipeline(req, res, (request, res) => {
+  //     expect(req.config.pipeline).to.have.any.keys('id', 'name', 'stages');
+  //     expect(req.config.pipeline)
+  //       .to.have.any.keys('id', 'name', 'pipeline_id');
+  //   });
+  // });
 
-  it(' should go into firstMiddleware - stages', () => {
-    feed.getPipeline(req, res, (request, res) => {
-      expect(req.config.pipeline.stages).to.be.an('array');
-      expect(req.config.pipeline.stages[0])
-        .to.have.any.keys('id', 'name');
-    });
-  });
+  // it(' should go into firstMiddleware - stages', () => {
+  //   feed.getPipeline(req, res, (request, res) => {
+  //     expect(req.config.pipeline.stages).to.be.an('array');
+  //     expect(req.config.pipeline.stages[0])
+  //       .to.have.any.keys('id', 'name');
+  //   });
+  // });
 });

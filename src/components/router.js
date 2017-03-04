@@ -123,7 +123,7 @@ module.exports = class Router {
   init() {
     this.handler();
 
-    return this.router_;
+    return {'url': this.getURL(), 'routes': this.router_};
   }
 
   /**

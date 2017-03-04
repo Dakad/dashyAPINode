@@ -29,11 +29,6 @@
     "bluebird": "^3.4.7",
     "config": "^1.25.1",
     "express": "^4.14.1",
-    "koa": "^2.0.1",
-    "koa-better-router": "^2.1.1",
-    "koa-handle-error": "0.0.4",
-    "koa-logger": "^2.0.1",
-    "koa-morgan": "^1.0.1",
     "morgan": "^1.8.1",
     "superagent": "^3.5.0",
     "winston": "^2.3.1"

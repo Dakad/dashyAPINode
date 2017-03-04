@@ -7,7 +7,7 @@
  * Handle the different routes possbiles;
  * @module  components/router
  * @requires config
- * @requires Koa
+ * @requires express
  * @requires ./components/logger
  *
  */
@@ -17,7 +17,7 @@
 // Dependencies
 
 // Package npm
-const KoaRouter = require('koa-better-router');
+const express = require('express');
 
 // Built-in
 
@@ -26,6 +26,12 @@ const KoaRouter = require('koa-better-router');
 
 // -------------------------------------------------------------------
 // Properties
+
+/**
+ * Express Router. The only to be exposed to the server component.
+ * @private
+ */
+const router = express.Router();
 
 
 // -------------------------------------------------------------------
@@ -42,7 +48,7 @@ const KoaRouter = require('koa-better-router');
  * @param {any} next The next middleware to call;
  *
  */
-const checkMiddleware = function* middleware(req, res, next) {
+const checkMiddleware = function middleware(req, res, next) {
   Logger.warn('First Middleware : Missing some check before continue');
   req.config = {};
 
@@ -69,16 +75,15 @@ const checkMiddleware = function* middleware(req, res, next) {
 module.exports = class Router {
 
   /**
-   * Creates an instance of Router by providing the URL
-   *    and the feeder middleware for this routeur.
-   * @param {string} url The prefix URL to handle. By default, it's on /.
+   * Creates an instance of Router.
+   * @param {string|RegExp|Array<string>|Array<RegExp>} url The URL to handle
    * @param {Feed} feeder The Feeder allocated to this router.
    *
    * @memberOf Router
    */
-  constructor(url='/', feeder) {
+  constructor(url, feeder) {
     this.url_ = url;
-    this.router_ = new KoaRouter({prefix: url}).loadMethods();
+    this.router_ = express.Router();
     this.feed_ = feeder;
 
     // this.route_.use(this.feed_.checkParams());
@@ -107,37 +112,34 @@ module.exports = class Router {
    * @memberof Router
    */
   handler() {
-    // TODO Add error Component like Factory APIError.getAbstractError();
-    throw new TypeError('You have to override this function!');
+    throw new TypeError('You have to implement the method fctAbst !');
   }
 
   /**
    * Collect all route assigned to this router.
    *
-   * @return {KoaBetterRouter} the router;
+   * @return {express.Router} the router;
    */
   init() {
-    this.router_.loadMethods();
-
     this.handler();
 
-    return this.router_.middleware();
+    return this.router_;
   }
 
   /**
    * Add a new Router.
    * @static
-   * @param {KoaBetterRouter} router the new Route to add.
+   * @param {Router} router the new Route to add.
    */
-  static addSubRouter(router) {
+  static add(router) {
     router.use(router.getURL(), router.init());
   };
 
 
   /**
    * Init the routing for the app.
-   * @param {Array<KoaBetterRouter>} routers Array of routes
-   * @return {KoaBetterRouter} an Koa Router set with all routes.
+   * @param {Array<Router>} routers Array of routes
+   * @return {express.Routeur} an express Router set with all routes.
    */
   static init(...routers) {
     router.use(checkMiddleware);

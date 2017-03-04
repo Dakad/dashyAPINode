@@ -8,31 +8,29 @@
  * @name Server
  * @module  components/server
  * @requires bluebird
- * @requires koa
- * @requires koa-handle-error
- * @requires koa
- * @requires koa-morgan
+ * @requires express
+ * @requires morgan
  *
  */
 
 // -------------------------------------------------------------------
-// Dependencies
+// Module' dependencies
+
 
 // npm
 const Promise = require('bluebird');
-const Koa = require('koa');
-const handleError = require('koa-handle-error');
-const morgan = require('koa-morgan');
+const express = require('express');
+const morgan = require('morgan');
 
 // Built-in
 
 
 // Mine
 const Logger = require('./logger');
-const Util = require('./util');
+// const Router = require('./router');
 
 // -------------------------------------------------------------------
-// Exports
+// Module' Exports
 
 module.exports = class Server {
   /**
@@ -41,46 +39,31 @@ module.exports = class Server {
    */
   constructor(port) {
     this.numPort_ = port;
-    this.app_ = new Koa();
+    this.app_ = express();
   }
 
   /**
    * Init the server by setting/using all his middlewares :
    *  - Morgan to log the request
-   *
-   *  - Finally, actives the routers for the server.
    * @param {Array<Router>} routers All routes handled by the server.
    * @return {Promise} a fullfied promise containing the app instance.
    */
-  init(routers=[]) {
+  init(routers) {
     return new Promise((resolve, reject) => {
-      this.app_.use(morgan('short'));
-      this.app_.use(morgan('combined', {
-        skip: (ctxt, next) => ctxt.statusCode < 400,
-        stream: Logger.fsStream,
+      this.app_.use(morgan('short', {
+        skip: (req, res, next) => res.statusCode < 400,
+        stream: Logger.stream,
       }));
 
-      this.app_.use(handleError(Logger.error));
-
-      if(!Util.isEmptyOrNull(routers))
-        this.initRouters(routers);
-      resolve();
-    });
-  }
-
-
-  /**
-   * Init the routers for this servers
-   *
-   * @param {Array<Router>} routers
-   */
-  initRouters(routers) {
-    if(Array.isArray(routers)) {
+      if(Array.isArray(routers)) {
         routers.forEach((rt) => app.use(rt));
       }else{
         app.use(routers);
       }
+      resolve();
+    });
   }
+
 
   /**
    * Start the server by receiving in args the init.

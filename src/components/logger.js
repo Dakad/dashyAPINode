@@ -33,7 +33,7 @@ const logger = new Winston.Logger({
         new Winston.transports.File({
             level: 'info',
             filename: Config.api.dirLogs +'all-logs.log',
-            handleExceptions: true,
+            // handleExceptions: true,
             humanReadableUnhandledException: true,
             json: true,
             maxsize: 1024000, // 1MB
@@ -53,7 +53,7 @@ const logger = new Winston.Logger({
 /**
  * To write on file. Only info msg.
  */
-logger.stream = {
+logger.fsStream = {
     write: (message) => logger.info(message),
 };
 

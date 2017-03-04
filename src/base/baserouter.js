@@ -105,9 +105,7 @@ module.exports = class BaseRouter extends Router {
     ctx.state.config = {};
     ctx.body = {
     // ApiKey for GeckoBoard
-      data: {
-        api: Config.geckoBoard.apiKey,
-      },
+      api: Config.geckoBoard.apiKey,
     };
     return next();
   };

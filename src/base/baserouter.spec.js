@@ -57,9 +57,8 @@ describe('Base : BaseRouter', () => {
     );
     BaseRouter.checkMiddleware(ctx, () => {
       expect(ctx.body).to.be.a('object');
-      expect(ctx.body).to.have.any.keys('data');
-      expect(ctx.body.data).to.have.any.keys('api');
-      expect(ctx.body.data.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+      expect(ctx.body).to.have.any.keys('api');
+      expect(ctx.body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
     });
   });
 
@@ -82,10 +81,9 @@ describe('Base : BaseRouter', () => {
         .get('/')
         .expect(200)
         .expect(({body}) => {
-          expect(body).to.be.a('object');
-          expect(body).to.have.any.keys('data');
-          expect(body.data).to.have.any.keys('api');
-          expect(body.data.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.be.a('object')
+            .and.to.have.any.keys('api');
+          expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
         })
         .end(done);
       ;
@@ -96,9 +94,10 @@ describe('Base : BaseRouter', () => {
         .get('/zen')
         .expect(200)
         .expect(({body}) => {
-          expect(body).to.have.any.keys('data', 'joke');
-          expect(body.data).to.have.any.keys('api');
-          expect(body.data.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.have.any.keys('api', 'joke');
+          expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+          expect(body.joke).to.be.a('string')
+
         })
         .end(done);
       ;

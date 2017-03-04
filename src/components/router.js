@@ -1,5 +1,4 @@
 'use strict';
-/* eslint-disable new-cap */
 
 /**
  * @overview Router Handler
@@ -17,7 +16,8 @@
 // Dependencies
 
 // Package npm
-const KoaRouter = require('koa-better-router');
+const KoaRouter = require('koa-trie-router');
+const mount = require('koa-mount');
 
 // Built-in
 
@@ -30,28 +30,6 @@ const KoaRouter = require('koa-better-router');
 
 // -------------------------------------------------------------------
 // Methods
-
-/**
- * Middleware to check the inconming request.
- *  1. Check if the req is right
- *  2. Insert a config Object in the req
- *  3. Insert a data Object into the req containnig the geckoBoard ApiKey.
- *
- * @param {any} req The incoming request
- * @param {any} res The outgoing response.
- * @param {any} next The next middleware to call;
- *
- */
-const checkMiddleware = function* middleware(req, res, next) {
-  Logger.warn('First Middleware : Missing some check before continue');
-  req.config = {};
-
-  // ApiKey for GeckoBoard
-  res.data = {
-    'api': Config.geckoBoard.apiKey,
-  };
-  next();
-};
 
 
 // -------------------------------------------------------------------
@@ -78,9 +56,8 @@ module.exports = class Router {
    */
   constructor(url='/', feeder) {
     this.url_ = url;
-    this.router_ = new KoaRouter({prefix: url}).loadMethods();
     this.feed_ = feeder;
-
+    this.router_ = new KoaRouter();
     // this.route_.use(this.feed_.checkParams());
   }
 
@@ -114,36 +91,12 @@ module.exports = class Router {
   /**
    * Collect all route assigned to this router.
    *
-   * @return {KoaBetterRouter} the router;
+   * @return {KoaRouter} the router;
    */
   init() {
-    this.router_.loadMethods();
-
     this.handler();
-
-    return this.router_.middleware();
+    return mount(this.url_, this.router_.middleware());
   }
-
-  /**
-   * Add a new Router.
-   * @static
-   * @param {KoaBetterRouter} router the new Route to add.
-   */
-  static addSubRouter(router) {
-    router.use(router.getURL(), router.init());
-  };
-
-
-  /**
-   * Init the routing for the app.
-   * @param {Array<KoaBetterRouter>} routers Array of routes
-   * @return {KoaBetterRouter} an Koa Router set with all routes.
-   */
-  static init(...routers) {
-    router.use(checkMiddleware);
-
-    return router;
-  };
 
 
 };

@@ -17,6 +17,7 @@
 // Mine
 // const Util = require('../components/util');
 const Router = require('../components/router');
+const BaseRouter = require('../base/baserouter');
 
 // -------------------------------------------------------------------
 // Properties
@@ -31,17 +32,17 @@ const Router = require('../components/router');
 module.exports = class PipeDriveRouter extends Router {
   /**
    * Creates an instance of PipeDriveRouter.
-   * @param {string|RegExp|Array<string>|Array<RegExp>} url -
-   *  the path to handle for this router.
    * @param {PipeDriveFeed} feeder The pipedrive Feeder.
    */
-  constructor(url, feeder) {
-    super(url, feeder);
+  constructor(feeder) {
+    super('/pipedrive', feeder);
   }
 
   /** @inheritdoc */
   handler() {
-    this.router_.use(this.feed_.getPipeline);
+      this.router_.get('/', BaseRouter.checkMiddleware);
+
+    // this.router_.use(this.feed_.getPipeline);
 
     // this.router_.use(this.feed_.sendData);
   }

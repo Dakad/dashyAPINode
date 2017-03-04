@@ -18,7 +18,7 @@ const PipeDriveRouter = require('./pipedrive-route');
 
 describe('PipeDrive : Router', () => {
   const pipeFeed = new MockPipeFeed();
-  const url = '/piped/';
+  const url = '/pipedrive';
   let router;
 
   beforeEach(() => router = new PipeDriveRouter(url, pipeFeed));

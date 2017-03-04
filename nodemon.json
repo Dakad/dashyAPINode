@@ -1,0 +1,11 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    "./**/*.spec"
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "node --harmony"
+  },
+  "ext": "js json"
+}

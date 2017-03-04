@@ -12,6 +12,10 @@ dev:
 	@NODE_ENV=dev \
 	./node_modules/.bin/nodemon $(DIR_SRC)/app.js
 
+debug:
+	@NODE_ENV=debug \
+	DEBUG=node* nodemon $(DIR_SRC)/app.js
+
 start:
 	@echo "#### Runnig lint-watch || test-watch";
 	npm-run-all --parallel test-watch open-src lint-watch

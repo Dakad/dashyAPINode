@@ -42,7 +42,10 @@ module.exports = class Server {
   constructor(port) {
     this.numPort_ = port;
     this.app_ = new Koa();
+
+    this.getApp = () => this.app_;
   }
+
 
   /**
    * Init the server by setting/using all his middlewares :
@@ -52,7 +55,7 @@ module.exports = class Server {
    * @param {Array<Router>} routers All routes handled by the server.
    * @return {Promise} a fullfied promise containing the app instance.
    */
-  init(routers=[]) {
+  init(routers = []) {
     return new Promise((resolve, reject) => {
       this.app_.use(morgan('short'));
       this.app_.use(morgan('combined', {
@@ -62,7 +65,7 @@ module.exports = class Server {
 
       this.app_.use(handleError(Logger.error));
 
-      if(!Util.isEmptyOrNull(routers))
+      if (!Util.isEmptyOrNull(routers))
         this.initRouters(routers);
       resolve();
     });
@@ -70,16 +73,16 @@ module.exports = class Server {
 
 
   /**
-   * Init the routers for this servers
+   * Init the routers for this server.
    *
    * @param {Array<Router>} routers
    */
   initRouters(routers) {
-    if(Array.isArray(routers)) {
-        routers.forEach((rt) => app.use(rt));
-      }else{
-        app.use(routers);
-      }
+    if (Array.isArray(routers)) {
+      routers.forEach((rt) => this.initRouters(rt));
+    } else {
+      this.app_.use(routers);
+    }
   }
 
   /**
@@ -110,13 +113,13 @@ module.exports = class Server {
         let errMsg = undefined;
         switch (err.code) {
           case 'EACCES':
-            errMsg ='Port :' + this.numPort_ + ' need to be admin';
+            errMsg = 'Port :' + this.numPort_ + ' need to be admin';
             break;
           case 'EADDRINUSE':
-            errMsg ='Port :' + this.numPort_ + ' is already in use.\n';
+            errMsg = 'Port :' + this.numPort_ + ' is already in use.\n';
             break;
           default:
-          errMsg = err.message;
+            errMsg = err.message;
         }
         reject(new Error(errMsg, err));
       });

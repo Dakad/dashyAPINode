@@ -24,7 +24,7 @@ Setup
 The first things to do when cloning this repo, is
 
 ``` bash
-  #Command to exec on terminal
+  # Command to exec on terminal
     make setup
 ```
 

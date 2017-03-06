@@ -1,6 +1,31 @@
+/**
+ * @overview Feeder for the pipedrive router.
+ *
+ * @module {Feeder} feeds/pipedrive
+ */
 
+
+// -------------------------------------------------------------------
+// Dependencies
+
+// Packages
+// const Config = require('config');
+// const sinon = require('sinon');
+
+// Built-in
+
+// Mine
+// const Util = require('../components/util');
 const PipeDriveFeed = require('./pipedrive-feed');
 
+
+// -------------------------------------------------------------------
+// Properties
+
+// const UtilRequestPipe = sinon.stub(Util, 'requestPipeDriveFor').returns({
+//     username: 'foo',
+//     passwrod: hash('1234'),
+// });
 
 /**
  * Mock PipeDriveFeed

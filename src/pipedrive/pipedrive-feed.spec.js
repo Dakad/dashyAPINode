@@ -32,23 +32,26 @@ describe('Pipedrive : Feeder', () => {
   const res = httpMocks.createResponse();
   // let cbNext = null;
 
-  it(' should go into firstMiddleware - config', () => {
-    feed.getPipeline(req, res, (request, res) => {
+  it(' should go into firstMiddleware - config', (done) => {
+    feed.getPipeline(req, res, (err, res) => {
+      if (err) return done();
       expect(req).to.have.any.keys('config');
       expect(req.config).to.have.any.keys('api_token', 'pipeline');
     });
   });
 
-  it(' should go into firstMiddleware - pipeline', () => {
-    feed.getPipeline(req, res, (request, res) => {
+  it(' should go into firstMiddleware - pipeline', (done) => {
+    feed.getPipeline(req, res, (err) => {
+      if (err) return done();
       expect(req.config.pipeline).to.have.any.keys('id', 'name', 'stages');
       expect(req.config.pipeline)
         .to.have.any.keys('id', 'name', 'pipeline_id');
     });
   });
 
-  it(' should go into firstMiddleware - stages', () => {
-    feed.getPipeline(req, res, (request, res) => {
+  it(' should go into firstMiddleware - stages', (done) => {
+    feed.getPipeline(req, res, (err, res) => {
+      if (err) return done();
       expect(req.config.pipeline.stages).to.be.an('array');
       expect(req.config.pipeline.stages[0])
         .to.have.any.keys('id', 'name');

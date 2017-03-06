@@ -13,8 +13,10 @@
 // Built-in 
 
 // Mine
-const Router = require('../src/components/router');
 const Util = require('../src/components/util');
+const Router = require('../src/components/router');
+const Feeder = require('../src/components/feeder');
+
 const PipeDriveFeeder = require('../src/pipedrive/pipedrive-feed')
 
 
@@ -22,9 +24,9 @@ const PipeDriveFeeder = require('../src/pipedrive/pipedrive-feed')
 
 class MockUtil extends Util {
   /**
-   * Same check but the request part is setTimeout of 2 sec.
-   * 
+   *  
    * @extends ../src/components/util#requestPipeDriveFor
+   * @override 
    * @memberof MockUtil
    */
   static requestPipeDriveFor(destination, query = {}) {
@@ -77,6 +79,13 @@ class MockRouter extends Router {
 }
 
 
+class MockFeeder extends Feeder {
+  
+}
+
+
+
+
 class MockPipeFeed extends PipeDriveFeeder {
   getPipeline(req, res, next) {
 
@@ -85,13 +94,16 @@ class MockPipeFeed extends PipeDriveFeeder {
 
 }
 
+
+
+
+
 // -------------------------------------------------------------------
 // Exports
 
 module.exports = {
   MockUtil,
-  BadMockRouter,
-  MockRouter,
-  MockPipeFeed
+  BadMockRouter,MockRouter,
+  MockFeeder, MockPipeFeed
 
 };

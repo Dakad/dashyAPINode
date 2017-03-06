@@ -14,7 +14,7 @@ const httpMocks = require('node-mocks-http');
 // Built-in
 
 // Mine
-const { MockFeeder } = require('./mocks');
+const MockUtil = require('./mocks');
 
 
 describe('Component : Feeder', () => {
@@ -25,7 +25,7 @@ describe('Component : Feeder', () => {
   });
 
   const res = httpMocks.createResponse();
-  const feed = new MockFeeder();
+  const feed = MockUtil.getFeeder();
   
   it('should go through the checkParams middleware', (done) => {
     feed.checkParams(req,res,(err) => {

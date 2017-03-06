@@ -41,7 +41,7 @@ module.exports = class PipeDriveFeed extends Feeder {
   /**
    * First middleware, to handle any request to /pipedrive,
    *  1. Go fetch te pipeline to PipedriveAPI
-   *  2. Put the fetched pipeline in req.config;
+   *  2. Put the fetched pipeline in res.locals;
    *  3. Put all stages in this pipeline
    *
    * @param {any} req The incoming request
@@ -49,19 +49,17 @@ module.exports = class PipeDriveFeed extends Feeder {
    * @param {any} next The next middleware to call.
    */
   getPipeline(req, res, next) {
-    req.config = {
-      'api_token': Config.pipeDrive.apiToken,
-    };
+    res.locals.api_token = Config.pipeDrive.apiToken;
 
-    Util.requestPipeDriveFor('/pipelines', req.config)
+    Util.requestPipeDriveFor('/pipelines', res.locals)
       .then((pipelines) => {
-        req.config.pipeline = pipelines.find((pipe) => {
+        res.locals.pipeline = pipelines.find((pipe) => {
           return pipe.name === Config.pipeDrive.pipeline;
         });
-        req.config.pipeline_id = req.config.pipeline.id;
-        return (Util.requestPipeDriveFor('/stages', req.config));
+        res.locals.pipeline_id = res.locals.pipeline.id;
+        return Util.requestPipeDriveFor('/stages', res.locals);
       }).then((stages) => {
-        req.config.pipeline.stages = stages;
+        res.locals.pipeline.stages = stages;
         next();
       }).catch((err) => next(err));
   }

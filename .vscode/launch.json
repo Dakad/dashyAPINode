@@ -15,6 +15,9 @@
             "request": "launch",
             "name": "Mocha Tests",
             "cwd": "${workspaceRoot}",
+            "env": {
+              "NODE_ENV" : "test"
+            },
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha",
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha.cmd"
@@ -25,7 +28,9 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceRoot}/test"
+                "--watch",
+                "${workspaceRoot}/test/**/*.spec.js",
+                "${workspaceRoot}/src/**/*.spec.js"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         },

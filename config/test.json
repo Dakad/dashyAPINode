@@ -13,7 +13,21 @@
     "apiUrl": "https://api.pipedrive.mock/v1",
     "pipeline": "The Mocky Pipeline",
     "apiToken": "PIPEDRIVE_API_TOKEN"
-  }
+  },
 
+  "request" : {
+    "pipedrive" : {
+      "/pipelines" : {
+        "id" :123,
+        "name" : "The Mocky Pipeline"
+      },
+      "/stages" : [
+        {"id":1, "name":"Sayain"},
+        {"id":972, "name":"Super Sayain"},
+        {"id":164, "name":"Super Sayain GOD"}
+      ]
+
+    } 
+  }
 
 }

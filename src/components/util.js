@@ -45,7 +45,7 @@ module.exports = class Util {
    * Convert a date into PipeDrive date format.
    *
    * @param {Date} date - The normal date,
-   * @return {String} The formatted string corresponding to the date or if not 
+   * @return {String} The formatted string corresponding to the date or if not
    *    provided use the current date.
    */
   static convertPipeDriveDate(date) {
@@ -94,12 +94,12 @@ module.exports = class Util {
           switch (param) {
             default: // This params'value is enumerated;
               const validParamValues = validParams[param];
-              check.isValid = (validParamValues.indexOf(paramValue) !== -1);
-              break;
+            check.isValid = (validParamValues.indexOf(paramValue) !== -1);
+            break;
             case 'for': // param for must be a Number
-              if (typeof params.for === 'string') {
-                params.for = Number.parseInt(params.for, 10);
-              }
+                if (typeof params.for === 'string') {
+                  params.for = Number.parseInt(params.for, 10);
+                }
               check.isValid = (params.for > 0 && params.for <= 12);
               break;
           }

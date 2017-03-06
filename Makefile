@@ -27,12 +27,13 @@ dev:
 
 lint:
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;
-	$(ESLint) --color $(DIR_SRC)
+	@$(ESLINT) --color $(DIR_SRC) \ 
+	@echo "#####  ESLint : DONE";
 
 test: lint
-	@echo "#####  Mocha Testing $(DIR_SRC) $(DIR_TEST)";
-	@NODE_ENV=test $(MOCHA) -R $(REPORTER) \
-		$(ALL_TESTS) \
+	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
+	@NODE_ENV=test $(MOCHA) -R $(REPORTER) $(ALL_TESTS);
+	@echo "#####  Mocha Testing : DONE";
 
 test-watch:
 	@NODE_ENV=test $(MOCHA) \

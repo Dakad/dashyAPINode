@@ -9,13 +9,15 @@
 // Packages
 const chai = require('chai');
 const chaiAsPromised = require("chai-as-promised");
+const sinon = require('sinon');
+const Config = require('config');
+const request = require('superagent');
 
 // Built-ins
 
 // Mine
-//const Util = require('../src/components/util');
-const {MockUtil} = require('./mocks');
-const Util = MockUtil;
+const Util = require('../src/components/util');
+
 
 // -------------------------------------------------------------------
 //  Properties
@@ -191,6 +193,24 @@ describe('Component : Util', () => {
       pipeline: 123,
     }
     let req;
+
+    let stubSuperAgent;
+
+    before(() => {
+      stubSuperAgent= sinon.stub(request,'end');
+      stubSuperAgent
+        .onFirstCall().returns(Config.request.pipedrive['/pipedrive'])
+        .onSecondCall().returns(Config.request.pipedrive['/stages']);
+    });
+
+    after(() => stubSuperAgent.restore());
+
+    it('should use twice request.get', (done) => {
+      Util.requestPipeDriveFor('reqMe',query).then((res) => {
+        expect(stubSuperAgent.called).to.be.true;
+      });
+      
+    });
 
     it('should return a Promise.rejected -  args:undefinied', (done) => {
       req = Util.requestPipeDriveFor();

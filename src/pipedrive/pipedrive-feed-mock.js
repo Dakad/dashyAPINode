@@ -24,7 +24,7 @@ const PipeDriveFeed = require('./pipedrive-feed');
 
 // const UtilRequestPipe = sinon.stub(Util, 'requestPipeDriveFor').returns({
 //     username: 'foo',
-//     passwrod: hash('1234'),
+//     passwrod: hash('1 234'),
 // });
 
 /**

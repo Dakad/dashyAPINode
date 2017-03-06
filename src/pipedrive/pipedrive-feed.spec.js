@@ -32,30 +32,31 @@ describe('Pipedrive : Feeder', () => {
   const res = httpMocks.createResponse();
 
   let stubRequest;
-  let spyRequest;
+  let spyUtilReqPipeDrive;
 
   before(() => {
     stubRequest = sinon.stub(request, 'end', () => console.log('WESSSH'));
+
     // .yields(null, null, JSON.stringify({login: 'bulkan'}));
 
-    spyRequest = sinon.spy(Util, 'requestPipeDriveFor');
+    spyUtilReqPipeDrive = sinon.spy(Util, 'requestPipeDriveFor');
   });
 
   after(function() {
+    spyUtilReqPipeDrive.restore();
     request.end.restore();
   });
 
   describe('firstMiddleware', () => {
     it('should go into firstMiddleware', () => {
       feed.getPipeline(req, res, () => {
-        spyRequest.restore();
-        expect(spyRequest.called).to.be.true;
-        expect(spyRequest.callCount).to.be.eq(2);
+        expect(spyUtilReqPipeDrive.called).to.be.true;
+        expect(spyUtilReqPipeDrive.callCount).to.be.eq(2);
 
-        expect(spyRequest.getCall(0).args[0])
+        expect(spyUtilReqPipeDrive.getCall(0).args[0])
           .to.be.eql('/pipelines');
 
-        expect(spyRequest.getCall(1).args[0])
+        expect(spyUtilReqPipeDrive.getCall(1).args[0])
           .to.be.eql('/stages');
       });
     });

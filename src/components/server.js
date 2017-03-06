@@ -52,14 +52,15 @@ module.exports = class Server {
    */
   init(routers) {
     return new Promise((resolve, reject) => {
-     this.app_.use(morgan('short'));
+      this.app_.use(morgan('short'));
       this.app_.use(morgan('combined', {
-        skip: (ctxt, next) => ctxt.statusCode < 400,
+        skip: (req, res) => req.statusCode < 400,
         stream: Logger.stream,
       }));
 
-      if (!Util.isEmptyOrNull(routers))
+      if (!Util.isEmptyOrNull(routers)) {
         this.initRouters(routers);
+      }
       resolve();
     });
   }

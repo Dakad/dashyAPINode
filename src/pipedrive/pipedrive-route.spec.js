@@ -18,13 +18,12 @@ const PipeDriveRouter = require('./pipedrive-route');
 
 describe('PipeDrive : Router', () => {
   const pipeFeed = new MockPipeFeed();
-  const url = '/piped/';
   let router;
 
-  beforeEach(() => router = new PipeDriveRouter(url, pipeFeed));
+  beforeEach(() => router = new PipeDriveRouter(pipeFeed));
 
   it('should have a path(url) to be called on', () => {
-    expect(router.getURL()).to.be.equal(url);
+    expect(router.getURL()).to.be.equal('/pipedrive');
   });
 
   it('should not thrown a TypeError on handler()', () => {

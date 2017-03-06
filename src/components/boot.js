@@ -31,6 +31,11 @@ const fs = require('fs');
 const Logger = require('./logger');
 const Server = require('./server');
 
+const BaseRouter = require('../base/baserouter');
+
+const PipeDriveRouter = require('../pipedrive/pipedrive-route');
+const PipeDriveFeed = require('../pipedrive/pipedrive-feed');
+
 
 // -------------------------------------------------------------------
 // Properties
@@ -38,10 +43,11 @@ const Server = require('./server');
 
 /**
  * Routes Containers
- * @private
+ * @private {Array<Router>}
  */
 const routes_ = [
-
+  BaseRouter.getInstance(),
+  new PipeDriveRouter(new PipeDriveFeed()),
 
 ];
 
@@ -62,15 +68,6 @@ const routes_ = [
  * @see components/boot
  */
 module.exports = class Boot {
-  /**
-   *
-   */
-  static initRouter() {
-    routes_.forEach((rt)=>{
-
-    });
-  }
-
 
   /**
    * Init the boot action.
@@ -97,16 +94,12 @@ module.exports = class Boot {
         (stats) => checkIfSetup(null, stats.isDirectory()),
         (err) => checkIfSetup(err)
       ).then(() => {
-        Logger.info(`[BOOT]\t Check logs folder: OK`);
+        Logger.info(`[BOOT]\t Check Setup : OK`);
+
         Logger.warn('Must provided all routes handler for the Server');
-        Boot.initRouter();
-        return server.init(routes_);
+        return server.init(routes_.map((rt) => rt.init()));
       }).then(function(app) {
         Logger.info(`[BOOT]\t Init server : OK`);
-
-        // Init the ctrls
-        Logger.info(`[BOOT]\t Init the ctrl ....`);
-
         Logger.info(`[BOOT]\t Starting server .... `);
         return server.start();
       }).then((address) => {

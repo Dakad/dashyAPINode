@@ -24,15 +24,14 @@ const expect = chai.expect;
 
 
 describe('Component : Util', () => {
+
   describe('isEmptyOrNull', () => {
-    it('should return true', (done) => {
+    it('should return true', () => {
       expect(Util.isEmptyOrNull()).to.be.true;
       expect(Util.isEmptyOrNull(undefined)).to.be.true;
       expect(Util.isEmptyOrNull(null)).to.be.true;
       expect(Util.isEmptyOrNull({})).to.be.true;
       expect(Util.isEmptyOrNull([])).to.be.true;
-
-      done();
     });
 
     it('should return false', () => {
@@ -48,6 +47,22 @@ describe('Component : Util', () => {
     });
   });
 
+  describe('convertPipeDriveDate', () => {
+    it('shoud return 2015-12-17', () => {
+      const dte = new Date('2015-12-17');
+      expect(Util.convertPipeDriveDate(dte))
+        .to.be.a('string')
+        .and.to.be.equal('2015-12-17')
+    });
+    it('shoud return the current date', () => {
+      const dte = new Date();
+      const res = dte.toISOString().substring(0,10);
+      expect(Util.convertPipeDriveDate())
+        .to.be.a('string')
+        .and.to.be.equal(res)
+    });
+  });
+  
   describe('checkParams', () => {
     it('should by default be valid', () => {
       const check = Util.checkParams({});
@@ -153,6 +168,14 @@ describe('Component : Util', () => {
 
       check = Util.checkParams({
         for: 12
+      });
+      expect(check).to.be.an('object');
+      expect(check).to.have.all.keys('isValid', 'errMsg');
+      expect(check.isValid, 'Must be valid').to.be.ok;
+      expect(check.errMsg, 'Must null or empty').to.be.null;
+
+      check = Util.checkParams({
+        for: '7'
       });
       expect(check).to.be.an('object');
       expect(check).to.have.all.keys('isValid', 'errMsg');

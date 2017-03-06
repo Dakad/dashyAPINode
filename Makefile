@@ -1,70 +1,79 @@
+#!/bin/bash
+
+DIR_BIN		= ./node_modules/.bin
+
 DIR_SRC		= ./src
 DIR_TEST 	= ./test
-DIR_DOC		= ./doc
-DIR_COVER	= $(DIR_DOC)/specs
+DIR_DOC		= ./docs
+DIR_LOG		= ./logs
+ALL_TESTS 	= $(shell find $(DIR_SRC)  $(DIR_TEST) -type f -name "*.spec.js"  -not -path "*node_modules*")
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
+TIMEOUT		= 5000
 
+ESLINT		= $(DIR_BIN)/eslint
+JSDOC		= $(DIR_BIN)/jsdoc
+MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) --growl --sort 
+_MOCHA		= $(DIR_BIN)/_mocha 
+NODEMON		= $(DIR_BIN)/nodemon
+ISTANBUL	= $(DIR_BIN)/istanbul
 
 
 dev:
 	@NODE_ENV=dev \
-	./node_modules/.bin/nodemon $(DIR_SRC)/app.js
-
-start:
-	@echo "#### Runnig lint-watch || test-watch";
-	npm-run-all --parallel test-watch open-src lint-watch
+	$(NODEMON) $(DIR_SRC)/app.js
 
 
 lint:
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;
-	./node_modules/.bin/eslint --color $(DIR_SRC)
+	$(ESLint) --color $(DIR_SRC)
 
 test: lint
 	@echo "#####  Mocha Testing $(DIR_SRC) $(DIR_TEST)";
-	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--bail \
-		--colors \
-		--reporter $(REPORTER) \
-		--timeout 2000 \
-		--sort \
-		--growl \
-		$(DIR_SRC)/**/*.spec.js \
-		$(DIR_TEST)/*.spec.js
+	@NODE_ENV=test $(MOCHA) -R $(REPORTER) \
+		$(ALL_TESTS) \
 
 test-watch:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--bail \
-		--colors \
-		--require assert \
+	@NODE_ENV=test $(MOCHA) \
 		--reporter $(REPORTER) \
-		--timeout 5000 \
-		--growl \
-		-- watch \
-		$(DIR_SRC)/**/*.spec.js \
-		$(DIR_TEST)/*.spec.js
+		--watch \
+		$(ALL_TESTS) \
+
+test-cover:lint
+	rm -rf coverage;
+	@NODE_ENV=test $(ISTANBUL) cover \
+	$(_MOCHA) $(ALL_TESTS) -- -R spec
 
 
-test-cover: lint
-	@./node_modules/.bin/istanbul cover \
-	@./node_modules/.bin/mocha -R doc
-
-
-test-coveralls:
+test-coveralls: test
 	@echo "#####  TRAVIS_JOB_ID $(TRAVIS_JOB_ID)"
-	./node_modules/.bin/istanbul cover \
-	./node_modules/mocha/bin/mocha --report lcovonly -- -R $(REPORTER)\
-	cat $(DIR_DOC)/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true
+	@NODE_ENV=test $(ISTANBUL) cover  \
+	$(_MOCHA) --report lcovonly -- -R spec && \
+		cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true
 
 
 test-docs:
-	@NODE_ENV=test ./node_modules/.bin/mocha --reporter=doc \
-		| cat $(DIR_DOC)/head.html - $(DIR_DOC)/tail.html \
-		> $(DIR_DOC)/test.html
+	@test -d $(DIR_DOC)/doc || mkdir $(DIR_DOC)/doc
+	@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test
+	@NODE_ENV=test $(MOCHA) --reporter=doc  $(DIR_SRC)  \
+		| cat $(DIR_DOC)/doc/head.html - $(DIR_DOC)/doc/tail.html \
+		> $(DIR_DOC)/test/test.html
+
+		
+docs: test-cover
+	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
+	@$(JSDOC) \
+		-c .jsdocrc.json \
+		-d $(DIR_DOC)/doc \
+		-r \
+		-t $(DOC_TEMPL) \
+		-R README.md \
+		--verbose \
+		$(DIR_SRC) \
 
 
-commit: test
+commit: test clean
 	@echo "New commit !";\
 	git add .;\
 	git commit -m "$m" ; \
@@ -73,27 +82,18 @@ commit-push:
 	git push origin master
 
 setup:
-	@node setup.js
+	@$(shell find logs/ -name "*.log")
+	@node  --harmony setup.js
 
-docs:
-	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
-	@./node_modules/.bin/jsdoc\
-		-c .jsdocrc.json \
-		-d $(DIR_DOC) \
-		-r \
-		-t $(DOC_TEMPL) \
-		-R README.md \
-		--verbose \
-		$(DIR_SRC) \
 
 build: test test-docs docs
 	@echo "##### Deleting the logs folder .... ";
-	@rm -rf $(DIR_SRC)/logs; \
+	@rm -rf $(DIR_LOG); \
 	@NODE_ENV=prod node --harmony $(DIR_SRC)/app.js \
 
 clean:
-	@echo Clear logs folder
-	@rm $(DIR_SRC)/logs/*\
+	@echo "##### Clear logs folder";
+	@rm $(DIR_LOG)/* \
 
 
 

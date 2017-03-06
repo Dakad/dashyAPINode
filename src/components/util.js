@@ -44,10 +44,15 @@ module.exports = class Util {
   /**
    * Convert a date into PipeDrive date format.
    *
-   * @param {Date} date - The normal date.
-   * @return {String} The formatted string corresponding to the date.
+   * @param {Date} date - The normal date,
+   * @return {String} The formatted string corresponding to the date or if not 
+   *    provided use the current date.
    */
   static convertPipeDriveDate(date) {
+    if (arguments.length === 0 || date === null) {
+      date = new Date();
+    }
+    console.log(date.toISOString());
     return date.toISOString().slice(0, 10);
   };
 
@@ -85,15 +90,16 @@ module.exports = class Util {
       Object.keys(params)
         .filter((param) => Object.keys(validParams).indexOf(param) !== -1)
         .some((param) => { // Then, check if valid
+          let paramValue = params[param];
           switch (param) {
             default: // This params'value is enumerated;
-              const validParam = validParams[param];
-            check.isValid = (validParam.indexOf(params[param]) !== -1);
-            break;
+              const validParamValues = validParams[param];
+              check.isValid = (validParamValues.indexOf(paramValue) !== -1);
+              break;
             case 'for': // param for must be a Number
-                if (typeof params.for === 'string') {
-                  params.for = Number.parseInt(param.for, 10);
-                }
+              if (typeof params.for === 'string') {
+                params.for = Number.parseInt(params.for, 10);
+              }
               check.isValid = (params.for > 0 && params.for <= 12);
               break;
           }
@@ -102,7 +108,7 @@ module.exports = class Util {
             let msg = Config.api.msg.err.check[param];
             if (!msg) {
               msg = Config.api.msg.err.check._def;
-              msg = util.format(msg, param, params[param]);
+              msg = util.format(msg, param, paramValue);
             }
             check.errMsg = msg;
           }

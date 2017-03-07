@@ -197,13 +197,13 @@ describe('Component : Util', () => {
     let stubSuperAgent;
 
     before(() => {
-      stubSuperAgent= sinon.stub(request,'end');
+      stubSuperAgent= sinon.stub(request,'end',(res,rej)=> null);
       stubSuperAgent
         .onFirstCall().returns(Config.request.pipedrive['/pipedrive'])
         .onSecondCall().returns(Config.request.pipedrive['/stages']);
     });
 
-    after(() => stubSuperAgent.restore());
+    // after(() => stubSuperAgent.restore());
 
     it('should use twice request.get', (done) => {
       Util.requestPipeDriveFor('reqMe',query).then((res) => {

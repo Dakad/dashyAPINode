@@ -31,7 +31,7 @@ describe('Pipedrive : Feeder', () => {
 
   const res = httpMocks.createResponse();
 
-  let stubRequest;
+  // let stubRequest;
   let spyUtilReqPipeDrive;
 
   before(() => {

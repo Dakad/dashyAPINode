@@ -6,7 +6,7 @@ DIR_SRC		= ./src
 DIR_TEST 	= ./test
 DIR_DOC		= ./docs
 DIR_LOG		= ./logs
-ALL_TESTS 	= $(shell find $(DIR_SRC)  $(DIR_TEST) -type f -name "*.spec.js"  -not -path "*node_modules*")
+ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -not -path "*node_modules*")
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
@@ -14,7 +14,7 @@ TIMEOUT		= 5000
 
 ESLINT		= $(DIR_BIN)/eslint
 JSDOC		= $(DIR_BIN)/jsdoc
-MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) --growl --sort 
+MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) --growl
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
 ISTANBUL	= $(DIR_BIN)/istanbul

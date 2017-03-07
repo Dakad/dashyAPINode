@@ -52,7 +52,6 @@ module.exports = class Util {
     if (arguments.length === 0 || date === null) {
       date = new Date();
     }
-    console.log(date.toISOString());
     return date.toISOString().slice(0, 10);
   };
 

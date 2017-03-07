@@ -44,7 +44,7 @@ describe('Component : Router', () => {
   });
 
   it('should on init(), call handler()', () => {
-    const spyHandler = sinon.spy(goodRouter.handler);
+    const spyHandler = sinon.spy(goodRouter,'handler');
     goodRouter.init();
     expect(spyHandler.called).to.be.true;
   });

@@ -71,10 +71,10 @@ class MockPipeFeed extends PipeDriveFeeder {
 // Exports
 
 module.exports = {
-  'getBadRouter' : (...args) => new BadMockRouter(args), 
-  'getRouter' : (...args) => new MockRouter(args), 
-  'getFeeder' : (...args) => new MockFeeder(args), 
-  'getPipeFeed' : (...args) => new MockPipeFeed(args), 
+  'getBadRouter' : (...args) => new BadMockRouter(...args), 
+  'getRouter' : (...args) => new MockRouter(...args), 
+  'getFeeder' : (...args) => new MockFeeder(...args), 
+  'getPipeFeed' : (...args) => new MockPipeFeed(...args), 
 
 
 };

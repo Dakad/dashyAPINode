@@ -141,7 +141,6 @@ module.exports = class Util {
       }
 
       request.get(Config.pipeDrive.apiUrl + destination)
-        .accept('json')
         .query(query)
         .end((err, resp) => {
           if (err)

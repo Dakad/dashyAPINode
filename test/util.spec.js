@@ -10,17 +10,21 @@
 const chai = require('chai');
 const chaiAsPromised = require("chai-as-promised");
 const sinon = require('sinon');
-const Config = require('config');
+// const Config = require('config');
 const request = require('superagent');
+const mockRequest = require('superagent-mock');
 
 // Built-ins
 
 // Mine
+const mockReqConf = require('./superagent-mock-config');
 const Util = require('../src/components/util');
 
 
 // -------------------------------------------------------------------
 //  Properties
+const superagentMock = mockRequest(request, mockReqConf);
+
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -194,21 +198,23 @@ describe('Component : Util', () => {
     }
     let req;
 
-    let stubSuperAgent;
+    let spySuperAgent;
 
-    before(() => {
-      stubSuperAgent= sinon.stub(request,'end',(res,rej)=> null);
-      stubSuperAgent
-        .onFirstCall().returns(Config.request.pipedrive['/pipedrive'])
-        .onSecondCall().returns(Config.request.pipedrive['/stages']);
+    beforeEach(() => {
+      spySuperAgent = sinon.spy(request,'get');
+      
     });
 
-    // after(() => stubSuperAgent.restore());
+    afterEach(() => spySuperAgent.restore());
 
-    it('should use twice request.get', (done) => {
-      Util.requestPipeDriveFor('reqMe',query).then((res) => {
-        expect(stubSuperAgent.called).to.be.true;
-      });
+    after(() => superagentMock.unset());
+    
+    it('should use request.get', (done) => {
+      Util.requestPipeDriveFor('reqMe',query)
+        .done((res) => {
+          expect(spySuperAgent.called).to.be.true;
+          done();
+        },(err)=> done());
       
     });
 
@@ -224,20 +230,21 @@ describe('Component : Util', () => {
       expect(req).to.be.rejected.notify(done);
     });
 
-    it('should return a Promise.rejected - args[dest]:undefined', (done) => {
+    it('should return a Promise.rejected - args[dest]:pipe/deals', (done) => {
       req = Util.requestPipeDriveFor('/pipe/deals');
       expect(req).to.be.rejected.notify(done);
       expect(req.catch).to.be.a('function');
     });
 
-    it('should return a Promise.fullfied', (done) => {
-      req = Util.requestPipeDriveFor('/pipe/deals', query);
+    it('should return a Promise.fullfied - /pipeline', (done) => {
+      req = Util.requestPipeDriveFor('/pipelines', query);
       expect(req).to.be.fulfilled;
       expect(req.then).to.be.a('function');
       expect(req.catch).to.be.a('function');
       expect(req.then).to.be.a('function');
-      return done();
+      done();
     });
+
 
 
 

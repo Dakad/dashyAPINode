@@ -12,9 +12,9 @@ DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
 TIMEOUT		= 5000
 
-ESLINT		= $(DIR_BIN)/eslint
+ESLINT		= $(DIR_BIN)/eslint --cache
 JSDOC		= $(DIR_BIN)/jsdoc
-MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) --growl
+MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT)
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
 ISTANBUL	= $(DIR_BIN)/istanbul
@@ -30,15 +30,22 @@ lint:
 	@$(ESLINT) --color $(DIR_SRC) \ 
 	@echo "#####  ESLint : DONE";
 
+
+lint-fix:
+	@echo "#####  ESLint Fixing $(DIR_SRC)" ;
+	@$(ESLINT) --fix $(DIR_SRC) \ 
+	@echo "#####  Fixing : DONE";
+
+
+
 test: lint
 	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
 	@NODE_ENV=test $(MOCHA) -R $(REPORTER) $(ALL_TESTS);
 	@echo "#####  Mocha Testing : DONE";
 
 test-watch:
-	@NODE_ENV=test $(MOCHA) \
+	@NODE_ENV=test $(MOCHA) --watch \
 		--reporter $(REPORTER) \
-		--watch \
 		$(ALL_TESTS) \
 
 test-cover:lint

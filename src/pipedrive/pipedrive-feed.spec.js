@@ -23,7 +23,7 @@ const mockReqConf = require('./superagent-mock-config');
 // -------------------------------------------------------------------
 // Properties
 
-let superagentMock = mockRequest(request, mockReqConf);
+const superagentMock = mockRequest(request, mockReqConf);
 const PipeDriveFeed = require('./pipedrive-feed');
 const feed = new PipeDriveFeed();
 
@@ -48,10 +48,9 @@ describe('Pipedrive : Feeder', () => {
     spyUtilReqPipeDrive = sinon.spy(Util, 'requestPipeDriveFor');
   });
 
-  after(function() {
-    spyUtilReqPipeDrive.restore();
-    superagentMock.unset();
-  });
+  afterEach( () => spyUtilReqPipeDrive.restore());
+
+  after(() =>superagentMock.unset());
 
   describe('firstMiddleware', () => {
     it('should go into firstMiddleware', (done) => {

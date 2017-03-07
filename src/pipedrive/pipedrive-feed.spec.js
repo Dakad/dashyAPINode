@@ -32,11 +32,9 @@ const feed = new PipeDriveFeed();
 
 
 describe('Pipedrive : Feeder', () => {
-  const superagentMock = mockRequest(request, mockReqConf);
-  const url = '/pipedrive';
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: url + '/mocky',
+    url: '/mocky',
   });
 
   const res = httpMocks.createResponse();
@@ -45,7 +43,9 @@ describe('Pipedrive : Feeder', () => {
   let spyUtilReqPipeDrive;
 
   describe('firstMiddleware', () => {
+    let superagentMock;
     beforeEach(() => {
+      superagentMock = mockRequest(request, mockReqConf);
       spyUtilReqPipeDrive = sinon.spy(Util, 'requestPipeDriveFor');
     });
 

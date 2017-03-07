@@ -91,7 +91,7 @@ commit-push:
 
 setup:
 	@$(shell find logs/ -name "*.log")
-	@node  --harmony setup.js
+	@node --harmony setup.js
 
 
 build: test test-docs docs

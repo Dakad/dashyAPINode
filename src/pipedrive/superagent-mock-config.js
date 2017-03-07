@@ -4,7 +4,7 @@ exports = module.exports = [{
     /**
      * regular expression of URL
      */
-    pattern: 'https://api.pipedrive.mock/v1(/[a-zA-Z_-]*)?(.*)',
+    pattern: 'https://api.pipedrive.mock/v1(.*)',
 
     /**
      * returns the data

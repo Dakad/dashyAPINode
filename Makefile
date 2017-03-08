@@ -37,29 +37,15 @@ lint-fix:
 	@echo "#####  Fixing : DONE";
 
 
-
 test: lint
 	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
 	@NODE_ENV=test $(MOCHA) -R $(REPORTER) $(ALL_TESTS);
 	@echo "#####  Mocha Testing : DONE";
 
-test-watch:
-	@NODE_ENV=test $(MOCHA) --watch \
-		--reporter $(REPORTER) \
-		$(ALL_TESTS) \
-
 test-cover:lint
 	rm -rf coverage;
-	@NODE_ENV=test $(ISTANBUL) cover \
+	NODE_ENV=test $(ISTANBUL) cover \
 	$(_MOCHA) $(ALL_TESTS) -- -R spec
-
-
-test-coveralls: test
-	@echo "#####  TRAVIS_JOB_ID $(TRAVIS_JOB_ID)"
-	@NODE_ENV=test $(ISTANBUL) cover  \
-	$(_MOCHA) --report lcovonly -- -R spec && \
-		cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true
-
 
 test-docs:
 	@test -d $(DIR_DOC)/doc || mkdir $(DIR_DOC)/doc
@@ -68,7 +54,11 @@ test-docs:
 		| cat $(DIR_DOC)/doc/head.html - $(DIR_DOC)/doc/tail.html \
 		> $(DIR_DOC)/test/test.html
 
-		
+test-watch:
+	@NODE_ENV=test $(MOCHA) --watch \
+		--reporter $(REPORTER) \
+		$(ALL_TESTS) \
+
 docs: test-cover
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
 	@$(JSDOC) \
@@ -90,7 +80,7 @@ commit-push:
 	git push origin master
 
 setup:
-	@$(shell find logs/ -name "*.log")
+	@$(find ./logs -name "*.log")
 	@node --harmony setup.js
 
 
@@ -101,11 +91,9 @@ build: test test-docs docs
 
 clean:
 	@echo "##### Clear logs folder";
-	@rm -rf $(DIR_LOG)/*;
-	@echo "##### Clear coverage folder";
-	@rm -rf ./coverage;
+	@rm -rf $(DIR_LOG)/* \
 	@echo "##### Clear jsdoc folder";
-	@rm -rf $(DIR_DOC)/doc/* ;
+	@rm -rf $(DIR_DOC)/* ;
 	@echo "##### Cleanig DONE";
 
 

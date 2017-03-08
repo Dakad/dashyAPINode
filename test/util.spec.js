@@ -10,7 +10,7 @@
 const chai = require('chai');
 const chaiAsPromised = require("chai-as-promised");
 const sinon = require('sinon');
-// const Config = require('config');
+const Config = require('config');
 const request = require('superagent');
 const mockRequest = require('superagent-mock');
 
@@ -238,7 +238,8 @@ describe('Component : Util', () => {
 
     it('should return a Promise.fullfied - /pipeline', (done) => {
       req = Util.requestPipeDriveFor('/pipelines', query);
-      expect(req).to.be.fulfilled;
+      expect(req).to.be.fulfilled
+            .and.to.equal(Config.request.pipedrive.pipelines);
       expect(req.then).to.be.a('function');
       expect(req.catch).to.be.a('function');
       expect(req.then).to.be.a('function');

@@ -101,7 +101,12 @@ build: test test-docs docs
 
 clean:
 	@echo "##### Clear logs folder";
-	@rm $(DIR_LOG)/* \
+	@rm -rf $(DIR_LOG)/*;
+	@echo "##### Clear coverage folder";
+	@rm -rf ./coverage;
+	@echo "##### Clear jsdoc folder";
+	@rm -rf $(DIR_DOC)/doc/* ;
+	@echo "##### Cleanig DONE";
 
 
 

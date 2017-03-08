@@ -59,6 +59,8 @@ lib-cov
 coverage
 doc/coverage
 docs/coverage
+docs/doc
+docs/test
 
 # nyc test coverage
 .nyc_output

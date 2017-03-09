@@ -17,6 +17,7 @@ JSDOC		= $(DIR_BIN)/jsdoc
 MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT)
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
+NYC			= $(DIR_BIN)/nyc --cache
 ISTANBUL	= $(DIR_BIN)/istanbul
 
 
@@ -42,24 +43,26 @@ test: lint
 	@NODE_ENV=test $(MOCHA) -R $(REPORTER) $(ALL_TESTS);
 	@echo "#####  Mocha Testing : DONE";
 
-test-cover:lint
-	rm -rf coverage;
-	NODE_ENV=test $(ISTANBUL) cover \
-	$(_MOCHA) $(ALL_TESTS) -- -R spec
-
-test-docs:
-	@test -d $(DIR_DOC)/doc || mkdir $(DIR_DOC)/doc
-	@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test
-	@NODE_ENV=test $(MOCHA) --reporter=doc  $(DIR_SRC)  \
-		| cat $(DIR_DOC)/doc/head.html - $(DIR_DOC)/doc/tail.html \
-		> $(DIR_DOC)/test/test.html
 
 test-watch:
 	@NODE_ENV=test $(MOCHA) --watch \
 		--reporter $(REPORTER) \
 		$(ALL_TESTS) \
 
-docs: test-cover
+
+test-cover: lint
+	@NODE_ENV=test $(NYC) report --reporter=lcov $(_MOCHA) -R $(REPORTER) $(ALL_TESTS)
+
+
+test-docs:
+	export NODE_ENV="test";
+	@test -d $(DIR_DOC) || mkdir $(DIR_DOC)
+	@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
+	@NODE_ENV=test $(MOCHA) --reporter mochawesome $(ALL_TEST);
+	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
+			> $(DIR_DOC)/test/index.md
+
+docs: clean test-cover
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
 	@$(JSDOC) \
 		-c .jsdocrc.json \
@@ -68,8 +71,8 @@ docs: test-cover
 		-t $(DOC_TEMPL) \
 		-R README.md \
 		--verbose \
-		$(DIR_SRC) \
-
+		$(DIR_SRC) ;
+	@open $(DIR_DOC)/doc/index.html
 
 commit: test clean
 	@echo "New commit !";\
@@ -92,7 +95,7 @@ build: test test-docs docs
 clean:
 	@echo "##### Clear logs folder";
 	@rm -rf $(DIR_LOG)/* \
-	@echo "##### Clear jsdoc folder";
+	@echo "##### Clear doc folder";
 	@rm -rf $(DIR_DOC)/* ;
 	@echo "##### Cleanig DONE";
 
@@ -100,4 +103,4 @@ clean:
 
 all: test 
 
-.PHONY: setup test
+.PHONY: docs setup test

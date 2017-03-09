@@ -239,11 +239,13 @@ describe('Component : Util', () => {
     it('should return a Promise.fullfied - /pipeline', (done) => {
       req = Util.requestPipeDriveFor('/pipelines', query);
       expect(req).to.be.fulfilled
-            .and.to.equal(Config.request.pipedrive.pipelines);
       expect(req.then).to.be.a('function');
       expect(req.catch).to.be.a('function');
       expect(req.then).to.be.a('function');
-      done();
+      req.done((data)=> {
+        expect(data).to.equal(Config.request.pipedrive.pipelines);
+        done();
+      });
     });
 
 

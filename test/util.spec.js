@@ -8,22 +8,19 @@
 
 // Packages
 const chai = require('chai');
-const chaiAsPromised = require("chai-as-promised");
-const sinon = require('sinon');
-const Config = require('config');
-const request = require('superagent');
-const mockRequest = require('superagent-mock');
+const chaiAsPromised = require('chai-as-promised');
+// const request = require('superagent');
+// const mockRequest = require('superagent-mock');
 
 // Built-ins
 
 // Mine
-const mockReqConf = require('./superagent-mock-config');
 const Util = require('../src/components/util');
 
 
 // -------------------------------------------------------------------
 //  Properties
-const superagentMock = mockRequest(request, mockReqConf);
+// const superagentMock = mockRequest(request, mockReqConf);
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -53,17 +50,17 @@ describe('Component : Util', () => {
     });
   });
 
-  describe('convertPipeDriveDate', () => {
+  describe('convertDate', () => {
     it('shoud return 2015-12-17', () => {
       const dte = new Date('2015-12-17');
-      expect(Util.convertPipeDriveDate(dte))
+      expect(Util.convertDate(dte))
         .to.be.a('string')
         .and.to.be.equal('2015-12-17')
     });
     it('shoud return the current date', () => {
       const dte = new Date();
       const res = dte.toISOString().substring(0,10);
-      expect(Util.convertPipeDriveDate())
+      expect(Util.convertDate())
         .to.be.a('string')
         .and.to.be.equal(res)
     });
@@ -191,66 +188,4 @@ describe('Component : Util', () => {
     });
   });
 
-  describe('requestPipeDriveFor', () => {
-    const query = {
-      api_token: 'PIPEDRIVE_API_TOKEN',
-      pipeline: 123,
-    }
-    let req;
-
-    let spySuperAgent;
-
-    beforeEach(() => {
-      spySuperAgent = sinon.spy(request,'get');
-      
-    });
-
-    afterEach(() => spySuperAgent.restore());
-
-    after(() => superagentMock.unset());
-    
-    it('should use request.get', (done) => {
-      Util.requestPipeDriveFor('reqMe',query)
-        .done((res) => {
-          expect(spySuperAgent.called).to.be.true;
-          done();
-        },(err)=> done());
-      
-    });
-
-    it('should return a Promise.rejected -  args:undefinied', (done) => {
-      req = Util.requestPipeDriveFor();
-      expect(req.catch).to.be.a('function');
-      expect(req).to.be.rejected.notify(done);
-    });
-
-    it('should return a Promise.rejected - args[dest]:undefined', (done) => {
-      req = Util.requestPipeDriveFor(null, query);
-      expect(req.catch).to.be.a('function');
-      expect(req).to.be.rejected.notify(done);
-    });
-
-    it('should return a Promise.rejected - args[dest]:pipe/deals', (done) => {
-      req = Util.requestPipeDriveFor('/pipe/deals');
-      expect(req).to.be.rejected.notify(done);
-      expect(req.catch).to.be.a('function');
-    });
-
-    it('should return a Promise.fullfied - /pipeline', (done) => {
-      req = Util.requestPipeDriveFor('/pipelines', query);
-      expect(req).to.be.fulfilled
-      expect(req.then).to.be.a('function');
-      expect(req.catch).to.be.a('function');
-      expect(req.then).to.be.a('function');
-      req.done((data)=> {
-        expect(data).to.equal(Config.request.pipedrive.pipelines);
-        done();
-      });
-    });
-
-
-
-
-
-  });
 });

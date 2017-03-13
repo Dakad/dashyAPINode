@@ -7,24 +7,28 @@
 // Dependencies
 
 // Packages
-const expect = require('chai').expect;
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
+const Config = require('config');
 const request = require('superagent');
 const mockRequest = require('superagent-mock');
 
 // Built-in
 
 // Mine
-const Util = require('../components/util');
+// const Util = require('../components/util');
+const PipeDriveFeed = require('./pipedrive-feed');
 const mockReqConf = require('./superagent-mock-config');
 
 
 // -------------------------------------------------------------------
 // Properties
-
-const PipeDriveFeed = require('./pipedrive-feed');
+const superagentMock = mockRequest(request, mockReqConf);
 const feed = new PipeDriveFeed();
+chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 
 // -------------------------------------------------------------------
@@ -40,27 +44,85 @@ describe('Pipedrive : Feeder', () => {
   const res = httpMocks.createResponse();
   res.locals = {};
 
-  let spyUtilReqPipeDrive;
+
+  describe('requestPipeDriveFor', () => {
+    const query = {
+      api_token: 'PIPEDRIVE_API_TOKEN',
+      pipeline: 123,
+    };
+    let req;
+
+    let spySuperAgent;
+
+    beforeEach(() => {
+      spySuperAgent = sinon.spy(request, 'get');
+    });
+
+    afterEach(() => spySuperAgent.restore());
+
+    after(() => superagentMock.unset());
+
+    it('should use request.get', (done) => {
+      feed.requestPipeDriveFor('reqMe', query)
+        .done((res) => {
+          expect(spySuperAgent.called).to.be.true;
+          done();
+        }, (err) => done());
+    });
+
+    it('should return a Promise.rejected -  args:undefinied', (done) => {
+      req = feed.requestPipeDriveFor();
+      expect(req.catch).to.be.a('function');
+      expect(req).to.be.rejected.notify(done);
+    });
+
+    it('should return a Promise.rejected - args[dest]:undefined', (done) => {
+      req = feed.requestPipeDriveFor(null, query);
+      expect(req.catch).to.be.a('function');
+      expect(req).to.be.rejected.notify(done);
+    });
+
+    it('should return a Promise.rejected - args[dest]:pipe/deals', (done) => {
+      req = feed.requestPipeDriveFor('/pipe/deals');
+      expect(req).to.be.rejected.notify(done);
+      expect(req.catch).to.be.a('function');
+    });
+
+    it('should return a Promise.fullfied - /pipeline', (done) => {
+      req = feed.requestPipeDriveFor('/pipelines', query);
+      expect(req).to.be.fulfilled;
+      expect(req.then).to.be.a('function');
+      expect(req.catch).to.be.a('function');
+      expect(req.then).to.be.a('function');
+      req.done((data) => {
+        expect(data).to.equal(Config.request.pipedrive.pipelines);
+        done();
+      });
+    });
+  });
+
 
   describe('firstMiddleware', () => {
     let superagentMock;
+    let spyReqPipeDrive;
+
     beforeEach(() => {
       superagentMock = mockRequest(request, mockReqConf);
-      spyUtilReqPipeDrive = sinon.spy(Util, 'requestPipeDriveFor');
+      spyReqPipeDrive = sinon.spy(feed, 'requestPipeDriveFor');
     });
 
-    afterEach(() => spyUtilReqPipeDrive.restore());
+    afterEach(() => spyReqPipeDrive.restore());
 
     it('should go into firstMiddleware', (done) => {
       feed.getPipeline(req, res, (err) => {
         if (err) return done(err);
-        expect(spyUtilReqPipeDrive.called).to.be.true;
-        expect(spyUtilReqPipeDrive.callCount).to.be.eq(2);
+        expect(spyReqPipeDrive.called).to.be.true;
+        expect(spyReqPipeDrive.callCount).to.be.eq(2);
 
-        expect(spyUtilReqPipeDrive.getCall(0).args[0])
+        expect(spyReqPipeDrive.getCall(0).args[0])
           .to.be.eql('/pipelines');
 
-        expect(spyUtilReqPipeDrive.getCall(1).args[0])
+        expect(spyReqPipeDrive.getCall(1).args[0])
           .to.be.eql('/stages');
         done(err);
       });

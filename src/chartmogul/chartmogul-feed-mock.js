@@ -22,7 +22,7 @@ const ChartMogulFeed = require('./chartmogul-feed');
 // -------------------------------------------------------------------
 // Properties
 
-// const UtilRequestPipe = sinon.stub(Util, 'requestPipeDriveFor').returns({
+// const UtilRequestPipe = sinon.stub(Util, 'requestPicppeDriveFor').returns({
 //     username: 'foo',
 //     passwrod: hash('1 234'),
 // });

@@ -3,8 +3,6 @@
  * @module components/util
  * @requires config
  * @requires util
- * @requires promise
- * @requires superagent
  */
 
 
@@ -14,8 +12,6 @@
 
 // Import
 const Config = require('config');
-const Promise = require('bluebird');
-const request = require('superagent');
 
 // Built-in
 const util = require('util');
@@ -42,18 +38,35 @@ module.exports = class Util {
 
 
   /**
-   * Convert a date into PipeDrive date format.
+   * Convert a date into ISO 8601 date format but only in format YYYY-MM-DD.
    *
    * @param {Date} date - The normal date,
    * @return {String} The formatted string corresponding to the date or if not
    *    provided use the current date.
    */
-  static convertPipeDriveDate(date) {
+  static convertDate(date) {
     if (arguments.length === 0 || date === null) {
       date = new Date();
     }
     return date.toISOString().slice(0, 10);
   };
+
+
+  /**
+   * Convert the num into a EUR currency format.
+   *
+   * @static
+   * @param {any} num - The Number to format.
+   * @return {string} a formatted string corresponding to the currency.
+   */
+  static formatToMoney(num) {
+    return Number(num.toFixed(2)).toLocaleString('en-GB', {
+      style: 'currency',
+      currency: 'EUR',
+    });
+
+    // return Number(num.toFixed(2)).replace(/(\d)(?=(\d{3})+\.)/g, '$1 ');
+  }
 
 
   /**
@@ -119,36 +132,5 @@ module.exports = class Util {
     return check;
   }
 
-
-  /**
-   * To send a
-   *
-   * @static
-   * @param {String} destination - The pipedrive endpoint
-   * @param {Object} query - Must Contains the apiToken and the pipeline_id
-   * @return {Bluebird.Promise}
-   */
-  static requestPipeDriveFor(destination, query = {}) {
-    return new Promise((resolve, reject) => {
-      if (!destination) {
-        return reject(new Error('Missing the destination to call PipeDrive'));
-      }
-      if (Util.isEmptyOrNull(query) || !query.api_token) {
-        return reject(new Error('Missing the query : {apiToken}'));
-      }
-      if (destination[0] !== '/') {
-        destination = '/' + destination;
-      }
-
-      request.get(Config.pipeDrive.apiUrl + destination)
-        .query(query)
-        .end((err, resp) => {
-          if (err)
-            reject(err);
-          else
-            resolve(resp.body.data);
-        });
-    });
-  }
 
 };

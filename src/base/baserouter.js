@@ -83,7 +83,6 @@ module.exports = class BaseRouter extends Router {
     // Must be the last middleware to send a response.
 
     this.router_.use(function(req, res) {
-        console.log('********* RES SENT ******');
         return res.json(res.locals.data);
     });
 

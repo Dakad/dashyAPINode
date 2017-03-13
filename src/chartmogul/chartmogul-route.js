@@ -21,21 +21,36 @@ const Router = require('../components/router');
 // -------------------------------------------------------------------
 // Properties
 
+/**
+ *
+ *
+ * @class ChartMogulRouter
+ * @extends {Router}
+ */
 class ChartMogulRouter extends Router {
 
+  /**
+   * Creates an instance of ChartMogulRouter.
+   * @param {any} feed
+   *
+   * @memberOf ChartMogulRouter
+   */
   constructor(feed) {
     super('/chartmogul', feed);
   }
 
 
-  public checkParams(req,res,next){
+  /**
+   *
+   * @override
+   *
+   * @memberOf ChartMogulRouter
+   */
+  handler() {
 
-    next();
-  }
-
-
-  public init(){
-    
   }
 
 };
+
+
+module.exports = ChartMogulRouter;

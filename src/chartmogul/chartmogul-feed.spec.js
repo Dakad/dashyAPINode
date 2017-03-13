@@ -9,22 +9,22 @@
 // Packages
 // const expect = require('chai').expect;
 const httpMocks = require('node-mocks-http');
-const sinon = require('sinon');
+// const sinon = require('sinon');
 // const request = require('superagent');
 // const mockRequest = require('superagent-mock');
 
 // Built-in
 
 // Mine
-const Util = require('../components/util');
+// const Util = require('../components/util');
 // const mockReqConf = require('./superagent-mock-config');
 
 
 // -------------------------------------------------------------------
 // Properties
 
-// const ChartMogulFeed = require('./chartmogul-feed');
-// const feed = new ChartMogulFeed();
+const ChartMogulFeed = require('./chartmogul-feed');
+const feed = new ChartMogulFeed();
 
 
 // -------------------------------------------------------------------
@@ -32,28 +32,30 @@ const Util = require('../components/util');
 
 
 describe('ChartMogul : Feeder', () => {
-  // const req = httpMocks.createRequest({
-  //   method: 'GET',
-  //   url: '/mocky',
-  // });
+  const req = httpMocks.createRequest({
+    method: 'GET',
+    url: '/mocky',
+  });
 
   const res = httpMocks.createResponse();
   res.locals = {};
 
-  let spyUtilReqPipeDrive;
+  // let spyUtilReqPipeDrive;
 
   describe('', () => {
     // let superagentMock;
     beforeEach(() => {
       // superagentMock = mockRequest(request, mockReqConf);
-      spyUtilReqPipeDrive = sinon.spy(Util, 'requestPipeDriveFor');
+      // spyUtilReqPipeDrive = sinon.spy(Util, 'requestPipeDriveFor');
     });
 
-    afterEach(() => spyUtilReqPipeDrive.restore());
+    // afterEach(() => spyUtilReqPipeDrive.restore());
 
 
-    it('should go into firstMiddleware', () => {
-
+    it('should go into firstMiddleware', (done) => {
+      feed.firstMiddleware(req, res, () => {
+        done();
+      });
     });
   });
 });

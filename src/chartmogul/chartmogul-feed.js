@@ -90,7 +90,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  configParams(req, res, next) {
+  configByParams(req, res, next) {
     res.locals.config.
     next();
   }

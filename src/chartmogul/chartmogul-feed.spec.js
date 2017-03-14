@@ -52,7 +52,7 @@ describe('ChartMogul : Feeder', () => {
 
 describe('configParams', () => {
   it('should return a object', (done) => {
-    feed.configParams(req, res, ()=>{
+    feed.configByParams(req, res, ()=>{
       expect(res.locals).to.have.property('config');
 
       done();

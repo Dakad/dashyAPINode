@@ -29,5 +29,36 @@ module.exports = class Feeder {
 
   }
 
+  /**
+
+   *
+   */
+
+
+  /**
+   * Check if the params sent is valid.
+   * If valid, using it to fill the req.config
+   * Otherwise, sent a error with the corresponding message.
+   *
+   * @param {any} req The request.
+   * @param {any} res The response.
+   * @param {any} next The next middleware to call;
+   */
+  checkParams(req, res, next) {
+    // Merge req.query into req.params
+    // The params will override those ?query if they match.
+
+    // req.params = Util.convertArrayToObject(req.params);
+    Object.assign(req.params, req.query);
+
+    const check = Util.checkParams(req.params);
+
+    if (!check.isValid) {
+      next(new Error(check.errorMsg));
+    } else {
+      next();
+    }
+  };
+
 
 };

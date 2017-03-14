@@ -64,7 +64,6 @@ module.exports = class Util {
       style: 'currency',
       currency: 'EUR',
     });
-
     // return Number(num.toFixed(2)).replace(/(\d)(?=(\d{3})+\.)/g, '$1 ');
   }
 
@@ -72,13 +71,13 @@ module.exports = class Util {
   /**
    * Convert an array into an object.
    *
-   * @param {Array} arr - The array source.
    * @param {Array} keys - The keys for the generated object.
+   * @param {Array} arr - The array source.
    *
    * @return  {Object} An array mapped by his keys or passed in args.
    */
-  // static convertArrayToObject(arr) {
-  //   return Object.keys(arr).reduce((pms, p) => arr[p], {});
+  // static convertArrayToObject(keys = [], arr = []) {
+  //   return Object.keys(arr).reduce((pms, p, i) => arr[p], {});
   //   // const param = arr[p];
   // };
 

@@ -80,6 +80,21 @@ class ChartMogulFeed extends Feeder {
     });
   }
 
+
+  /**
+   * Config the request for ChartMogul depending on theparams received.
+   *
+   * @param {any} req - The request
+   * @param {any} res - The response
+   * @param {any} next - The next middleware to call.
+   *
+   * @memberOf ChartMogulFeed
+   */
+  configParams(req, res, next) {
+    res.locals.config.
+    next();
+  }
+
   /**
    * The firstMiddleware where the request must go first.
    *

@@ -65,6 +65,15 @@ describe('Component : Util', () => {
         .and.to.be.equal(res)
     });
   });
+
+  // describe('convertArrayToObject', () =>{
+  //   it('should return empty Object', () => {
+  //     const obj = Util.convertArrayToObject();
+  //     expect(obj).to.not.be.undefined.and.null;
+  //     expect(obj).to.be.empty;
+  //   });
+
+  // });
   
   describe('checkParams', () => {
     it('should by default be valid', () => {

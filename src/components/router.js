@@ -120,7 +120,7 @@ module.exports = class Router {
    * @return {express.Routeur} an express Router set with all routes.
    */
   static init(...routers) {
-    router.use(checkMiddleware);
+    // router.use(checkMiddleware);
 
     return router;
   };

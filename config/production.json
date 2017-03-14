@@ -9,8 +9,8 @@
   },
   "chartmogul" : {
     "apiUrl": "https://api.chartmogul.com/v1",
-    "apiToken": "e357296778fe1aa578dba69f17997fabecad4cab",
-    "apiSecret": "e357296778fe1aa578dba69f17997fabecad4cab"
+    "apiToken": "NHuEIxAwQ0Yv4l1CyrTpLQ",
+    "apiSecret": "7c9523422df0343497e733bd91280e54"
   },
   "pipeDrive": {
     "apiUrl": "https://api.pipedrive.com/v1",

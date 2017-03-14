@@ -87,6 +87,8 @@ module.exports = class BaseRouter extends Router {
     });
 
 
+    // -------------------------------------------------------------------
+    // Must be the last to handle the error.
     this.router_.use(function(err, req, res, next) {
       Logger.error(err);
       return res.status(500).send('Something went south !');

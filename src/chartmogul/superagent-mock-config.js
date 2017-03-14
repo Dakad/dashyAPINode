@@ -4,7 +4,7 @@ exports = module.exports = [{
     /**
      * regular expression of URL
      */
-    pattern: 'https://api.chartmogul.mock/v1(/.*)(/?.*)',
+    pattern: 'https://api.chartmogul.mock/v1(/.*)',
 
     /**
      * returns the data
@@ -25,13 +25,26 @@ exports = module.exports = [{
         throw new Error(404);
       }
 
+      console.log(match);
+
       if (match[1].startsWith('/customers')) {
         return Config.request.chartmogul.get('customers');
       }
 
 
-      if (match[1].startsWith('/metrics')) {
-        console.log(match);
+      if (match[1] === '/metrics') {
+        if (match[2].startsWith('/mrr')) {
+          return Config.request.chartmogul.get('mrr');
+        }
+        if (match[2].startsWith('/arr')) {
+          return Config.request.chartmogul.get('arr');
+        }
+        if (match[2].startsWith('/arpa')) {
+          return Config.request.chartmogul.get('arpa');
+        }
+        if (match[2].startsWith('/customer-count')) {
+          return Config.request.chartmogul.get('customer');
+        }
       }
 
 

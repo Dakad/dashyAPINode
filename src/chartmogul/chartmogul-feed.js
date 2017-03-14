@@ -24,6 +24,7 @@ const request = require('superagent');
 
 // Mine
 const Feeder = require('../components/feeder');
+const Util = require('../components/util');
 
 // -------------------------------------------------------------------
 // Properties
@@ -38,22 +39,9 @@ const Feeder = require('../components/feeder');
 class ChartMogulFeed extends Feeder {
 
   /**
-   * Creates an instance of ChartMogulFeed.
-   * Init the ChartMogul Config.
-   *
-   * @memberOf ChartMogulFeed
-   */
-  constructor() {
-    super();
-    // this.mogulConfig_ = new ChartMogul.Config(
-    // Config.chartmogul.apiToken, Config.chartmogul.apiSecret);
-  }
-
-
-  /**
    * Send a request to ChartMogul API.
    *
-   * @param {String} destination - The pipedrive endpoint
+   * @param {string} destination - The pipedrive endpoint
    * @param {Object} query - The query params to send to ChartMogul
    * @return {Promise}
    *
@@ -74,8 +62,9 @@ class ChartMogulFeed extends Feeder {
         .end((err, res) => {
           if (err) {
             return reject(err);
+          } else {
+            return resolve(res.body);
           }
-          return resolve(res.body);
         });
     });
   }
@@ -91,7 +80,14 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   configByParams(req, res, next) {
-    res.locals.config.
+    const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(today.getMonth() - 1);
+    res.locals.config = {
+      'start-date': Util.convertDate(today),
+      'end-date': Util.convertDate(lastMonth),
+      'interval': 'month',
+    };
     next();
   }
 
@@ -118,8 +114,22 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchMrr(req, res, next) {
-    this.requestChartMogulFor('/metrics/mrr', res.locals.config);
-    next();
+    res.locals.data.item = [];
+    this.requestChartMogulFor('/metrics/mrr', res.locals.config)
+      .then((data) => {
+        // The mrr for today
+        res.locals.data.item.push({
+          'value': data.summary.current,
+        });
+
+        data = data.entries.pop();
+        res.locals.data.item.push({
+          'value': data.mrr,
+        });
+
+        next();
+      })
+      .catch((err) => next(err));
   }
 
 }

@@ -108,8 +108,8 @@ module.exports = class BaseRouter extends Router {
   /**
    * Middleware to check the inconming request.
    *  1. Check if the req is right
-   *  2. Insert a config Object in the req
-   *  3. Insert a data Object into the req containnig the geckoBoard ApiKey.
+   *  2. Insert a config Object in the res.locals
+   *  3. Insert a data Object into the res.locals with the geckoBoard ApiKey.
    *
    * @param {any} req The context of the request and response.
    * @param {any} res The context of the request and response.

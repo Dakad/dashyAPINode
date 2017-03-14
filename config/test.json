@@ -9,29 +9,118 @@
   "geckoBoard": {
     "apiKey": "GECKOBOARD_WIDGET_API_KEY"
   },
+  "chartmogul": {
+    "apiUrl": "https://api.chartmogul.mock/v1",
+    "apiToken": "CHARTMOGUL_API_TOKEN",
+    "apiSecret": "CHARTMOGUL_API_SECRET"
+  },
   "pipeDrive": {
     "apiUrl": "https://api.pipedrive.mock/v1",
     "pipeline": "The Mocky Pipeline",
     "apiToken": "PIPEDRIVE_API_TOKEN"
   },
 
-  "request" : {
-    "pipedrive" : {
-      "pipelines" : [{
-        "id" :123,
-        "name" : "The Mocky Pipeline"
-      },{
-        "id":57,
-        "name":"Pipo"
-      }
+  "request": {
+    "chartmogul": {
+      "metrics": [{
+          "date": "2015-01-31",
+          "customer-churn-rate": 20,
+          "mrr-churn-rate": 14,
+          "ltv": 1250.3,
+          "customers": 331,
+          "asp": 125,
+          "arpa": 1250,
+          "arr": 254000,
+          "mrr": 21166
+        },
+        {
+          "date": "2015-02-28",
+          "customer-churn-rate": 20,
+          "mrr-churn-rate": 22,
+          "ltv": 1248,
+          "customers": 329,
+          "asp": 125,
+          "arpa": 1250,
+          "arr": 238000,
+          "mrr": 21089
+        }
       ],
-      "stages" : [
-        {"id":1, "name":"Sayain"},
-        {"id":972, "name":"Super Sayain"},
-        {"id":164, "name":"Super Sayain GOD"}
-      ]
 
-    } 
+      "mrr": [{
+          "date": "2015-01-31",
+          "mrr": 30000,
+          "mrr-new-business": 10000,
+          "mrr-expansion": 15000,
+          "mrr-contraction": 0,
+          "mrr-churn": 0,
+          "mrr-reactivation": 0
+        },
+        {
+          "date": "2015-02-28",
+          "mrr": 30000,
+          "mrr-new-business": 0,
+          "mrr-expansion": 0,
+          "mrr-contraction": 0,
+          "mrr-churn": 0,
+          "mrr-reactivation": 0
+        }
+
+      ],
+
+      "arr": [{
+          "date": "2015-01-31",
+          "arr": 360000
+        },
+        {
+          "date": "2015-02-28",
+          "arr": 36600000
+        }
+      ],
+      "arpa": [{
+          "date": "2015-01-03",
+          "arpa": 15000
+        },
+        {
+          "date": "2015-01-10",
+          "arpa": 15000
+        }
+      ],
+      "customers": [{
+        "date": "2015-07-31",
+        "customers": 382
+      }],
+      "mrrChurnRate": [{
+          "date": "2015-01-31",
+          "mrr-churn-rate": -300.0
+        },
+        {
+          "date": "2015-02-28",
+          "mrr-churn-rate": -0.0
+        }
+      ]
+    },
+    "pipedrive": {
+      "pipelines": [{
+        "id": 123,
+        "name": "The Mocky Pipeline"
+      }, {
+        "id": 57,
+        "name": "Pipo"
+      }],
+      "stages": [{
+          "id": 1,
+          "name": "Sayain"
+        },
+        {
+          "id": 972,
+          "name": "Super Sayain"
+        },
+        {
+          "id": 164,
+          "name": "Super Sayain GOD"
+        }
+      ]
+    }
   }
 
 }

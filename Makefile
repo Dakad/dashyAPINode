@@ -28,13 +28,13 @@ dev:
 
 lint:
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;
-	@$(ESLINT) --color $(DIR_SRC) \ 
+	@$(ESLINT) --color $(DIR_SRC); 
 	@echo "#####  ESLint : DONE";
 
 
 lint-fix:
 	@echo "#####  ESLint Fixing $(DIR_SRC)" ;
-	@$(ESLINT) --fix $(DIR_SRC) \ 
+	@$(ESLINT) --fix $(DIR_SRC);
 	@echo "#####  Fixing : DONE";
 
 

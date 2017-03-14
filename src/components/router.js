@@ -37,28 +37,6 @@ const router = express.Router();
 // -------------------------------------------------------------------
 // Methods
 
-/**
- * Middleware to check the inconming request.
- *  1. Check if the req is right
- *  2. Insert a config Object in the req
- *  3. Insert a data Object into the req containnig the geckoBoard ApiKey.
- *
- * @param {any} req The incoming request
- * @param {any} res The outgoing response.
- * @param {any} next The next middleware to call;
- *
- */
-const checkMiddleware = function middleware(req, res, next) {
-  Logger.warn('First Middleware : Missing some check before continue');
-  req.config = {};
-
-  // ApiKey for GeckoBoard
-  res.data = {
-    'api': Config.geckoBoard.apiKey,
-  };
-  next();
-};
-
 
 // -------------------------------------------------------------------
 // Exports

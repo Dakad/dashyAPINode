@@ -119,12 +119,13 @@ class ChartMogulFeed extends Feeder {
       .then((data) => {
         // The mrr for today
         res.locals.data.item.push({
-          'value': data.summary.current,
+          'value': data.summary.current / 100,
         });
 
+        // Take the last one because it'll be for the end of month
         data = data.entries.pop();
         res.locals.data.item.push({
-          'value': data.mrr,
+          'value': data.mrr / 100,
         });
 
         next();

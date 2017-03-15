@@ -117,12 +117,12 @@ describe('ChartMogul : Feeder', () => {
 
     afterEach(() => spyFeedReqChartMogul.restore());
 
-    it('should call requestChartMogulFor()', (done) => {
+    it('should call requestChartMogulFor()', () => {
       feed.fetchMrr(req, res, () => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(res.locals.data).to.have.any.keys('item');
-        // expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
-        done();
+        expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
+        expect(res.locals.data.item).to.have.lengthOf(2);
       });
     });
   });

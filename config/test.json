@@ -19,95 +19,144 @@
     "pipeline": "The Mocky Pipeline",
     "apiToken": "PIPEDRIVE_API_TOKEN"
   },
-
   "request": {
     "chartmogul": {
-      "metrics": [{
-          "date": "2015-01-31",
-          "customer-churn-rate": 20,
-          "mrr-churn-rate": 14,
-          "ltv": 1250.3,
-          "customers": 331,
-          "asp": 125,
-          "arpa": 1250,
-          "arr": 254000,
-          "mrr": 21166
-        },
-        {
-          "date": "2015-02-28",
-          "customer-churn-rate": 20,
-          "mrr-churn-rate": 22,
-          "ltv": 1248,
-          "customers": 329,
-          "asp": 125,
-          "arpa": 1250,
-          "arr": 238000,
-          "mrr": 21089
+      "metrics": {
+        "entries": [
+          {
+            "date": "2015-01-31",
+            "customer-churn-rate": 20,
+            "mrr-churn-rate": 14,
+            "ltv": 1250.3,
+            "customers": 331,
+            "asp": 125,
+            "arpa": 1250,
+            "arr": 254000,
+            "mrr": 21166
+          },
+          {
+            "date": "2015-02-28",
+            "customer-churn-rate": 20,
+            "mrr-churn-rate": 22,
+            "ltv": 1248,
+            "customers": 329,
+            "asp": 125,
+            "arpa": 1250,
+            "arr": 238000,
+            "mrr": 21089
+          }
+        ],
+        "summary": {
+          "current": 43145000,
+          "previous": 43145000,
+          "percentage-change": 0.0
         }
-      ],
-
-      "mrr": [{
-          "date": "2015-01-31",
-          "mrr": 30000,
-          "mrr-new-business": 10000,
-          "mrr-expansion": 15000,
-          "mrr-contraction": 0,
-          "mrr-churn": 0,
-          "mrr-reactivation": 0
-        },
-        {
-          "date": "2015-02-28",
-          "mrr": 30000,
-          "mrr-new-business": 0,
-          "mrr-expansion": 0,
-          "mrr-contraction": 0,
-          "mrr-churn": 0,
-          "mrr-reactivation": 0
+      },
+      "mrr": {
+        "entries": [
+          {
+            "date": "2015-01-31",
+            "mrr": 30000,
+            "mrr-new-business": 10000,
+            "mrr-expansion": 15000,
+            "mrr-contraction": 0,
+            "mrr-churn": 0,
+            "mrr-reactivation": 0
+          },
+          {
+            "date": "2015-02-28",
+            "mrr": 30000,
+            "mrr-new-business": 0,
+            "mrr-expansion": 0,
+            "mrr-contraction": 0,
+            "mrr-churn": 0,
+            "mrr-reactivation": 0
+          }
+        ],
+        "summary": {
+          "current": 43145000,
+          "previous": 43145000,
+          "percentage-change": 0.0
         }
-
-      ],
-
-      "arr": [{
-          "date": "2015-01-31",
-          "arr": 360000
-        },
-        {
-          "date": "2015-02-28",
-          "arr": 36600000
+      },
+      "arr": {
+        "entries": [
+          {
+            "date": "2015-01-31",
+            "arr": 360000
+          },
+          {
+            "date": "2015-02-28",
+            "arr": 36600000
+          }
+        ],
+        "summary": {
+          "current": 305520000,
+          "previous": 305520000,
+          "percentage-change": 0.0
         }
-      ],
-      "arpa": [{
-          "date": "2015-01-03",
-          "arpa": 15000
-        },
-        {
-          "date": "2015-01-10",
-          "arpa": 15000
+      },
+      "arpa": {
+        "entries": [
+          {
+            "date": "2015-01-03",
+            "arpa": 15000
+          },
+          {
+            "date": "2015-01-10",
+            "arpa": 15000
+          }
+        ],
+        "summary": {
+          "current": 980568,
+          "previous": 980568,
+          "percentage-change": 0.0
         }
-      ],
-      "customers": [{
-        "date": "2015-07-31",
-        "customers": 382
-      }],
-      "mrrChurnRate": [{
-          "date": "2015-01-31",
-          "mrr-churn-rate": -300.0
-        },
-        {
-          "date": "2015-02-28",
-          "mrr-churn-rate": -0.0
+      },
+      "customers": {
+        "entries": [
+          {
+            "date": "2015-07-31",
+            "customers": 382
+          }
+        ],
+        "summary": {
+          "current": 382,
+          "previous": 379,
+          "percentage-change": 0.8
         }
-      ]
+      },
+      "mrrChurnRate": {
+        "entries": [
+          {
+            "date": "2015-01-31",
+            "mrr-churn-rate": -300.0
+          },
+          {
+            "date": "2015-02-28",
+            "mrr-churn-rate": -0.0
+          }
+        ],
+        "summary": {
+          "current": 0,
+          "previous": 0,
+          "percentage-change": 0.0
+        }
+      }
     },
     "pipedrive": {
-      "pipelines": [{
-        "id": 123,
-        "name": "The Mocky Pipeline"
-      }, {
-        "id": 57,
-        "name": "Pipo"
-      }],
-      "stages": [{
+      "pipelines": [
+        {
+          "id": 123,
+          "name": "The Mocky Pipeline"
+        },
+        {
+          "id": 57,
+          "name": "Pipo"
+        }
+      ],
+      "stages": [
+        {
           "id": 1,
           "name": "Sayain"
         },
@@ -122,5 +171,4 @@
       ]
     }
   }
-
 }

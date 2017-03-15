@@ -88,7 +88,7 @@ describe('Pipedrive : Feeder', () => {
       expect(req.catch).to.be.a('function');
     });
 
-    it('should return a Promise.fullfied - /pipeline', (done) => {
+    it.skip('should return a Promise.fullfied - /pipeline', (done) => {
       req = feed.requestPipeDriveFor('/pipelines', query);
       expect(req).to.be.fulfilled;
       expect(req.then).to.be.a('function');

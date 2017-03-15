@@ -1,24 +1,17 @@
 {
-  "entries": [{
-    "date": "2017-02-28",
-    "mrr": 3206161,
-    "mrr-new-business": 260897,
-    "mrr-expansion": 50303,
-    "mrr-contraction": -22349,
-    "mrr-churn": -287523,
-    "mrr-reactivation": 0
-  }, {
-    "date": "2017-03-01",
-    "mrr": 3256058,
-    "mrr-new-business": 54800,
-    "mrr-expansion": 0,
-    "mrr-contraction": 0,
-    "mrr-churn": -5125,
-    "mrr-reactivation": 0
-  }],
+  "entries": [
+    {
+      "date": "2017-02-28",
+      "customers": 327
+    },
+    {
+      "date": "2017-03-15",
+      "customers": 317
+    }
+  ],
   "summary": {
-    "current": 3213847,
-    "previous": 3123282,
-    "percentage-change": 2.9
+    "current": 317,
+    "previous": 323,
+    "percentage-change": -1.86
   }
 }

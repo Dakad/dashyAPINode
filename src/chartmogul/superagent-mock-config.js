@@ -1,6 +1,6 @@
 const Config = require('config');
 
-
+/*
 const extractParamsFromQuery = function convert(str ='') {
   return str.substr(1).split('&')
     .map((q) => q.split('='))
@@ -9,13 +9,13 @@ const extractParamsFromQuery = function convert(str ='') {
       return params;
     }, {});
 };
-
+*/
 
 exports = module.exports = [{
   /**
    * regular expression of URL
    */
-  pattern: /https:\/\/api.chartmogul.mock\/v1(\/[\w]*[^/])(\/[\w]*)?(\?.*)?/,
+  pattern: /https:\/\/api.chartmogul.mock\/v1(\/[\w]*[^/])(\/[\w-]*)?(\?.*)?/,
 
   /**
    * returns the data
@@ -31,11 +31,11 @@ exports = module.exports = [{
     if (!headers['Authorization']) {
       throw new Error(401); // Unauthorized
     }
-    let query;
-    console.log();
-    if (match[3]) {
-      query = extractParamsFromQuery(match[3]);
-    }
+
+    // let query;
+    // if (match[3]) {
+    //   query = extractParamsFromQuery(match[3]);
+    // }
 
     if (match[1] === '/404') {
       throw new Error(404);
@@ -48,17 +48,21 @@ exports = module.exports = [{
 
 
     if (match[1].startsWith('/metrics')) {
-      if (match[2] === ('/mrr')) {
-        return Config.request.chartmogul.mrr;
-      }
-      if (match[2] === '/arr') {
-        return Config.request.chartmogul.arr;
-      }
-      if (match[2] === '/arpa') {
-        return Config.request.chartmogul.arpa;
-      }
-      if (match[2] === '/customer-count') {
-        return Config.request.chartmogul.customers;
+      console.log(match[2]);
+
+      switch (match[2]) {
+        case '/mrr':
+          return Config.request.chartmogul.mrr;
+        case '/mrr-churn-rate':
+          return Config.request.chartmogul.mrrChurnRate;
+        case '/arr':
+          return Config.request.chartmogul.arr;
+        case '/arpa':
+          return Config.request.chartmogul.arpa;
+        case '/customer-count':
+          return Config.request.chartmogul.customers;
+        default:
+          return Config.request.chartmogul.metrics;
       }
     }
 

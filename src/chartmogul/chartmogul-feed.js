@@ -114,18 +114,19 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchMrr(req, res, next) {
-    res.locals.data.item = [];
     this.requestChartMogulFor('/metrics/mrr', res.locals.config)
       .then((data) => {
+        res.locals.data.item = [];
+
         // The mrr for today
         res.locals.data.item.push({
           'value': data.summary.current / 100,
         });
 
         // Take the last one because it'll be for the end of month
-        data = data.entries.pop();
+
         res.locals.data.item.push({
-          'value': data.mrr / 100,
+          'value': data.summary.previous / 100,
         });
 
         next();
@@ -133,8 +134,60 @@ class ChartMogulFeed extends Feeder {
       .catch((err) => next(err));
   }
 
-}
+  /**
+   * The middleware in charge of fetching the customers count.
+   *
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNbCustomers(req, res, next) {
+    this.requestChartMogulFor('/metrics/customer-count')
+      .then((data) => {
+        res.locals.data.item = [];
 
+        res.locals.data.item.push({
+          value: data.summary.current,
+        });
+
+        res.locals.data.item.push({
+          value: data.summary.previous,
+        });
+        next();
+      })
+      .catch((err) => next(err));
+  }
+
+
+  /**
+   * The middleware in charge of fetching the NET MRR Churn Rate.
+   *
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNetMRRChurnRate(req, res, next) {
+    this.requestChartMogulFor('/metrics/mrr-churn-rate')
+      .then((data) => {
+        res.locals.data.item = [];
+
+        res.locals.data.item.push({
+          value: data.summary.current,
+        });
+
+        res.locals.data.item.push({
+          value: data.summary.previous,
+        });
+        next();
+      })
+      .catch(next);
+  }
+
+}
 
 // -------------------------------------------------------------------
 // Exports

@@ -28,6 +28,7 @@ const feed = new ChartMogulFeed();
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
+let spyFeedReqChartMogul;
 let superagentMock = mockRequest(request, mockReqConf,
   (log) => console.log('superagent call', log.url));
 
@@ -47,6 +48,13 @@ describe('ChartMogul : Feeder', () => {
       api: 'API_TOKEN_FOR_MOCK_GECKOBOARD',
     },
   };
+
+  beforeEach(() => {
+    spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+  });
+
+  afterEach(() => spyFeedReqChartMogul.restore());
+
 
   describe('configByParams', () => {
     it('should return a object', (done) => {
@@ -110,23 +118,71 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-  describe('MiddleWare : fetchMrr', () => {
-    beforeEach(() => {
-      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
-    });
-
-    afterEach(() => spyFeedReqChartMogul.restore());
-
-    it('should call requestChartMogulFor()', () => {
+  describe('MiddleWare : fetchMrr', (done) => {
+    it('should call requestChartMogulFor()', (done) => {
       feed.fetchMrr(req, res, () => {
         expect(spyFeedReqChartMogul.called).to.be.true;
+        expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
+        done();
+      });
+    });
+
+    it('should fill data with items', () => {
+      feed.fetchMrr(req, res, () => {
         expect(res.locals.data).to.have.any.keys('item');
         expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
         expect(res.locals.data.item).to.have.lengthOf(2);
       });
     });
+
+
+    // TODO Unit test for the parametred req
   });
 
+
+  describe('MiddleWare : fetchNbCustomers', () => {
+    it('shoudl call feed.requestCharMogulFor', (done) => {
+      feed.fetchNbCustomers(req, res, (err) => {
+        if(err) return done(err);
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        expect(spyFeedReqChartMogul.calledWith('/metrics/customer-count'))
+          .to.be.true;
+          done();
+      });
+    });
+
+    it('should fill data with items', (done) => {
+      feed.fetchNbCustomers(req, res, (err) => {
+        const data = res.locals.data;
+        expect(data).to.not.be.undefined.and.null;
+        expect(data).to.have.property('item');
+        expect(data.item).to.be.a('array').and.to.have.lengthOf(2);
+        done();
+      });
+    });
+  });
+
+  describe('MiddleWare : fetchNetMRRChurn', () => {
+    it('shoud call feed.requestCharMogulFor', (done) => {
+      feed.fetchNetMRRChurnRate(req, res, (err) => {
+        if(err) return done(err);
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        expect(spyFeedReqChartMogul.calledWith('/metrics/mrr-churn-rate'))
+          .to.be.true;
+          done();
+      });
+    });
+
+    it('should fill data with items', (done) => {
+      feed.fetchNetMRRChurnRate(req, res, (err) => {
+        const data = res.locals.data;
+        expect(data).to.not.be.undefined.and.null;
+        expect(data).to.have.property('item');
+        expect(data.item).to.be.a('array').and.to.have.lengthOf(2);
+        done();
+      });
+    });
+  });
 
   after(() => superagentMock.unset());
 });

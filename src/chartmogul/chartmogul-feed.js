@@ -28,7 +28,18 @@ const Util = require('../components/util');
 
 // -------------------------------------------------------------------
 // Properties
+const mrrs = [
+      {'entrie': 'mrr-new-business', 'label': 'New Business'},
+      {'entrie': 'mrr-expansion', 'label': 'Expansion'},
+      {'entrie': 'mrr-contraction', 'label': 'Contraction'},
+      {'entrie': 'mrr-churn', 'label': 'Churn'},
+    ];
 
+/*
+const calcNetMRRMovement = (mrr) => {
+
+};
+*/
 
 /**
  * Feeder for ChartMogul route
@@ -186,6 +197,103 @@ class ChartMogulFeed extends Feeder {
       })
       .catch(next);
   }
+
+/*
+  fetchNetMRRMovements(req, res, next) {
+    next();
+  }
+*/
+
+  /**
+   * THe middleware inf charge of fetching the other MRR Movements.
+   *
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchMRRMovements(req, res, next) {
+    this.requestChartMogulFor('/metrics/mrr')
+      .then((data) => {
+        const otherMrr = data.entries.pop();
+
+        /*
+        const items = mrrs.map(function createItems(item) {
+          return {
+            label: item.label, value: otherMrr[item.entrie]/100,
+          };
+        });
+      */
+        Object.assign(res.locals.data, {
+          'format': 'currency',
+          'unit': 'EUR',
+          'items': mrrs.map((item) => {
+            return {
+              'label': item.label,
+              'value': otherMrr[item.entrie] / 100,
+            };
+          }),
+        });
+
+        next();
+      })
+      .catch(next);
+  }
+
+
+  /**
+   * The middleware in charge of fetching the ARR.
+   *
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchArr(req, res, next) {
+    this.requestChartMogulFor('/metrics/arr')
+      .then((data) => {
+        res.locals.data.item = [];
+
+        res.locals.data.item.push({
+          value: data.summary.current / 100,
+        });
+
+        res.locals.data.item.push({
+          value: data.summary.previous / 100,
+        });
+        next();
+      })
+      .catch(next);
+  }
+
+  /**
+   * The middleware in charge of fetching the ARPA.
+   *
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchArpa(req, res, next) {
+    this.requestChartMogulFor('/metrics/arpa')
+      .then((data) => {
+        res.locals.data.item = [];
+
+        res.locals.data.item.push({
+          value: data.summary.current / 100,
+        });
+
+        res.locals.data.item.push({
+          value: data.summary.previous / 100,
+        });
+        next();
+      })
+      .catch(next);
+  }
+
 
 }
 

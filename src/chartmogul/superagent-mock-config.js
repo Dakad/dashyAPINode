@@ -48,7 +48,7 @@ exports = module.exports = [{
 
 
     if (match[1].startsWith('/metrics')) {
-      console.log(match[2]);
+      // console.log(match[2]);
 
       switch (match[2]) {
         case '/mrr':
@@ -61,6 +61,7 @@ exports = module.exports = [{
           return Config.request.chartmogul.arpa;
         case '/customer-count':
           return Config.request.chartmogul.customers;
+        case '/all':
         default:
           return Config.request.chartmogul.metrics;
       }

@@ -37,28 +37,27 @@ let superagentMock = mockRequest(request, mockReqConf,
 
 
 describe('ChartMogul : Feeder', () => {
-  const req = httpMocks.createRequest({
-    method: 'GET',
-    url: '/mocky',
-  });
-
-  const res = httpMocks.createResponse();
-  res.locals = {
-    data: {
-      api: 'API_TOKEN_FOR_MOCK_GECKOBOARD',
-    },
-  };
+  let req;
+  let res;
 
   beforeEach(() => {
-    spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+    req = httpMocks.createRequest({
+      method: 'GET',
+      url: '/mocky',
+    });
+    res = httpMocks.createResponse();
+    res.locals = {
+      data: {
+        api: 'API_TOKEN_FOR_MOCK_GECKOBOARD',
+      },
+    };
   });
-
-  afterEach(() => spyFeedReqChartMogul.restore());
 
 
   describe('configByParams', () => {
     it('should return a object', (done) => {
-      feed.configByParams(req, res, () => {
+      feed.configByParams(req, res, (err) => {
+        if (err) return done(err);
         expect(res.locals).to.have.property('config');
         done();
       });
@@ -68,7 +67,8 @@ describe('ChartMogul : Feeder', () => {
       const currentDate = new Date();
       const lastMonth = new Date();
       lastMonth.setMonth(currentDate.getMonth() - 1);
-      feed.configByParams(req, res, () => {
+      feed.configByParams(req, res, (err) => {
+        if (err) return done(err);
         expect(res.locals.config)
           .to.have.any.keys('start-date', 'end-date', 'interval');
         expect(res.locals.config['start-date'])
@@ -118,71 +118,75 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-  describe('MiddleWare : fetchMrr', (done) => {
+  describe('MiddleWare - basicFetcher', (done) => {
+    const middlewares = [
+      {'fetch': feed.fetchMrr, 'url': '/metrics/mrr'},
+      {'fetch': feed.fetchNbCustomers, 'url': '/metrics/customer-count'},
+      {'fetch': feed.fetchNetMRRChurnRate, 'url': '/metrics/mrr-churn-rate'},
+      {'fetch': feed.fetchArr, 'url': '/metrics/arr'},
+      {'fetch': feed.fetchArpa, 'url': '/metrics/arpa'},
+    ];
+
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+    });
+
+    afterEach(() => spyFeedReqChartMogul.restore());
+
+    middlewares.forEach((middleware) => {
+      it(`feed.${middleware.fetch.name}() should call requestChartMogulFor()`,
+        (done) => {
+          middleware.fetch.call(feed, req, res, (err) => {
+            if (err) return done(err);
+            expect(spyFeedReqChartMogul.called).to.be.true;
+            expect(spyFeedReqChartMogul.calledWith(middleware.url)).to.be.true;
+            done();
+          });
+        });
+
+      it(`feed.${middleware.fetch.name}() should fill data with items`, () => {
+        middleware.fetch.call(feed, req, res, (err) => {
+          if (err) return done(err);
+          expect(res.locals.data).to.have.any.keys('item');
+          expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
+          expect(res.locals.data.item).to.have.lengthOf(2);
+        });
+      });
+    });
+
+    // TODO Unit test for the parametred req
+  });
+
+  describe('MiddleWare : fetchMRRMovements', (done) => {
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+    });
+
+    afterEach(() => spyFeedReqChartMogul.restore());
+
     it('should call requestChartMogulFor()', (done) => {
-      feed.fetchMrr(req, res, () => {
+      feed.fetchMRRMovements(req, res, (err) => {
+        if (err) return done(err);
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
         done();
       });
     });
 
-    it('should fill data with items', () => {
-      feed.fetchMrr(req, res, () => {
-        expect(res.locals.data).to.have.any.keys('item');
-        expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
-        expect(res.locals.data.item).to.have.lengthOf(2);
+    it('should fill data with items', (done) => {
+      feed.fetchMRRMovements(req, res, (err) => {
+        if (err) return done(err);
+        expect(res.locals.data).to.contains.all.keys('format', 'unit', 'items');
+        expect(res.locals.data.format).to.be.a('string').and.eql('currency');
+        expect(res.locals.data.items).to.be.a('array').and.to.not.be.empty;
+        expect(res.locals.data.items).to.have.lengthOf(4);
+        done();
       });
     });
-
 
     // TODO Unit test for the parametred req
   });
 
-
-  describe('MiddleWare : fetchNbCustomers', () => {
-    it('shoudl call feed.requestCharMogulFor', (done) => {
-      feed.fetchNbCustomers(req, res, (err) => {
-        if(err) return done(err);
-        expect(spyFeedReqChartMogul.called).to.be.true;
-        expect(spyFeedReqChartMogul.calledWith('/metrics/customer-count'))
-          .to.be.true;
-          done();
-      });
-    });
-
-    it('should fill data with items', (done) => {
-      feed.fetchNbCustomers(req, res, (err) => {
-        const data = res.locals.data;
-        expect(data).to.not.be.undefined.and.null;
-        expect(data).to.have.property('item');
-        expect(data.item).to.be.a('array').and.to.have.lengthOf(2);
-        done();
-      });
-    });
-  });
-
-  describe('MiddleWare : fetchNetMRRChurn', () => {
-    it('shoud call feed.requestCharMogulFor', (done) => {
-      feed.fetchNetMRRChurnRate(req, res, (err) => {
-        if(err) return done(err);
-        expect(spyFeedReqChartMogul.called).to.be.true;
-        expect(spyFeedReqChartMogul.calledWith('/metrics/mrr-churn-rate'))
-          .to.be.true;
-          done();
-      });
-    });
-
-    it('should fill data with items', (done) => {
-      feed.fetchNetMRRChurnRate(req, res, (err) => {
-        const data = res.locals.data;
-        expect(data).to.not.be.undefined.and.null;
-        expect(data).to.have.property('item');
-        expect(data.item).to.be.a('array').and.to.have.lengthOf(2);
-        done();
-      });
-    });
-  });
 
   after(() => superagentMock.unset());
 });

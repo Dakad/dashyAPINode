@@ -221,20 +221,25 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe.skip('MiddleWare : fetchNetMRRMovements', (done) => {
+  describe('MiddleWare : fetchNetMRRMovements', (done) => {
     let spyCalcNetMRRMovement;
+    let mogulFeed;
+
     beforeEach(() => {
-      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
-      spyCalcNetMRRMovement = sinon.spy(feed, 'calcNetMRRMovement');
+      mogulFeed = new ChartMogulFeed();
+      spyFeedReqChartMogul = sinon.spy(mogulFeed, 'requestChartMogulFor');
+      spyFindMaxNetMRR = sinon.spy(mogulFeed, 'findMaxNetMRR');
+      spyCalcNetMRRMovement = sinon.spy(mogulFeed, 'calcNetMRRMovement');
     });
 
     afterEach(() => {
       spyFeedReqChartMogul.restore();
       spyCalcNetMRRMovement.restore();
+      spyFindMaxNetMRR.restore();
     });
 
     it('should call requestChartMogulFor()', (done) => {
-      feed.fetchMRRMovements(req, res, (err) => {
+      mogulFeed.fetchNetMRRMovements(req, res, (err) => {
         if (err) return done(err);
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
@@ -242,18 +247,20 @@ describe('ChartMogul : Feeder', () => {
       });
     });
 
-    it('should call calcNetMRRMovement()', (done) => {
-      const mrrs = Config.request.chartmogul.mrr.entries[1];
-      feed.fetchMRRMovements(req, res, (err) => {
+    it('should call findMaxNetMRR() and calcNetMRRMovement()', (done) => {
+      const mrrs = Config.request.chartmogul.mrr;
+      mogulFeed.fetchNetMRRMovements(req, res, (err) => {
         if (err) return done(err);
+        expect(spyFindMaxNetMRR.called).to.be.true;
+        expect(spyFindMaxNetMRR.calledWith(mrrs)).to.be.true;
         expect(spyCalcNetMRRMovement.called).to.be.true;
-        expect(spyCalcNetMRRMovement.calledWith(mrrs)).to.be.true;
+        expect(spyCalcNetMRRMovement.callCount).to.be.eql(mrrs.length);
         done();
       });
     });
 
     it('should fill data with items', (done) => {
-      feed.fetchNetMRRMovements(req, res, (err) => {
+      mogulFeed.fetchNetMRRMovements(req, res, (err) => {
         if (err) return done(err);
         expect(res.locals.data).to.contains.all.keys('item');
         expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;

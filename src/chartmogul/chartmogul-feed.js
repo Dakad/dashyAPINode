@@ -249,7 +249,7 @@ class ChartMogulFeed extends Feeder {
     }
     entries.forEach((entry) => {
       const netMrr = this.calcNetMRRMovement(entry);
-      if(netMrr > this.bestNetMRRMove_.val) {
+      if (netMrr > this.bestNetMRRMove_.val) {
         Object.assign(this.bestNetMRRMove_, {
           'startDate': entry.date,
           'val': netMrr,
@@ -270,8 +270,23 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNetMRRMovements(req, res, next) {
-    this.requestChartMogulFor('/metrics/mrr');
-    next();
+    const query = {
+      'start-date': Util.convertDate(this.bestNetMRRMove_.startDate),
+      'end-date': Util.convertDate(),
+      'interval': 'month',
+    };
+    this.reqCharMogul = this.requestChartMogulFor('/metrics/mrr', query)
+      .then(({summary, entries}) => {
+        this.findMaxNetMRR(entries);
+        res.locals.data.item = [{
+          'text': `
+            <p style="font-size:1.7em">${summary.current}</p>
+            <h1 style="font-size:1.7em;color:#1c99e3">${this.bestNetMRRMove_}</h1>
+            `,
+        }];
+        next();
+      })
+      .catch(next);
   }
 
   /**

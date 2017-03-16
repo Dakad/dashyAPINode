@@ -29,16 +29,14 @@ const Util = require('../components/util');
 // -------------------------------------------------------------------
 // Properties
 const mrrs = [
-      {'entrie': 'mrr-new-business', 'label': 'New Business'},
-      {'entrie': 'mrr-expansion', 'label': 'Expansion'},
-      {'entrie': 'mrr-contraction', 'label': 'Contraction'},
-      {'entrie': 'mrr-churn', 'label': 'Churn'},
-    ];
+  {'entrie': 'mrr-new-business', 'label': 'New Business'},
+  {'entrie': 'mrr-expansion', 'label': 'Expansion'},
+  {'entrie': 'mrr-contraction', 'label': 'Contraction'},
+  {'entrie': 'mrr-churn', 'label': 'Churn'},
+];
 
 /*
-const calcNetMRRMovement = (mrr) => {
-
-};
+const ;
 */
 
 /**
@@ -48,6 +46,16 @@ const calcNetMRRMovement = (mrr) => {
  * @extends {Feeder}
  */
 class ChartMogulFeed extends Feeder {
+
+  /**
+   * Creates an instance of ChartMogulFeed.
+   *
+   * @memberOf ChartMogulFeed
+   */
+  constructor() {
+    super();
+    this.bestNetMRRMove = undefined;
+  }
 
   /**
    * Send a request to ChartMogul API.
@@ -198,11 +206,40 @@ class ChartMogulFeed extends Feeder {
       .catch(next);
   }
 
-/*
+  /**
+   * Calc. the NET MRR Movement.
+   *
+   * @param {Array<number>|Object} mrrs - Other MRRs
+   *  {new-biz,expansion,contraction,churn}
+   * @return {number} The NET MRR Movement
+   * @memberOf ChartMogulFeed
+   */
+  calcNetMRRMovement(mrrs = []) {
+    if (!mrrs) {
+      return 0;
+    }
+    if (!Array.isArray(mrrs)) {
+      mrrs = Object.keys(mrrs)
+        .filter((key) => key.startsWith('mrr-'))
+        .map((key) => mrrs[key]);
+    }
+    return (mrrs.reduce((net, mrr) => net = net + mrr, 0) / 100);
+  }
+
+  /**
+   * THe middleware inf charge of fetching and calc the NET MRR Movements
+   * based on others MRR Movements.
+   *
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   *
+   * @memberOf ChartMogulFeed
+   */
   fetchNetMRRMovements(req, res, next) {
+    this.requestChartMogulFor('/metrics/mrr');
     next();
   }
-*/
 
   /**
    * THe middleware inf charge of fetching the other MRR Movements.
@@ -228,12 +265,10 @@ class ChartMogulFeed extends Feeder {
         Object.assign(res.locals.data, {
           'format': 'currency',
           'unit': 'EUR',
-          'items': mrrs.map((item) => {
-            return {
-              'label': item.label,
-              'value': otherMrr[item.entrie] / 100,
-            };
-          }),
+          'items': mrrs.map((item) => ({
+            'label': item.label,
+            'value': otherMrr[item.entrie] / 100,
+          })),
         });
 
         next();

@@ -48,8 +48,6 @@ exports = module.exports = [{
 
 
     if (match[1].startsWith('/metrics')) {
-      // console.log(match[2]);
-
       switch (match[2]) {
         case '/mrr':
           return Config.request.chartmogul.mrr;
@@ -78,8 +76,9 @@ exports = module.exports = [{
    * @return {Object} the result of the GET request
    */
   get: function(match, data) {
+    const copy = JSON.parse(JSON.stringify(data));
     return {
-      body: data,
+      body: Object.assign({}, copy),
     };
   },
 

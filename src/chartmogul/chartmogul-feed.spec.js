@@ -118,6 +118,33 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
+  describe('calcNetMovement', () => {
+    it('should return 0 : invalid args', () => {
+      expect(feed.calcNetMRRMovement()).to.be.equal(0);
+      expect(feed.calcNetMRRMovement(undefined)).to.be.equal(0);
+      expect(feed.calcNetMRRMovement(null)).to.be.equal(0);
+      expect(feed.calcNetMRRMovement({})).to.be.equal(0);
+      expect(feed.calcNetMRRMovement([])).to.be.equal(0);
+    });
+
+    it('should return -26,89', () => {
+      const mrrs = [98458, 1800, -2970, -109447, 9470];
+      expect(feed.calcNetMRRMovement(mrrs)).to.be.equal(-26.89);
+    });
+    it('should return -26,89', () => {
+      const mrr = {
+        'date': '2016-02-29',
+        'mrr': 1000130,
+        'mrr-new-business': 98458,
+        'mrr-expansion': 1800,
+        'mrr-contraction': -2970,
+        'mrr-churn': -109447,
+        'mrr-reactivation': 9470,
+      };
+      expect(feed.calcNetMRRMovement(mrr)).to.be.equal(-26.89);
+    });
+  });
+
   describe('MiddleWare - basicFetcher', (done) => {
     const middlewares = [
       {'fetch': feed.fetchMrr, 'url': '/metrics/mrr'},
@@ -180,6 +207,43 @@ describe('ChartMogul : Feeder', () => {
         expect(res.locals.data.format).to.be.a('string').and.eql('currency');
         expect(res.locals.data.items).to.be.a('array').and.to.not.be.empty;
         expect(res.locals.data.items).to.have.lengthOf(4);
+        done();
+      });
+    });
+
+    // TODO Unit test for the parametred req
+  });
+
+  describe.skip('MiddleWare : fetchNetMRRMovements', (done) => {
+    let spyCalcNetMRRMovement;
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+      spyCalcNetMRRMovement = sinon.spy(feed, 'calcNetMRRMovement');
+    });
+
+    afterEach(() => {
+      spyFeedReqChartMogul.restore();
+      spyCalcNetMRRMovement.restore();
+    });
+
+    it('should call requestChartMogulFor()', (done) => {
+      feed.fetchMRRMovements(req, res, (err) => {
+        if (err) return done(err);
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
+        done();
+      });
+    });
+
+    it('should call calcNetMovement()', () => {
+      // const netMrr = feed.calcNetMRRMovement();
+    });
+
+    it('should fill data with items', (done) => {
+      feed.fetchNetMRRMovements(req, res, (err) => {
+        if (err) return done(err);
+        expect(res.locals.data).to.contains.all.keys('item');
+        expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
         done();
       });
     });

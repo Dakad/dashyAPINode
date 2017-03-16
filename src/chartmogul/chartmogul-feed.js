@@ -28,11 +28,12 @@ const Util = require('../components/util');
 
 // -------------------------------------------------------------------
 // Properties
-const mrrs = [
+const mrrsEntries = [
   {'entrie': 'mrr-new-business', 'label': 'New Business'},
   {'entrie': 'mrr-expansion', 'label': 'Expansion'},
   {'entrie': 'mrr-contraction', 'label': 'Contraction'},
   {'entrie': 'mrr-churn', 'label': 'Churn'},
+  {'entrie': 'mrr-reactivation', 'label': 'Reactivation'},
 ];
 
 /*
@@ -54,7 +55,10 @@ class ChartMogulFeed extends Feeder {
    */
   constructor() {
     super();
-    this.bestNetMRRMove = undefined;
+    this.bestNetMRRMove_ = {
+      'startDate': new Date('2014-09-01'),
+      'val': 0,
+    };
   }
 
   /**
@@ -206,6 +210,7 @@ class ChartMogulFeed extends Feeder {
       .catch(next);
   }
 
+
   /**
    * Calc. the NET MRR Movement.
    *
@@ -218,12 +223,40 @@ class ChartMogulFeed extends Feeder {
     if (!mrrs) {
       return 0;
     }
-    if (!Array.isArray(mrrs)) {
+    if (!Array.isArray(mrrs) && typeof mrrs === 'object') {
+      // const allMrrEntries = mrrsEntries.map((mrr)=>mrr.entrie);
+      // Keep only those required for the net mrr calc
+      // Check if contains all mrrs required for the calc.
       mrrs = Object.keys(mrrs)
         .filter((key) => key.startsWith('mrr-'))
+        // .every((key) => allMrrEntries.indexOf(key))
         .map((key) => mrrs[key]);
     }
     return (mrrs.reduce((net, mrr) => net = net + mrr, 0) / 100);
+  }
+
+
+  /**
+   * Calc the NET MRR and return only the max
+   *
+   * @param {Array<Object>} entries - All entries.
+   * @return {number} The MAX NET
+   * @memberOf ChartMogulFeed
+   */
+  findMaxNetMRR(entries) {
+    if (!Array.isArray(entries)) {
+      throw new TypeError('Invalid arguements for entries - Must be an array');
+    }
+    entries.forEach((entry) => {
+      const netMrr = this.calcNetMRRMovement(entry);
+      if(netMrr > this.bestNetMRRMove_.val) {
+        Object.assign(this.bestNetMRRMove_, {
+          'startDate': entry.date,
+          'val': netMrr,
+        });
+      }
+    });
+    return this.bestNetMRRMove_.val;
   }
 
   /**
@@ -256,7 +289,7 @@ class ChartMogulFeed extends Feeder {
         const otherMrr = data.entries.pop();
 
         /*
-        const items = mrrs.map(function createItems(item) {
+        const items = mrrsEntries.map(function createItems(item) {
           return {
             label: item.label, value: otherMrr[item.entrie]/100,
           };
@@ -265,7 +298,7 @@ class ChartMogulFeed extends Feeder {
         Object.assign(res.locals.data, {
           'format': 'currency',
           'unit': 'EUR',
-          'items': mrrs.map((item) => ({
+          'items': mrrsEntries.map((item) => ({
             'label': item.label,
             'value': otherMrr[item.entrie] / 100,
           })),

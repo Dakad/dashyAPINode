@@ -17,6 +17,7 @@ const mockRequest = require('superagent-mock');
 // Built-in
 
 // Mine
+const Config = require('../../config/test.json');
 const Util = require('../components/util');
 const ChartMogulFeed = require('./chartmogul-feed');
 const mockReqConf = require('./superagent-mock-config');
@@ -131,21 +132,27 @@ describe('ChartMogul : Feeder', () => {
       const mrrs = [98458, 1800, -2970, -109447, 9470];
       expect(feed.calcNetMRRMovement(mrrs)).to.be.equal(-26.89);
     });
-    it('should return -26,89', () => {
-      const mrr = {
-        'date': '2016-02-29',
-        'mrr': 1000130,
-        'mrr-new-business': 98458,
-        'mrr-expansion': 1800,
-        'mrr-contraction': -2970,
-        'mrr-churn': -109447,
-        'mrr-reactivation': 9470,
-      };
-      expect(feed.calcNetMRRMovement(mrr)).to.be.equal(-26.89);
+    it('should return 811,64', () => {
+      const mrr = Config.request.chartmogul.mrr.entries[0];
+      expect(feed.calcNetMRRMovement(mrr)).to.be.equal(811.64);
     });
   });
 
-  describe('MiddleWare - basicFetcher', (done) => {
+  describe('findMaxNetMRR', () => {
+    it('should return 0 : invalid args', () => {
+      expect(feed.findMaxNetMRR).to.throw(TypeError);
+      expect(()=>feed.findMaxNetMRR()).to.throw(TypeError);
+      expect(()=>feed.findMaxNetMRR(null)).to.throw(TypeError);
+      expect(feed.findMaxNetMRR([])).to.be.equal(0);
+    });
+
+    it('should return 2357,7', () => {
+      const mrrEntries = Config.request.chartmogul.mrr.entries;
+      expect(feed.findMaxNetMRR(mrrEntries)).to.be.equal(2357.7);
+    });
+  });
+
+  describe('MiddleWare - basicFetchers', (done) => {
     const middlewares = [
       {'fetch': feed.fetchMrr, 'url': '/metrics/mrr'},
       {'fetch': feed.fetchNbCustomers, 'url': '/metrics/customer-count'},
@@ -206,7 +213,7 @@ describe('ChartMogul : Feeder', () => {
         expect(res.locals.data).to.contains.all.keys('format', 'unit', 'items');
         expect(res.locals.data.format).to.be.a('string').and.eql('currency');
         expect(res.locals.data.items).to.be.a('array').and.to.not.be.empty;
-        expect(res.locals.data.items).to.have.lengthOf(4);
+        // expect(res.locals.data.items).to.have.lengthOf(4);
         done();
       });
     });
@@ -235,8 +242,14 @@ describe('ChartMogul : Feeder', () => {
       });
     });
 
-    it('should call calcNetMovement()', () => {
-      // const netMrr = feed.calcNetMRRMovement();
+    it('should call calcNetMRRMovement()', (done) => {
+      const mrrs = Config.request.chartmogul.mrr.entries[1];
+      feed.fetchMRRMovements(req, res, (err) => {
+        if (err) return done(err);
+        expect(spyCalcNetMRRMovement.called).to.be.true;
+        expect(spyCalcNetMRRMovement.calledWith(mrrs)).to.be.true;
+        done();
+      });
     });
 
     it('should fill data with items', (done) => {

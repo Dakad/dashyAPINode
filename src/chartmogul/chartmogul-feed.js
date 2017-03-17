@@ -56,7 +56,8 @@ class ChartMogulFeed extends Feeder {
   constructor() {
     super();
     this.bestNetMRRMove_ = {
-      'startDate': new Date('2014-09-01'),
+      'lastFetch': null,
+      'startDate': new Date(Config.chartmogul.bestNetMRR.startDate),
       'val': 0,
     };
   }
@@ -277,11 +278,20 @@ class ChartMogulFeed extends Feeder {
     };
     this.reqCharMogul = this.requestChartMogulFor('/metrics/mrr', query)
       .then(({summary, entries}) => {
-        this.findMaxNetMRR(entries);
+        // Never made the fetch for the max.
+        if (!this.bestNetMRRMove_.lastFetch || this.bestNetMRRMove_.val === 0) {
+          this.bestNetMRRMove_.lastFetch = new Date().getTime();
+          this.findMaxNetMRR(entries);
+        }
+
+        // TODO Only after a specific amount of time {3 days, 1 week , only Monday}
+
+        const current = Util.toMoneyFormat(summary.current, '', ',');
+        const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');
         res.locals.data.item = [{
           'text': `
-            <p style="font-size:1.7em">${summary.current}</p>
-            <h1 style="font-size:1.7em;color:#1c99e3">${this.bestNetMRRMove_}</h1>
+            <p style="font-size:1.7em">${current}</p>
+            <h1 style="font-size:1.7em;color:#1c99e3">${best}</h1>
             `,
         }];
         next();

@@ -59,10 +59,35 @@ describe('Component : Util', () => {
     });
     it('shoud return the current date', () => {
       const dte = new Date();
-      const res = dte.toISOString().substring(0,10);
+      const res = dte.toISOString().substring(0, 10);
       expect(Util.convertDate())
         .to.be.a('string')
         .and.to.be.equal(res)
+    });
+  });
+
+  describe('formatMoney', () => {
+    const inputs = [1, 12, 123, 1234, 12345, 123456, 1234567, 12345.67];
+    const outputs = ['€ 1.00', '€ 12.00', '€ 123.00', '€ 1 234.00', '€ 12 345.00', '€ 123 456.00', '€ 1 234 567.00', '€ 12 345.67']
+    const outputs2 = ['€ 1.00', '€ 12.00', '€ 123.00', '€ 1,234.00', '€ 12,345.00', '€ 123,456.00', '€ 1,234,567.00', '€ 12,345.67']
+    const outputs3 = ['€ 1,00', '€ 12,00', '€ 123,00', '€ 1 234,00', '€ 12 345,00', '€ 123 456,00', '€ 1 234 567,00', '€ 12 345,67']
+
+    
+    it('should format the number into currency with no delimeter', () => {
+      let money;
+      inputs.forEach((num,i)=> {
+        money = Util.toMoneyFormat(num);
+        expect(money.startsWith('€'),`1:${i} - Out : ${money}`).to.be.true;
+        expect(money,`1:${i} - Out = ${money}`).to.be.eq(outputs[i]);
+
+        money = Util.toMoneyFormat(num,',');
+        expect(money.startsWith('€'),`2:${i} - Out : ${money}`).to.be.true;
+        expect(money,`2:${i} - Out = ${money}`).to.be.eq(outputs2[i]);
+
+        money = Util.toMoneyFormat(num,' ', ',');
+        expect(money.startsWith('€'),`2:${i} - Out : ${money}`).to.be.true;
+        expect(money,`2:${i} - Out = ${money}`).to.be.eq(outputs3[i]);
+      });
     });
   });
 
@@ -74,7 +99,7 @@ describe('Component : Util', () => {
   //   });
 
   // });
-  
+
   describe('checkParams', () => {
     it('should by default be valid', () => {
       const check = Util.checkParams({});

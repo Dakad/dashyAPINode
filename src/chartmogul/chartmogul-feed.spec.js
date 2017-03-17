@@ -115,7 +115,11 @@ describe('ChartMogul : Feeder', () => {
       expect(promise).to.be.fulfilled;
       expect(promise.then).to.be.a('function');
       expect(promise.catch).to.be.a('function');
-      expect(promise).to.eventually.have.property('entries').and.notify(done);
+      expect(promise)
+        .to.eventually.contains.all.keys([
+          'entries',
+        ])
+        .and.notify(done);
     });
   });
 
@@ -134,6 +138,9 @@ describe('ChartMogul : Feeder', () => {
     });
     it('should return 811,64', () => {
       const mrr = Config.request.chartmogul.mrr.entries[0];
+      feed.calcNetMRRMovement(Config.request.chartmogul.mrr.entries[0]);
+      feed.calcNetMRRMovement(Config.request.chartmogul.mrr.entries[1]);
+      feed.calcNetMRRMovement(Config.request.chartmogul.mrr.entries[2]);
       expect(feed.calcNetMRRMovement(mrr)).to.be.equal(811.64);
     });
   });
@@ -146,9 +153,9 @@ describe('ChartMogul : Feeder', () => {
       expect(feed.findMaxNetMRR([])).to.be.equal(0);
     });
 
-    it('should return 2357,7', () => {
+    it('should return 2357,70', () => {
       const mrrEntries = Config.request.chartmogul.mrr.entries;
-      expect(feed.findMaxNetMRR(mrrEntries)).to.be.equal(2357.7);
+      expect(feed.findMaxNetMRR(mrrEntries)).to.be.eql(2357.70);
     });
   });
 
@@ -248,13 +255,13 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should call findMaxNetMRR() and calcNetMRRMovement()', (done) => {
-      const mrrs = Config.request.chartmogul.mrr;
+      const mrrEntries = Config.request.chartmogul.mrr.entries;
       mogulFeed.fetchNetMRRMovements(req, res, (err) => {
         if (err) return done(err);
         expect(spyFindMaxNetMRR.called).to.be.true;
-        expect(spyFindMaxNetMRR.calledWith(mrrs)).to.be.true;
+        expect(spyFindMaxNetMRR.calledWith(mrrEntries)).to.be.true;
         expect(spyCalcNetMRRMovement.called).to.be.true;
-        expect(spyCalcNetMRRMovement.callCount).to.be.eql(mrrs.length);
+        expect(spyCalcNetMRRMovement.callCount).to.be.eql(mrrEntries.length);
         done();
       });
     });

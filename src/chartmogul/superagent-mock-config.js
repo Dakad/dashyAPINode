@@ -1,7 +1,7 @@
 const Config = require('config');
 
-/*
-const extractParamsFromQuery = function convert(str ='') {
+
+const extractParamsFromQuery = function convert(str = '') {
   return str.substr(1).split('&')
     .map((q) => q.split('='))
     .reduce((params, q) => {
@@ -9,7 +9,6 @@ const extractParamsFromQuery = function convert(str ='') {
       return params;
     }, {});
 };
-*/
 
 exports = module.exports = [{
   /**
@@ -32,10 +31,10 @@ exports = module.exports = [{
       throw new Error(401); // Unauthorized
     }
 
-    // let query;
-    // if (match[3]) {
-    //   query = extractParamsFromQuery(match[3]);
-    // }
+    let query;
+    if (match[3]) {
+      query = extractParamsFromQuery(match[3]);
+    }
 
     if (match[1] === '/404') {
       throw new Error(404);
@@ -43,7 +42,8 @@ exports = module.exports = [{
 
 
     if (match[1].startsWith('/customers')) {
-      return Config.request.chartmogul.get('customers');
+      const page = (query) ? query.page - 1 : 0;
+      return Config.request.chartmogul.customers[page];
     }
 
 
@@ -58,7 +58,7 @@ exports = module.exports = [{
         case '/arpa':
           return Config.request.chartmogul.arpa;
         case '/customer-count':
-          return Config.request.chartmogul.customers;
+          return Config.request.chartmogul.customersCount;
         case '/all':
         default:
           return Config.request.chartmogul.metrics;

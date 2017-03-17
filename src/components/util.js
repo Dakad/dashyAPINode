@@ -56,15 +56,19 @@ module.exports = class Util {
    * Convert the num into a EUR currency format.
    *
    * @static
-   * @param {any} num - The Number to format.
+   * @param {number} num - The Number to format.
+   * @param {character} delimiter - The thousand delimiter
+   * @param {character} separator - The Unit separator
    * @return {string} a formatted string corresponding to the currency.
    */
-  static formatToMoney(num) {
-    return Number(num.toFixed(2)).toLocaleString('en-GB', {
-      style: 'currency',
-      currency: 'EUR',
-    });
-    // return Number(num.toFixed(2)).replace(/(\d)(?=(\d{3})+\.)/g, '$1 ');
+  static toMoneyFormat(num, delimiter=' ', separator='.') {
+    // return Number(num.toFixed(2)).toLocaleString('en-GB', {
+    //   style: 'currency',
+    //   currency: 'EUR',
+    // });
+    return '€ '+ num.toFixed(2)
+        .replace(/(\d)(?=(\d{3})+\.)/g, `$1${delimiter}`)
+        .replace('.', separator);
   }
 
 

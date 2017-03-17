@@ -55,10 +55,28 @@ class ChartMogulFeed extends Feeder {
    */
   constructor() {
     super();
+    /** @private */
     this.bestNetMRRMove_ = {
       'lastFetch': null,
       'startDate': new Date(Config.chartMogul.bestNetMRR.startDate),
       'val': 0,
+    };
+    /** @private */
+    this.leads_ = {
+      'lastFetch': null,
+      'startPage': Config.chartMogul.leads.startPage,
+      'necessaryKeys': [
+        'name',
+        'status',
+        'customer-since',
+        'company',
+        'country',
+        'state',
+        'city',
+        'lead_created_at',
+        'free_trial_started_at',
+        'address',
+      ],
     };
   }
 
@@ -126,6 +144,69 @@ class ChartMogulFeed extends Feeder {
    */
   firstMiddleware(req, res, next) {
     next();
+  }
+
+
+  /**
+   * Recursive fetcher for the customers.
+   * @private
+   * @param {number} startingPage - The page to go fetch.
+   * @param {boolean} onlyLead - What kind of customer must be retained.
+   * @return {Array<Object>} All customers filtered.
+   * @memberOf ChartMogulFeed
+   */
+  fetchAndFilterCustomers(startingPage, onlyLead = false) {
+    const currentDate = new Date().getTime();
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+    return this.requestChartMogulFor('/customers', {
+      page: startingPage,
+    }).then((data) => {
+      if (data.hasMore) {
+        return this.fetchAndFilterCustomers(data.page++, onlyLead);
+      }
+      return data.entries;
+    }).then((entries) => {
+      let leadDate;
+      let isLead = false;
+      let isInRange = false;
+      let newEntry;
+      entries
+        .filter((entry, i) => {
+          leadDate = new Date(entry['lead_created_at']).getTime();
+          isLead = (entry.status === 'Lead');
+          // If the entry is in range (lastMonth && today)
+          isInRange = (leadDate >= lastMonth.getTime()
+            && leadDate <= currentDate);
+          return (onlyLead) ? isLead && isInRange : isInRange;
+        })
+        .map((entry) => {
+          newEntry = this.leads_.necessaryKeys.reduce((nEntry, key)=>{
+            nEntry[key] = entry[key];
+            return nEntry;
+          }, {});
+          return Object.assign({}, newEntry);
+        });
+    });
+  }
+
+
+  /**
+   * The middleware inf chargin of fetch the leads.
+   *
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNbLeads(req, res, next) {
+    this.requestChartMogulFor('/customers', {
+      'page': this.leads_.startPage,
+    }).then((data) => {
+      next();
+    }).catch(next);
   }
 
   /**
@@ -214,7 +295,7 @@ class ChartMogulFeed extends Feeder {
 
   /**
    * Calc. the NET MRR Movement.
-   *
+   * @private
    * @param {Array<number>|Object} mrrs - Other MRRs
    *  {new-biz,expansion,contraction,churn}
    * @return {number} The NET MRR Movement
@@ -239,7 +320,7 @@ class ChartMogulFeed extends Feeder {
 
   /**
    * Calc the NET MRR and return only the max
-   *
+   * @private
    * @param {Array<Object>} entries - All entries.
    * @return {number} The MAX NET
    * @memberOf ChartMogulFeed
@@ -284,7 +365,8 @@ class ChartMogulFeed extends Feeder {
           this.findMaxNetMRR(entries);
         }
 
-        // TODO Only after a specific amount of time {3 days, 1 week , only Monday}
+        // TODO Only after a specific amount of time
+        // {3 days, 1 week , only Monday}
 
         const current = Util.toMoneyFormat(summary.current, '', ',');
         const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');

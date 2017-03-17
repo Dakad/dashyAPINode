@@ -58,7 +58,8 @@ module.exports = class BaseRouter extends Router {
    *    and the feeder middleware for this routeur.
    * @param {string} url The prefix URL to handle. By default, it's on /.
    * @param {Feed} feeder The Feeder allocated to this router.
-   *
+   * @private
+   * @constructor
    * @memberOf Router
    */
   constructor(url = '/', feeder) {

@@ -7,7 +7,7 @@
   "geckoBoard": {
     "apiKey": "0ecc2de9f3229af5d555b1b14f357ade"
   },
-  "chartmogul" : {
+  "chartMogul" : {
     "apiUrl": "https://api.chartmogul.com/v1",
     "apiToken": "NHuEIxAwQ0Yv4l1CyrTpLQ",
     "apiSecret": "7c9523422df0343497e733bd91280e54"

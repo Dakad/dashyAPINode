@@ -137,10 +137,10 @@ describe('ChartMogul : Feeder', () => {
       expect(feed.calcNetMRRMovement(mrrs)).to.be.equal(-26.89);
     });
     it('should return 811,64', () => {
-      const mrr = Config.request.chartmogul.mrr.entries[0];
-      feed.calcNetMRRMovement(Config.request.chartmogul.mrr.entries[0]);
-      feed.calcNetMRRMovement(Config.request.chartmogul.mrr.entries[1]);
-      feed.calcNetMRRMovement(Config.request.chartmogul.mrr.entries[2]);
+      const mrr = Config.request.chartMogul.mrr.entries[0];
+      feed.calcNetMRRMovement(Config.request.chartMogul.mrr.entries[0]);
+      feed.calcNetMRRMovement(Config.request.chartMogul.mrr.entries[1]);
+      feed.calcNetMRRMovement(Config.request.chartMogul.mrr.entries[2]);
       expect(feed.calcNetMRRMovement(mrr)).to.be.equal(811.64);
     });
   });
@@ -154,7 +154,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should return 2357,70', () => {
-      const mrrEntries = Config.request.chartmogul.mrr.entries;
+      const mrrEntries = Config.request.chartMogul.mrr.entries;
       expect(feed.findMaxNetMRR(mrrEntries)).to.be.eql(2357.70);
     });
   });
@@ -255,7 +255,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should call findMaxNetMRR() and calcNetMRRMovement()', (done) => {
-      const mrrEntries = Config.request.chartmogul.mrr.entries;
+      const mrrEntries = Config.request.chartMogul.mrr.entries;
       mogulFeed.fetchNetMRRMovements(req, res, (err) => {
         if (err) return done(err);
         expect(spyFindMaxNetMRR.called).to.be.true;
@@ -276,6 +276,31 @@ describe('ChartMogul : Feeder', () => {
     });
 
     // TODO Unit test for the parametred req
+  });
+
+
+  describe('MiddleWare : fetchNbLeads', () => {
+    const q = {
+      'page': Config.chartMogul.leads.startPage,
+    };
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+    });
+
+    afterEach(() => spyFeedReqChartMogul.restore());
+
+    it('should call requestChartMogulFor()', (done) => {
+      feed.fetchNbLeads(req, res, (err) => {
+        if (err) return done(err);
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        expect(spyFeedReqChartMogul.calledWith('/customers', q)).to.be.true;
+        done();
+      });
+    });
+
+    it('', () => {
+
+    });
   });
 
 

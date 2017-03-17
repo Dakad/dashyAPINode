@@ -57,7 +57,7 @@ class ChartMogulFeed extends Feeder {
     super();
     this.bestNetMRRMove_ = {
       'lastFetch': null,
-      'startDate': new Date(Config.chartmogul.bestNetMRR.startDate),
+      'startDate': new Date(Config.chartMogul.bestNetMRR.startDate),
       'val': 0,
     };
   }
@@ -80,8 +80,8 @@ class ChartMogulFeed extends Feeder {
       if (!destination.startsWith('/')) {
         destination = '/' + destination;
       }
-      request.get(Config.chartmogul.apiUrl + destination)
-        .auth(Config.chartmogul.apiToken, Config.chartmogul.apiSecret)
+      request.get(Config.chartMogul.apiUrl + destination)
+        .auth(Config.chartMogul.apiToken, Config.chartMogul.apiSecret)
         .query(query)
         .end((err, res) => {
           if (err) {

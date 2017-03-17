@@ -43,25 +43,25 @@ exports = module.exports = [{
 
     if (match[1].startsWith('/customers')) {
       const page = (query) ? query.page - 1 : 0;
-      return Config.request.chartmogul.customers[page];
+      return Config.request.chartMogul.customers[page];
     }
 
 
     if (match[1].startsWith('/metrics')) {
       switch (match[2]) {
         case '/mrr':
-          return Config.request.chartmogul.mrr;
+          return Config.request.chartMogul.mrr;
         case '/mrr-churn-rate':
-          return Config.request.chartmogul.mrrChurnRate;
+          return Config.request.chartMogul.mrrChurnRate;
         case '/arr':
-          return Config.request.chartmogul.arr;
+          return Config.request.chartMogul.arr;
         case '/arpa':
-          return Config.request.chartmogul.arpa;
+          return Config.request.chartMogul.arpa;
         case '/customer-count':
-          return Config.request.chartmogul.customersCount;
+          return Config.request.chartMogul.customersCount;
         case '/all':
         default:
-          return Config.request.chartmogul.metrics;
+          return Config.request.chartMogul.metrics;
       }
     }
 

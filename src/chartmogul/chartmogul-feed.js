@@ -170,7 +170,9 @@ class ChartMogulFeed extends Feeder {
 
     return customers
       .filter((customer) => {
-        if (onlyLead && !customer['lead_created_at']) {
+        if (customer.status === 'Cancelled' ||
+          (onlyLead && !customer['lead_created_at'])
+        ) {
           return false;
         }
         if (onlyLead && (customer.status === 'Lead')) {
@@ -223,11 +225,32 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNbLeads(req, res, next) {
-    this.requestChartMogulFor('/customers', {
-      'page': this.leads_.startPage,
-    }).then((data) => {
-      next();
-    }).catch(next);
+    const today = new Date().toLocaleDateString();
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    const item = [
+      {'value': 0},
+      {'value': 0},
+    ];
+
+    let leadDate;
+
+    this.fetchAndFilterCustomers(this.leads_.startPage, true)
+      .then((leads) => {
+        leads.forEach((lead) => {
+          leadDate = new Date(lead['lead_created_at']).toLocaleDateString();
+          if (leadDate === today) {
+            item[0].value += 1;
+          }
+
+          if (leadDate === lastMonth) {
+            item[1].value += 1;
+          }
+        });
+
+        res.locals.data.item = item;
+        next();
+      }).catch(next);
   }
 
   /**

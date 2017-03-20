@@ -160,7 +160,7 @@
           "entries": [
             {
               "name": "Iva Warner",
-              "status": "Active",
+              "status": "Lead",
               "customer-since": "2014-09-11T14:34:20+00:00",
               "company": "Zigilovo",
               "country": "US",
@@ -176,8 +176,8 @@
               }
             },
             {
-              "name": "Maria Cristina Isabella Bonechi",
-              "status": "Active",
+              "name": "Maria Isabella Bonechi",
+              "status": "Cancelled",
               "customer-since": "2014-09-17T09:00:47+00:00",
               "company": "Fuuhu",
               "country": "FR",
@@ -194,8 +194,8 @@
             },
             {
               "name": "Ola Katie Nunez ",
-              "status": "Cancelled",
-              "customer-since": "2017-03-17T14:29:54+00:00",
+              "status": "Active",
+              "customer-since": "2017-03-20T14:29:54+00:00",
               "company": "NofsafDor",
               "country": "US",
               "state": "IL",
@@ -293,7 +293,7 @@
               "state": null,
               "city": "Stockholm",
               "zip": "11633",
-              "lead_created_at": "2017-03-16T10:22:34.000Z",
+              "lead_created_at": "2017-03-20T10:22:34.000Z",
               "free_trial_started_at": "2017-03-16T10:22:34.000Z",
               "address": {
                 "country": "Sweden",

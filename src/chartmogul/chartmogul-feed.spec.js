@@ -228,7 +228,7 @@ describe('ChartMogul : Feeder', () => {
 
     it('should return customers : [1]', () => {
       const customers = feed.fetchAndFilterCustomers(1);
-      customers.done((data)=>{
+      customers.done((data) => {
         expect(data).to.be.a('array').and.to.not.be.empty;
         expect(data).to.have.lengthOf(1);
       });
@@ -375,24 +375,33 @@ describe('ChartMogul : Feeder', () => {
   });
 
   describe('MiddleWare : fetchNbLeads', () => {
-    // let spyFetchAndSortCustomers;
+    let spyFetchAndFilter;
     beforeEach(() => {
-      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
-      spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');
+      spyFetchAndFilter = sinon.spy(feed, 'fetchAndFilterCustomers');
     });
 
-    afterEach(() => spyFeedReqChartMogul.restore());
-    // const q = {
-    //   'page': Config.chartMogul.leads.startPage,
-    // };
-    // it('should c', (done) => {
-    //   feed.fetchNbLeads(req, res, (err) => {
-    //     if (err) return done(err);
-    //     expect(spyFeedReqChartMogul.called).to.be.true;
-    //     expect(spyFeedReqChartMogul.calledWith('/customers', q)).to.be.true;
-    //     done();
-    //   });
-    // });
+    afterEach(() => spyFetchAndFilter.restore());
+
+
+    it('should call fetchAndFilterCustomers', (done) => {
+      feed.fetchNbLeads(req, res, (err) => {
+        if (err) return done(err);
+        expect(spyFetchAndFilter.called).to.be.true;
+        expect(spyFetchAndFilter.calledWith(Config.chartMogul.leads.startPage))
+          .to.be.true;
+        done();
+      });
+    });
+
+    it('should fill data with items', (done) => {
+      feed.fetchNbLeads(req, res, (err) => {
+        if (err) return done(err);
+        expect(res.locals.data).to.contains.all.keys('item');
+        expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
+        expect(res.locals.data.item).to.have.lengthOf(2);
+        done();
+      });
+    });
   });
 
 

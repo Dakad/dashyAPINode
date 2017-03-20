@@ -14,7 +14,7 @@ exports = module.exports = [{
   /**
    * regular expression of URL
    */
-  pattern: /https:\/\/api.chartmogul.mock\/v1(\/[\w]*[^/])(\/[\w-]*)?(\?.*)?/,
+  pattern: /https:\/\/api.chartmogul.mock\/v1(\/[\w]*[^/?])(\/[\w]*)?(\?.*)?/,
 
   /**
    * returns the data
@@ -31,7 +31,7 @@ exports = module.exports = [{
       throw new Error(401); // Unauthorized
     }
 
-    let query;
+    let query = {};
     if (match[3]) {
       query = extractParamsFromQuery(match[3]);
     }
@@ -42,8 +42,10 @@ exports = module.exports = [{
 
 
     if (match[1].startsWith('/customers')) {
-      const page = (query) ? query.page - 1 : 0;
-      return Config.request.chartMogul.customers[page];
+      const maxCustomers = Config.request.chartMogul.customers.length;
+      let {page = 1} = query;
+      page = (page > maxCustomers) ? maxCustomers : page;
+      return Config.request.chartMogul.customers[page - 1];
     }
 
 

@@ -148,46 +148,67 @@ class ChartMogulFeed extends Feeder {
 
 
   /**
+   * Perfom a filtering on the customers[].
+   *
+   * @private
+   * @param {Array<Object>} customers
+   * @param {boolean} [onlyLead=false] - Which kind of customer must be kept.
+   * @return {Array<Object>} All customers filtered.
+   *
+   * @memberOf ChartMogulFeed
+   */
+  filterCustomers(customers, onlyLead = false) {
+    if (!Array.isArray(customers)) {
+      return [];
+    }
+
+    const currentDate = new Date().getTime();
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    let leadDate;
+    let customerDate;
+
+    return customers
+      .filter((customer) => {
+        if (onlyLead && !customer['lead_created_at']) {
+          return false;
+        }
+        if (onlyLead && (customer.status === 'Lead')) {
+          leadDate = new Date(customer['lead_created_at']).getTime();
+          // If [ lastMonth <= lead <= today ]
+          return (leadDate >= lastMonth.getTime()
+            && leadDate <= currentDate);
+        }
+        customerDate = new Date(customer['customer-since']).getTime();
+        return (customerDate >= lastMonth.getTime()
+          && customerDate <= currentDate);
+      })
+      .map((entry) => {
+        return this.leads_.necessaryKeys.reduce((nEntry, key) => {
+          nEntry[key] = entry[key];
+          return nEntry;
+        }, {});
+      });
+  }
+
+  /**
    * Recursive fetcher for the customers.
    * @private
    * @param {number} startingPage - The page to go fetch.
-   * @param {boolean} onlyLead - What kind of customer must be retained.
+   * @param {boolean} [onlyLead=false] - Which kind of customer must be kept.
    * @return {Array<Object>} All customers filtered.
    * @memberOf ChartMogulFeed
    */
   fetchAndFilterCustomers(startingPage, onlyLead = false) {
-    const currentDate = new Date().getTime();
-    const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 1);
-
     return this.requestChartMogulFor('/customers', {
       page: startingPage,
-    }).then((data) => {
-      if (data.hasMore) {
-        return this.fetchAndFilterCustomers(data.page++, onlyLead);
+    }).then(({entries, has_more: hasMore}) => {
+      const filtered = this.filterCustomers(entries, onlyLead);
+      if (hasMore) {
+        return this.fetchAndFilterCustomers(startingPage + 1, onlyLead)
+          .then((data) => data.concat(filtered));
       }
-      return data.entries;
-    }).then((entries) => {
-      let leadDate;
-      let isLead = false;
-      let isInRange = false;
-      let newEntry;
-      entries
-        .filter((entry, i) => {
-          leadDate = new Date(entry['lead_created_at']).getTime();
-          isLead = (entry.status === 'Lead');
-          // If the entry is in range (lastMonth && today)
-          isInRange = (leadDate >= lastMonth.getTime()
-            && leadDate <= currentDate);
-          return (onlyLead) ? isLead && isInRange : isInRange;
-        })
-        .map((entry) => {
-          newEntry = this.leads_.necessaryKeys.reduce((nEntry, key)=>{
-            nEntry[key] = entry[key];
-            return nEntry;
-          }, {});
-          return Object.assign({}, newEntry);
-        });
+      return filtered;
     });
   }
 

@@ -159,29 +159,99 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-
-  describe('fetchAndFilterCustomers', () => {
-    beforeEach(() => {
-      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+  describe('filterCustomers', () => {
+    it('should return [] : args[customers] invalid', () => {
+      expect(feed.filterCustomers()).to.be.a('array').and.to.be.empty;
+      expect(feed.filterCustomers(undefined)).to.be.a('array').and.to.be.empty;
+      expect(feed.filterCustomers('1')).to.be.a('array').and.to.be.empty;
+      expect(feed.filterCustomers(1234)).to.be.a('array').and.to.be.empty;
+      expect(feed.filterCustomers({})).to.be.a('array').and.to.be.empty;
+      expect(feed.filterCustomers(new Set())).to.be.a('array').and.to.be.empty;
     });
 
-    afterEach(() => spyFeedReqChartMogul.restore());
+    it('should return Array[1]', () => {
+      const customers = Config.request.chartMogul.customers[0].entries;
+      const res = feed.filterCustomers(customers);
+      expect(res).to.not.be.empty;
+      expect(res).to.have.lengthOf(1);
+    });
+    it('should return Array[2] onlyLead', () => {
+      const customers = Config.request.chartMogul.customers[0].entries;
+      const res = feed.filterCustomers(customers, true);
+      expect(res).to.not.be.empty;
+      expect(res).to.have.lengthOf(2);
+    });
+    it('should return []', () => {
+      const customers = Config.request.chartMogul.customers[2].entries;
+      let res = feed.filterCustomers(customers, true);
+      expect(res).to.be.a('array').and.to.be.empty;
+
+      res = feed.filterCustomers(customers);
+      expect(res).to.be.a('array').and.to.be.empty;
+    });
+  });
+
+
+  describe('fetchAndFilterCustomers', () => {
+    let spyFetchAndFilter;
+
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
+      spyFetchAndFilter = sinon.spy(feed, 'fetchAndFilterCustomers');
+    });
+
+    afterEach(() => {
+      spyFeedReqChartMogul.restore();
+      spyFetchAndFilter.restore();
+    });
 
 
     it('should call spyFeedReqChartMogul()', () => {
-      feed.fetchAndFilterCustomers(1);
-      expect(spyFeedReqChartMogul.called).to.be.true;
-      expect(spyFeedReqChartMogul.calledWith('/customers', {
-        'page': 1,
-      })).to.be.true;
-      expect(spyFeedReqChartMogul.callCount)
-        .to.be.eq(Config.request.chartMogul.customers[0].total_pages);
+      const nbCalls = Config.request.chartMogul.customers[0].total_pages;
+      feed.fetchAndFilterCustomers(1)
+        .then((data) => {
+          expect(spyFeedReqChartMogul.called).to.be.true;
+          expect(spyFetchAndFilter.callCount)
+            .to.be.eq(nbCalls);
+          expect(spyFeedReqChartMogul.firstCall.calledWith('/customers', {
+            'page': 1,
+          })).to.be.true;
+          expect(spyFeedReqChartMogul.secondCall.calledWith('/customers', {
+            'page': 2,
+          })).to.be.true;
+          // expect(spyFetchAndFilter.firstCall.args[0])
+          //   .to.be.equal(1);
+          // expect(spyFetchAndFilter.secondCall.args[0])
+          //   .to.be.equal(2);
+        });
     });
 
-    it('should return []', () => {
-      feed.fetchAndFilterCustomers();
-      // TODO feed.fetchAndFilterCustomers
-      // TODO Check the args[page] for fetchAndFilterCustomers
+    it('should return customers : [1]', () => {
+      const customers = feed.fetchAndFilterCustomers(1);
+      customers.done((data)=>{
+        expect(data).to.be.a('array').and.to.not.be.empty;
+        expect(data).to.have.lengthOf(1);
+      });
+    });
+
+    it('should return leads : [7]', () => {
+      const leads = feed.fetchAndFilterCustomers(1, true);
+      leads.done((data) => {
+        expect(data).to.be.a('array').and.to.not.be.empty;
+        expect(data).to.have.lengthOf(7);
+      });
+    });
+
+    it('should return customers && leads : []', () => {
+      let leads = feed.fetchAndFilterCustomers(3);
+      leads.done((data) => {
+        expect(data).to.be.a('array').and.to.be.empty;
+      });
+
+      leads = feed.fetchAndFilterCustomers(3, true);
+      leads.done((data) => {
+        expect(data).to.be.a('array').and.to.be.empty;
+      });
     });
   });
 
@@ -304,8 +374,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-
-  describe.skip('MiddleWare : fetchNbLeads', () => {
+  describe('MiddleWare : fetchNbLeads', () => {
     // let spyFetchAndSortCustomers;
     beforeEach(() => {
       spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');

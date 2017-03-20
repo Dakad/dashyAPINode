@@ -2,7 +2,7 @@
  * @overview SubRouter to handle the all path related to /chartmogul
  *
  * @module {Router} router/chartmogul
- * @requires router
+ * @requires baserouter
  * @requires chartmogul-feed
  */
 
@@ -16,7 +16,7 @@
 
 // Mine
 // const Util = require('../components/util');
-const Router = require('../components/router');
+const BaseRouter = require('../base/baserouter');
 
 // -------------------------------------------------------------------
 // Properties
@@ -25,13 +25,13 @@ const Router = require('../components/router');
  *
  *
  * @class ChartMogulRouter
- * @extends {Router}
+ * @extends {BaseRouter}
  */
-class ChartMogulRouter extends Router {
+class ChartMogulRouter extends BaseRouter {
 
   /**
    * Creates an instance of ChartMogulRouter.
-   * @param {any} feed
+   * @param {ChartMogulFeed} feed
    *
    * @memberOf ChartMogulRouter
    */
@@ -47,7 +47,21 @@ class ChartMogulRouter extends Router {
    * @memberOf ChartMogulRouter
    */
   handler() {
+    this.router_.all('/leads', this.feed_.fetchNbLeads);
 
+    // this.router_.all('/mrr', this.feed_.fetchMrr);
+
+    // this.router_.all('/customers', this.feed_.fetchNbCustomers);
+
+    // this.router_.all('/mrr/churn', this.feed_.fetchNetMRRChurnRate);
+
+    // this.router_.all('/mrr/net', this.feed_.findMaxNetMRR);
+
+    // this.router_.all('/mrr/move', this.feed_.fetchNetMRRMovements);
+
+    // this.router_.all('/arr', this.feed_.fetchArr);
+
+    // this.router_.all('/arpa', this.feed_.fetchArpa);
   }
 
 };

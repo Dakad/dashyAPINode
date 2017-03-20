@@ -64,6 +64,7 @@ module.exports = class BaseRouter extends Router {
    */
   constructor(url = '/', feeder) {
     super(url, feeder);
+    this.router_.use(BaseRouter.checkMiddleware);
   }
 
 
@@ -71,8 +72,6 @@ module.exports = class BaseRouter extends Router {
    * @override
    */
   handler() {
-    this.router_.use(BaseRouter.checkMiddleware);
-
     this.router_.get(['/', '/zen'], function(req, res, next) {
       const jokes = Config.zen;
       const num = Math.floor(Math.random() * (jokes.length));
@@ -84,7 +83,7 @@ module.exports = class BaseRouter extends Router {
     // Must be the last middleware to send a response.
 
     this.router_.use(function(req, res) {
-        return res.json(res.locals.data);
+      return res.json(res.locals.data);
     });
 
 

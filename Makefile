@@ -1,74 +1,80 @@
+#!/bin/bash
+
+DIR_BIN		= ./node_modules/.bin
+
 DIR_SRC		= ./src
 DIR_TEST 	= ./test
-DIR_DOC		= ./doc
-DIR_COVER	= $(DIR_DOC)/specs
+DIR_DOC		= ./docs
+DIR_LOG		= ./logs
+ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -not -path "*node_modules*")
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
+TIMEOUT		= 5000
 
+ESLINT		= $(DIR_BIN)/eslint --cache
+JSDOC		= $(DIR_BIN)/jsdoc
+MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT)
+_MOCHA		= $(DIR_BIN)/_mocha 
+NODEMON		= $(DIR_BIN)/nodemon
+NYC			= $(DIR_BIN)/nyc --cache
+ISTANBUL	= $(DIR_BIN)/istanbul
 
 
 dev:
 	@NODE_ENV=dev \
-	./node_modules/.bin/nodemon $(DIR_SRC)/app.js
-
-debug:
-	@NODE_ENV=debug \
-	DEBUG=node* nodemon $(DIR_SRC)/app.js
-
-start:
-	@echo "#### Runnig lint-watch || test-watch";
-	npm-run-all --parallel test-watch open-src lint-watch
+	$(NODEMON) $(DIR_SRC)/app.js
 
 
 lint:
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;
-	./node_modules/.bin/eslint --color $(DIR_SRC)
+	@$(ESLINT) --color $(DIR_SRC); 
+	@echo "#####  ESLint : DONE";
+
+
+lint-fix:
+	@echo "#####  ESLint Fixing $(DIR_SRC)" ;
+	@$(ESLINT) --fix $(DIR_SRC);
+	@echo "#####  Fixing : DONE";
+
 
 test: lint
-	@echo "#####  Mocha Testing $(DIR_SRC) $(DIR_TEST)";
-	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--bail \
-		--colors \
-		--reporter $(REPORTER) \
-		--timeout 2000 \
-		--sort \
-		--growl \
-		$(DIR_SRC)/**/*.spec.js \
-		$(DIR_TEST)/*.spec.js
+	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
+	@NODE_ENV=test $(MOCHA) -R $(REPORTER) $(ALL_TESTS);
+	@echo "#####  Mocha Testing : DONE";
+
 
 test-watch:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--bail \
-		--colors \
-		--require assert \
+	@NODE_ENV=test $(MOCHA) --watch \
 		--reporter $(REPORTER) \
-		--timeout 5000 \
-		--growl \
-		-- watch \
-		$(DIR_SRC)/**/*.spec.js \
-		$(DIR_TEST)/*.spec.js
+		$(ALL_TESTS) \
 
 
 test-cover: lint
-	@./node_modules/.bin/istanbul cover \
-	@./node_modules/.bin/mocha -R doc
-
-
-test-coveralls:
-	@echo "#####  TRAVIS_JOB_ID $(TRAVIS_JOB_ID)"
-	./node_modules/.bin/istanbul cover \
-	./node_modules/mocha/bin/mocha --report lcovonly -- -R $(REPORTER)\
-	cat $(DIR_DOC)/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true
+	@NODE_ENV=test $(NYC) report --reporter=lcov $(_MOCHA) -R $(REPORTER) $(ALL_TESTS)
 
 
 test-docs:
-	@NODE_ENV=test ./node_modules/.bin/mocha --reporter=doc \
-		| cat $(DIR_DOC)/head.html - $(DIR_DOC)/tail.html \
-		> $(DIR_DOC)/test.html
+	export NODE_ENV="test";
+	@test -d $(DIR_DOC) || mkdir $(DIR_DOC)
+	@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
+	@NODE_ENV=test $(MOCHA) --reporter mochawesome $(ALL_TEST);
+	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
+			> $(DIR_DOC)/test/index.md
 
+docs: clean test-cover
+	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
+	@$(JSDOC) \
+		-c .jsdocrc.json \
+		-d $(DIR_DOC)/doc \
+		-r \
+		-t $(DOC_TEMPL) \
+		-R README.md \
+		--verbose \
+		$(DIR_SRC) ;
+	@open $(DIR_DOC)/doc/index.html
 
-commit: test
+commit: test clean
 	@echo "New commit !";\
 	git add .;\
 	git commit -m "$m" ; \
@@ -77,30 +83,24 @@ commit-push:
 	git push origin master
 
 setup:
-	@node setup.js
+	@$(find ./logs -name "*.log")
+	@node --harmony setup.js
 
-docs:
-	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
-	@./node_modules/.bin/jsdoc\
-		-c .jsdocrc.json \
-		-d $(DIR_DOC) \
-		-r \
-		-t $(DOC_TEMPL) \
-		-R README.md \
-		--verbose \
-		$(DIR_SRC) \
 
 build: test test-docs docs
 	@echo "##### Deleting the logs folder .... ";
-	@rm -rf $(DIR_SRC)/logs; \
+	@rm -rf $(DIR_LOG); \
 	@NODE_ENV=prod node --harmony $(DIR_SRC)/app.js \
 
 clean:
-	@echo Clear logs folder
-	@rm $(DIR_SRC)/logs/*\
+	@echo "##### Clear logs folder";
+	@rm -rf $(DIR_LOG)/* \
+	@echo "##### Clear doc folder";
+	@rm -rf $(DIR_DOC)/* ;
+	@echo "##### Cleanig DONE";
 
 
 
 all: test 
 
-.PHONY: setup test
+.PHONY: docs setup test

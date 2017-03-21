@@ -25,17 +25,24 @@
   "license": "MIT",
   "homepage": "https://bitbucket.org/DavidStage/dashboard-api-node#readme",
   "eslintConfig": {},
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js",
+      "**/*mock*.js"
+    ],
+    "cache": true,
+    "all": true,
+    "check-coverage": true,
+    "lines": 80,
+    "statements": 80,
+    "functions": 80,
+    "branches": 80,
+    "report-dir": "./docs/coverage"
+  },
   "dependencies": {
     "bluebird": "^3.4.7",
     "config": "^1.25.1",
     "express": "^4.14.1",
-    "koa": "^2.0.1",
-    "koa-handle-error": "0.0.4",
-    "koa-logger": "^2.0.1",
-    "koa-morgan": "^1.0.1",
-    "koa-mount": "^2.0.0",
-    "koa-router": "^5.4.0",
-    "koa-trie-router": "^2.1.2",
     "morgan": "^1.8.1",
     "superagent": "^3.5.0",
     "winston": "^2.3.1"
@@ -44,7 +51,6 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chance": "^1.0.6",
-    "coveralls": "^2.11.16",
     "eslint": "^3.16.1",
     "eslint-config-google": "^0.7.1",
     "eslint-plugin-chai-expect": "^1.1.1",
@@ -53,10 +59,14 @@
     "istanbul": "^0.4.5",
     "jsdoc": "^3.4.3",
     "mocha": "^3.2.0",
+    "mocha-istanbul": "^0.3.0",
+    "mochawesome": "^2.0.4",
     "node-mocks-http": "^1.6.1",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2",
+    "nyc": "^10.1.2",
     "sinon": "^1.17.7",
+    "superagent-mock": "^3.3.0",
     "supertest": "^3.0.0"
   },
   "scripts": {

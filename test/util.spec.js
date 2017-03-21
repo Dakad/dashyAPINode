@@ -8,31 +8,33 @@
 
 // Packages
 const chai = require('chai');
-const chaiAsPromised = require("chai-as-promised");
+const chaiAsPromised = require('chai-as-promised');
+// const request = require('superagent');
+// const mockRequest = require('superagent-mock');
 
 // Built-ins
 
 // Mine
-//const Util = require('../src/components/util');
-const {MockUtil} = require('./mocks');
-const Util = MockUtil;
+const Util = require('../src/components/util');
+
 
 // -------------------------------------------------------------------
 //  Properties
+// const superagentMock = mockRequest(request, mockReqConf);
+
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 
 describe('Component : Util', () => {
+
   describe('isEmptyOrNull', () => {
-    it('should return true', (done) => {
+    it('should return true', () => {
       expect(Util.isEmptyOrNull()).to.be.true;
       expect(Util.isEmptyOrNull(undefined)).to.be.true;
       expect(Util.isEmptyOrNull(null)).to.be.true;
       expect(Util.isEmptyOrNull({})).to.be.true;
       expect(Util.isEmptyOrNull([])).to.be.true;
-
-      done();
     });
 
     it('should return false', () => {
@@ -47,6 +49,56 @@ describe('Component : Util', () => {
       expect(Util.isEmptyOrNull([1, 2, 3])).to.be.false;
     });
   });
+
+  describe('convertDate', () => {
+    it('shoud return 2015-12-17', () => {
+      const dte = new Date('2015-12-17');
+      expect(Util.convertDate(dte))
+        .to.be.a('string')
+        .and.to.be.equal('2015-12-17')
+    });
+    it('shoud return the current date', () => {
+      const dte = new Date();
+      const res = dte.toISOString().substring(0, 10);
+      expect(Util.convertDate())
+        .to.be.a('string')
+        .and.to.be.equal(res)
+    });
+  });
+
+  describe('formatMoney', () => {
+    const inputs = [1, 12, 123, 1234, 12345, 123456, 1234567, 12345.67];
+    const outputs = ['€ 1.00', '€ 12.00', '€ 123.00', '€ 1 234.00', '€ 12 345.00', '€ 123 456.00', '€ 1 234 567.00', '€ 12 345.67']
+    const outputs2 = ['€ 1.00', '€ 12.00', '€ 123.00', '€ 1,234.00', '€ 12,345.00', '€ 123,456.00', '€ 1,234,567.00', '€ 12,345.67']
+    const outputs3 = ['€ 1,00', '€ 12,00', '€ 123,00', '€ 1 234,00', '€ 12 345,00', '€ 123 456,00', '€ 1 234 567,00', '€ 12 345,67']
+
+    
+    it('should format the number into currency with no delimeter', () => {
+      let money;
+      inputs.forEach((num,i)=> {
+        money = Util.toMoneyFormat(num);
+        expect(money.startsWith('€'),`1:${i} - Out : ${money}`).to.be.true;
+        expect(money,`1:${i} - Out = ${money}`).to.be.eq(outputs[i]);
+
+        money = Util.toMoneyFormat(num,',');
+        expect(money.startsWith('€'),`2:${i} - Out : ${money}`).to.be.true;
+        expect(money,`2:${i} - Out = ${money}`).to.be.eq(outputs2[i]);
+
+        money = Util.toMoneyFormat(num,' ', ',');
+        expect(money.startsWith('€'),`2:${i} - Out : ${money}`).to.be.true;
+        expect(money,`2:${i} - Out = ${money}`).to.be.eq(outputs3[i]);
+      });
+    });
+  });
+
+  // describe('convertArrayToObject', () =>{
+  //   it('should return empty Object', () => {
+  //     const obj = Util.convertArrayToObject();
+  //     expect(obj).to.not.be.undefined.and.null;
+  //     expect(obj).to.be.empty;
+  //   });
+
+  // });
 
   describe('checkParams', () => {
     it('should by default be valid', () => {
@@ -158,46 +210,16 @@ describe('Component : Util', () => {
       expect(check).to.have.all.keys('isValid', 'errMsg');
       expect(check.isValid, 'Must be valid').to.be.ok;
       expect(check.errMsg, 'Must null or empty').to.be.null;
+
+      check = Util.checkParams({
+        for: '7'
+      });
+      expect(check).to.be.an('object');
+      expect(check).to.have.all.keys('isValid', 'errMsg');
+      expect(check.isValid, 'Must be valid').to.be.ok;
+      expect(check.errMsg, 'Must null or empty').to.be.null;
       done();
     });
   });
 
-  describe('requestPipeDriveFor', () => {
-    const query = {
-      api_token: 'PIPEDRIVE_API_TOKEN',
-      pipeline: 123,
-    }
-    let req;
-
-    it('should return a Promise.rejected -  args:undefinied', (done) => {
-      req = Util.requestPipeDriveFor();
-      expect(req.catch).to.be.a('function');
-      expect(req).to.be.rejected.notify(done);
-    });
-
-    it('should return a Promise.rejected - args[dest]:undefined', (done) => {
-      req = Util.requestPipeDriveFor(null, query);
-      expect(req.catch).to.be.a('function');
-      expect(req).to.be.rejected.notify(done);
-    });
-
-    it('should return a Promise.rejected - args[dest]:undefined', (done) => {
-      req = Util.requestPipeDriveFor('/pipe/deals');
-      expect(req).to.be.rejected.notify(done);
-      expect(req.catch).to.be.a('function');
-    });
-
-    it('should return a Promise.fullfied', (done) => {
-      req = Util.requestPipeDriveFor('/pipe/deals', query);
-      expect(req).to.be.fulfilled;
-      expect(req.then).to.be.a('function');
-      expect(req.catch).to.be.a('function');
-      expect(req.then).to.be.a('function');
-      return done();
-    });
-
-
-
-
-  });
 });

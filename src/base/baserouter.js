@@ -4,9 +4,9 @@
  * @overview Base Router Handler for url /
  *
  * Handle the different routes possbiles;
- * @module  components/router
+ * @module  base/baserouter
  * @requires config
- * @requires Koa
+ * @requires components/router
  * @requires ./components/logger
  *
  */
@@ -41,28 +41,26 @@ const Singleton = {
 // Methods
 
 
-// -------------------------------------------------------------------
-// Exports
-
-
 /**
  * Router for the root path /.
  *
  * is SINGLETON.
  * @class BaseRouter
  */
-module.exports = class BaseRouter extends Router {
+class BaseRouter extends Router {
 
   /**
    * Creates an instance of Router by providing the URL
    *    and the feeder middleware for this routeur.
    * @param {string} url The prefix URL to handle. By default, it's on /.
    * @param {Feed} feeder The Feeder allocated to this router.
-   *
+   * @private
+   * @constructor
    * @memberOf Router
    */
   constructor(url = '/', feeder) {
     super(url, feeder);
+    this.router_.use(BaseRouter.checkMiddleware);
   }
 
 
@@ -70,13 +68,31 @@ module.exports = class BaseRouter extends Router {
    * @override
    */
   handler() {
-    this.router_.use(BaseRouter.checkMiddleware);
-
-    this.router_.get(['/', '/zen'], (ctx, next) => {
-      ctx.body.joke = 'A good joke is coming. Just Wait for it ! ';
-      return next();
+    this.router_.get('/zen', function(req, res, next) {
+      const jokes = Config.zen;
+      const num = Math.floor(Math.random() * (jokes.length));
+      res.locals.data.joke = jokes[num];
+      next();
     });
   }
+
+
+  /**
+   * @override
+   */
+  sendResponse(req, res) {
+    return res.json(res.locals.data);
+  }
+
+
+  /**
+   * @override
+   */
+  sendErr(err, req, res, next) {
+    Logger.error(err);
+    return res.status(500).send('Something went south !');
+  }
+
 
   /**
    * @static
@@ -93,24 +109,29 @@ module.exports = class BaseRouter extends Router {
   /**
    * Middleware to check the inconming request.
    *  1. Check if the req is right
-   *  2. Insert a config Object in the req
-   *  3. Insert a data Object into the req containnig the geckoBoard ApiKey.
+   *  2. Insert a config Object in the res.locals
+   *  3. Insert a data Object into the res.locals with the geckoBoard ApiKey.
    *
-   * @param {any} ctx The context of the request and response.
+   * @param {any} req The request.
+   * @param {any} res The response.
    * @param {any} next The next middleware to call;
-   * @return {Function} the next middleware()
    */
-  static checkMiddleware(ctx, next) {
+  static checkMiddleware(req, res, next) {
     Logger.warn('First Middleware : Missing some check before continue');
-    ctx.state.config = {};
-    ctx.body = {
+    res.locals.config = {};
+
     // ApiKey for GeckoBoard
+    res.locals.data = {
       api: Config.geckoBoard.apiKey,
     };
-    return next();
+    next();
   };
 
 
 };
 
 
+// -------------------------------------------------------------------
+// Exports
+
+module.exports = BaseRouter;

@@ -3,8 +3,6 @@
  * @module components/util
  * @requires config
  * @requires util
- * @requires promise
- * @requires superagent
  */
 
 
@@ -14,8 +12,6 @@
 
 // Import
 const Config = require('config');
-const Promise = require('bluebird');
-const request = require('superagent');
 
 // Built-in
 const util = require('util');
@@ -42,26 +38,50 @@ module.exports = class Util {
 
 
   /**
-   * Convert a date into PipeDrive date format.
+   * Convert a date into ISO 8601 date format but only in format YYYY-MM-DD.
    *
-   * @param {Date} date - The normal date.
-   * @return {String} The formatted string corresponding to the date.
+   * @param {Date} date - The normal date,
+   * @return {String} The formatted string corresponding to the date or if not
+   *    provided use the current date.
    */
-  static convertPipeDriveDate(date) {
+  static convertDate(date) {
+    if (arguments.length === 0 || date === null) {
+      date = new Date();
+    }
     return date.toISOString().slice(0, 10);
   };
 
 
   /**
+   * Convert the num into a EUR currency format.
+   *
+   * @static
+   * @param {number} num - The Number to format.
+   * @param {character} delimiter - The thousand delimiter
+   * @param {character} separator - The Unit separator
+   * @return {string} a formatted string corresponding to the currency.
+   */
+  static toMoneyFormat(num, delimiter=' ', separator='.') {
+    // return Number(num.toFixed(2)).toLocaleString('en-GB', {
+    //   style: 'currency',
+    //   currency: 'EUR',
+    // });
+    return '€ '+ num.toFixed(2)
+        .replace(/(\d)(?=(\d{3})+\.)/g, `$1${delimiter}`)
+        .replace('.', separator);
+  }
+
+
+  /**
    * Convert an array into an object.
    *
-   * @param {Array} arr - The array source.
    * @param {Array} keys - The keys for the generated object.
+   * @param {Array} arr - The array source.
    *
    * @return  {Object} An array mapped by his keys or passed in args.
    */
-  // static convertArrayToObject(arr) {
-  //   return Object.keys(arr).reduce((pms, p) => arr[p], {});
+  // static convertArrayToObject(keys = [], arr = []) {
+  //   return Object.keys(arr).reduce((pms, p, i) => arr[p], {});
   //   // const param = arr[p];
   // };
 
@@ -85,14 +105,15 @@ module.exports = class Util {
       Object.keys(params)
         .filter((param) => Object.keys(validParams).indexOf(param) !== -1)
         .some((param) => { // Then, check if valid
+          let paramValue = params[param];
           switch (param) {
             default: // This params'value is enumerated;
-              const validParam = validParams[param];
-            check.isValid = (validParam.indexOf(params[param]) !== -1);
+              const validParamValues = validParams[param];
+            check.isValid = (validParamValues.indexOf(paramValue) !== -1);
             break;
             case 'for': // param for must be a Number
                 if (typeof params.for === 'string') {
-                  params.for = Number.parseInt(param.for, 10);
+                  params.for = Number.parseInt(params.for, 10);
                 }
               check.isValid = (params.for > 0 && params.for <= 12);
               break;
@@ -102,7 +123,7 @@ module.exports = class Util {
             let msg = Config.api.msg.err.check[param];
             if (!msg) {
               msg = Config.api.msg.err.check._def;
-              msg = util.format(msg, param, params[param]);
+              msg = util.format(msg, param, paramValue);
             }
             check.errMsg = msg;
           }
@@ -114,37 +135,5 @@ module.exports = class Util {
     return check;
   }
 
-
-  /**
-   * To send a
-   *
-   * @static
-   * @param {String} destination - The pipedrive endpoint
-   * @param {Object} query - Must Contains the apiToken and the pipeline_id
-   * @return {Bluebird.Promise}
-   */
-  static requestPipeDriveFor(destination, query = {}) {
-    return new Promise((resolve, reject) => {
-      if (!destination) {
-        return reject(new Error('Missing the destination to call PipeDrive'));
-      }
-      if (Util.isEmptyOrNull(query) || !query.api_token) {
-        return reject(new Error('Missing the query : {apiToken}'));
-      }
-      if (destination[0] !== '/') {
-        destination = '/' + destination;
-      }
-
-      request.get(Config.pipeDrive.apiUrl + destination)
-        .accept('json')
-        .query(query)
-        .end((err, resp) => {
-          if (err)
-            reject(err);
-          else
-            resolve(resp.body.data);
-        });
-    });
-  }
 
 };

@@ -20,8 +20,6 @@
 const Router = require('../src/components/router');
 const Feeder = require('../src/components/feeder');
 
-const PipeDriveFeeder = require('../src/pipedrive/pipedrive-feed')
-
 
 // -------------------------------------------------------------------
 // Properties
@@ -54,15 +52,6 @@ class MockFeeder extends Feeder {
 
 
 
-class MockPipeFeed extends PipeDriveFeeder {
-  
-  getPipeline(req, res, next) {
-
-    next();
-  }
-
-}
-
 
 
 
@@ -74,7 +63,6 @@ module.exports = {
   'getBadRouter' : (...args) => new BadMockRouter(...args), 
   'getRouter' : (...args) => new MockRouter(...args), 
   'getFeeder' : (...args) => new MockFeeder(...args), 
-  'getPipeFeed' : (...args) => new MockPipeFeed(...args), 
 
 
 };

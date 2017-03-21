@@ -1,5 +1,4 @@
 'use strict';
-/* eslint-disable new-cap */
 
 /**
  * @overview Router Handler
@@ -7,7 +6,7 @@
  * Handle the different routes possbiles;
  * @module  components/router
  * @requires config
- * @requires express
+ * @requires Koa
  * @requires ./components/logger
  *
  */
@@ -17,7 +16,8 @@
 // Dependencies
 
 // Package npm
-const express = require('express');
+const KoaRouter = require('koa-trie-router');
+const mount = require('koa-mount');
 
 // Built-in
 
@@ -31,9 +31,8 @@ const express = require('express');
 // -------------------------------------------------------------------
 // Methods
 
-
 /**
- * Used to create subRouter to handle a specific root path.
+ * Use to create subRouter to handle a specific root path.
  *
  * is ABSTRACT, cannot be instanciated directly.
  * Only inherited (extends);
@@ -43,19 +42,20 @@ const express = require('express');
 class Router {
 
   /**
-   * Creates an instance of Router.
-   * @param {string|RegExp|Array<string>|Array<RegExp>} url The URL to handle
+   * Creates an instance of Router by providing the URL
+   *    and the feeder middleware for this routeur.
+   * @param {string} url The prefix URL to handle. By default, it's on /.
    * @param {Feed} feeder The Feeder allocated to this router.
    *
    * @memberOf Router
    */
-  constructor(url, feeder) {
+  constructor(url = '/', feeder) {
     this.url_ = url;
     this.feed_ = feeder;
     /**
-     * @private Express Router. The only to be exposed to the server component.
+     * @private Koa Router. The only to be exposed to the server component.
      */
-    this.router_ = express.Router();
+    this.router_ = new KoaRouter();
   }
 
   /**
@@ -66,6 +66,24 @@ class Router {
   getURL() {
     return this.url_;
   }
+
+
+  /**
+   * Collect all route assigned to this router.
+   *
+   * @return {KoaRouter} the router;
+   */
+  init() {
+    this.router_.use((ctx, next) => {
+      return next()
+        .catch((err) => this.handleErr(err, ctx, next));
+    });
+
+    this.router_.use(this.handleResponse);
+    this.handler();
+    return mount(this.url_, this.router_.middleware());
+  }
+
 
   /**
    * Here goes the jointure of the middle into the router.
@@ -82,8 +100,10 @@ class Router {
    * @memberof Router
    */
   handler() {
-    throw new TypeError('You have to implement the method !');
+    // TODO Add error Component like Factory APIError.getAbstractError();
+    throw new TypeError('You have to override this function!');
   }
+
 
   /**
    * The middleware in charge of sending the response.
@@ -93,11 +113,10 @@ class Router {
    * @throws {TypeError} Must implement this method in the child.
    * @memberof Router
    *
-   * @param {any} req - The incomming request
-   * @param {any} res - The response containing all data in res.locals
+   * @param {any} ctx
    * @return {any} The data
    */
-  sendResponse(req, res) {
+  handleResponse(ctx) {
     throw new TypeError('You have to implement the method !');
   }
 
@@ -110,34 +129,14 @@ class Router {
    * @memberof Router
    *
    * @param {Error} err
-   * @param {any} req
-   * @param {any} res
+   * @param {any} ctx
    * @param {any} next
-   * @return {string|Object} The error message
+   * @return {any} The error message
    */
-  sendErr(err, req, res, next) {
+  handleErr(err, ctx, next) {
     throw new TypeError('You have to implement the method !');
   }
 
-
-  /**
-   * Collect all route assigned to this router.
-   *
-   * @return {express.Router} the router;
-   */
-  init() {
-    this.handler();
-
-    // -------------------------------------------------------------------
-    // Must be the last middleware to send a response.
-    this.router_.use(this.sendResponse);
-
-    // -------------------------------------------------------------------
-    // Must be the last to handle the error.
-    this.router_.use(this.sendErr);
-
-    return {'url': this.getURL(), 'routes': this.router_};
-  }
 
 };
 

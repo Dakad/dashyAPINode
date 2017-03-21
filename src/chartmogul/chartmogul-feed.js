@@ -113,41 +113,6 @@ class ChartMogulFeed extends Feeder {
 
 
   /**
-   * Config the request for ChartMogul depending on theparams received.
-   *
-   * @param {any} req - The request
-   * @param {any} res - The response
-   * @param {any} next - The next middleware to call.
-   *
-   * @memberOf ChartMogulFeed
-   */
-  configByParams(req, res, next) {
-    const today = new Date();
-    const lastMonth = new Date();
-    lastMonth.setMonth(today.getMonth() - 1);
-    res.locals.config = {
-      'start-date': Util.convertDate(today),
-      'end-date': Util.convertDate(lastMonth),
-      'interval': 'month',
-    };
-    next();
-  }
-
-  /**
-   * The firstMiddleware where the request must go first.
-   *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
-   *
-   * @memberOf ChartMogulFeed
-   */
-  firstMiddleware(req, res, next) {
-    next();
-  }
-
-
-  /**
    * Perfom a filtering on the customers[].
    *
    * @private
@@ -218,13 +183,12 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware inf chargin of fetch the leads.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNbLeads(req, res, next) {
+  fetchNbLeads(config) {
     const today = new Date().toLocaleDateString();
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
@@ -235,7 +199,7 @@ class ChartMogulFeed extends Feeder {
 
     let leadDate;
 
-    this.fetchAndFilterCustomers(this.leads_.startPage, true)
+    return this.fetchAndFilterCustomers(this.leads_.startPage, true)
       .then((leads) => {
         leads.forEach((lead) => {
           leadDate = new Date(lead['lead_created_at']).toLocaleDateString();
@@ -248,92 +212,76 @@ class ChartMogulFeed extends Feeder {
           }
         });
 
-        res.locals.data.item = item;
-        next();
-      }).catch(next);
+        return item;
+      });
   }
 
   /**
    * The middleware in charge of fetching the MRR.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchMrr(req, res, next) {
-    this.requestChartMogulFor('/metrics/mrr', res.locals.config)
+  fetchMrr(config) {
+    return this.requestChartMogulFor('/metrics/mrr', config.state.config)
       .then((data) => {
-        res.locals.data.item = [];
+        config.state.data.item = [];
 
         // The mrr for today
-        res.locals.data.item.push({
+        config.state.data.item.push({
           'value': data.summary.current / 100,
         });
 
         // Take the last one because it'll be for the end of month
 
-        res.locals.data.item.push({
+        config.state.data.item.push({
           'value': data.summary.previous / 100,
         });
-
-        next();
       })
-      .catch((err) => next(err));
+      ;
   }
 
   /**
    * The middleware in charge of fetching the customers count.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNbCustomers(req, res, next) {
-    this.requestChartMogulFor('/metrics/customer-count')
+  fetchNbCustomers(config) {
+    return this.requestChartMogulFor('/metrics/customer-count')
       .then((data) => {
-        res.locals.data.item = [];
-
-        res.locals.data.item.push({
+        config.state.data.item.push({
           value: data.summary.current,
         });
 
-        res.locals.data.item.push({
+        config.state.data.item.push({
           value: data.summary.previous,
         });
-        next();
       })
-      .catch((err) => next(err));
+      ;
   }
 
 
   /**
    * The middleware in charge of fetching the NET MRR Churn Rate.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNetMRRChurnRate(req, res, next) {
-    this.requestChartMogulFor('/metrics/mrr-churn-rate')
+  fetchNetMRRChurnRate(config) {
+    return this.requestChartMogulFor('/metrics/mrr-churn-rate')
       .then((data) => {
-        res.locals.data.item = [];
-
-        res.locals.data.item.push({
-          value: data.summary.current,
-        });
-
-        res.locals.data.item.push({
+        config.state.data.item.push({
           value: data.summary.previous,
         });
-        next();
       })
-      .catch(next);
+      ;
   }
 
 
@@ -389,19 +337,18 @@ class ChartMogulFeed extends Feeder {
    * THe middleware inf charge of fetching and calc the NET MRR Movements
    * based on others MRR Movements.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNetMRRMovements(req, res, next) {
+  fetchNetMRRMovements(config) {
     const query = {
       'start-date': Util.convertDate(this.bestNetMRRMove_.startDate),
       'end-date': Util.convertDate(),
       'interval': 'month',
     };
-    this.reqCharMogul = this.requestChartMogulFor('/metrics/mrr', query)
+    return this.requestChartMogulFor('/metrics/mrr', query)
       .then(({summary, entries}) => {
         // Never made the fetch for the max.
         if (!this.bestNetMRRMove_.lastFetch || this.bestNetMRRMove_.val === 0) {
@@ -409,33 +356,31 @@ class ChartMogulFeed extends Feeder {
           this.findMaxNetMRR(entries);
         }
 
-        // TODO Only after a specific amount of time
+        // TODO Refactor Only after a specific amount of time
         // {3 days, 1 week , only Monday}
 
         const current = Util.toMoneyFormat(summary.current, '', ',');
         const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');
-        res.locals.data.item = [{
+        config.state.data.item = [{
           'text': `
             <p style="font-size:1.7em">${current}</p>
             <h1 style="font-size:1.7em;color:#1c99e3">${best}</h1>
             `,
         }];
-        next();
       })
-      .catch(next);
+      ;
   }
 
   /**
    * THe middleware inf charge of fetching the other MRR Movements.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchMRRMovements(req, res, next) {
-    this.requestChartMogulFor('/metrics/mrr')
+  fetchMRRMovements(config) {
+    return this.requestChartMogulFor('/metrics/mrr')
       .then((data) => {
         const otherMrr = data.entries.pop();
 
@@ -446,7 +391,7 @@ class ChartMogulFeed extends Feeder {
           };
         });
       */
-        Object.assign(res.locals.data, {
+        Object.assign(config.state.data, {
           'format': 'currency',
           'unit': 'EUR',
           'items': mrrsEntries.map((item) => ({
@@ -454,63 +399,45 @@ class ChartMogulFeed extends Feeder {
             'value': otherMrr[item.entrie] / 100,
           })),
         });
-
-        next();
       })
-      .catch(next);
+      ;
   }
 
 
   /**
    * The middleware in charge of fetching the ARR.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchArr(req, res, next) {
-    this.requestChartMogulFor('/metrics/arr')
+  fetchArr(config) {
+    return this.requestChartMogulFor('/metrics/arr')
       .then((data) => {
-        res.locals.data.item = [];
-
-        res.locals.data.item.push({
-          value: data.summary.current / 100,
-        });
-
-        res.locals.data.item.push({
+        config.state.data.item.push({
           value: data.summary.previous / 100,
         });
-        next();
       })
-      .catch(next);
+      ;
   }
 
   /**
    * The middleware in charge of fetching the ARPA.
    *
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchArpa(req, res, next) {
-    this.requestChartMogulFor('/metrics/arpa')
+  fetchArpa(config) {
+    return this.requestChartMogulFor('/metrics/arpa')
       .then((data) => {
-        res.locals.data.item = [];
-
-        res.locals.data.item.push({
-          value: data.summary.current / 100,
-        });
-
-        res.locals.data.item.push({
+        config.state.data.item.push({
           value: data.summary.previous / 100,
         });
-        next();
       })
-      .catch(next);
+      ;
   }
 
 

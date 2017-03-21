@@ -9,7 +9,7 @@
 // Packages
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const httpMocks = require('node-mocks-http');
+// const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 const request = require('superagent');
 const mockRequest = require('superagent-mock');
@@ -18,7 +18,6 @@ const mockRequest = require('superagent-mock');
 
 // Mine
 const Config = require('../../config/test.json');
-const Util = require('../components/util');
 const ChartMogulFeed = require('./chartmogul-feed');
 const mockReqConf = require('./superagent-mock-config');
 
@@ -38,49 +37,8 @@ let superagentMock = mockRequest(request, mockReqConf,
 
 
 describe('ChartMogul : Feeder', () => {
-  let req;
-  let res;
+  beforeEach(() => { });
 
-  beforeEach(() => {
-    req = httpMocks.createRequest({
-      method: 'GET',
-      url: '/mocky',
-    });
-    res = httpMocks.createResponse();
-    res.locals = {
-      data: {
-        api: 'API_TOKEN_FOR_MOCK_GECKOBOARD',
-      },
-    };
-  });
-
-
-  describe('configByParams', () => {
-    it('should return a object', (done) => {
-      feed.configByParams(req, res, (err) => {
-        if (err) return done(err);
-        expect(res.locals).to.have.property('config');
-        done();
-      });
-    });
-
-    it('should return an object with the default params', (done) => {
-      const currentDate = new Date();
-      const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 1);
-      feed.configByParams(req, res, (err) => {
-        if (err) return done(err);
-        expect(res.locals.config)
-          .to.have.any.keys('start-date', 'end-date', 'interval');
-        expect(res.locals.config['start-date'])
-          .to.be.eql(Util.convertDate(currentDate));
-        expect(res.locals.config['end-date'])
-          .to.be.equal(Util.convertDate(lastMonth));
-        expect(res.locals.config['interval']).to.be.eql('month');
-        done();
-      });
-    });
-  });
 
   describe('requestChartMogulFor', () => {
     let spySuperAgent;
@@ -257,11 +215,17 @@ describe('ChartMogul : Feeder', () => {
 
   describe('MiddleWare - basicFetchers', (done) => {
     const middlewares = [
-      {'fetch': feed.fetchMrr, 'url': '/metrics/mrr'},
-      {'fetch': feed.fetchNbCustomers, 'url': '/metrics/customer-count'},
-      {'fetch': feed.fetchNetMRRChurnRate, 'url': '/metrics/mrr-churn-rate'},
-      {'fetch': feed.fetchArr, 'url': '/metrics/arr'},
-      {'fetch': feed.fetchArpa, 'url': '/metrics/arpa'},
+      {'fetch': feed.fetchMrr, 'url': '/metrics/mrr', 'config': {}},
+      {
+        'fetch': feed.fetchNbCustomers, 'url': '/metrics/customer-count',
+        'config': {},
+      },
+      {
+        'fetch': feed.fetchNetMRRChurnRate, 'url': '/metrics/mrr-churn-rate',
+        'config': {},
+      },
+      {'fetch': feed.fetchArr, 'url': '/metrics/arr', 'config': {}},
+      {'fetch': feed.fetchArpa, 'url': '/metrics/arpa', 'config': {}},
     ];
 
     beforeEach(() => {
@@ -270,24 +234,25 @@ describe('ChartMogul : Feeder', () => {
 
     afterEach(() => spyFeedReqChartMogul.restore());
 
-    middlewares.forEach((middleware) => {
-      it(`feed.${middleware.fetch.name}() should call requestChartMogulFor()`,
+    middlewares.forEach(({fetch, url, config}) => {
+      it(`feed.${fetch.name}() should call requestChartMogulFor()`,
         (done) => {
-          middleware.fetch.call(feed, req, res, (err) => {
-            if (err) return done(err);
-            expect(spyFeedReqChartMogul.called).to.be.true;
-            expect(spyFeedReqChartMogul.calledWith(middleware.url)).to.be.true;
-            done();
-          });
+          fetch.call(feed, config)
+            .then((item) => {
+              expect(spyFeedReqChartMogul.called).to.be.true;
+              expect(spyFeedReqChartMogul.calledWith(url)).to.be.true;
+              done();
+            }, done);
         });
 
-      it(`feed.${middleware.fetch.name}() should fill data with items`, () => {
-        middleware.fetch.call(feed, req, res, (err) => {
-          if (err) return done(err);
-          expect(res.locals.data).to.have.any.keys('item');
-          expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
-          expect(res.locals.data.item).to.have.lengthOf(2);
-        });
+      it(`feed.${fetch.name}() should fill data with items`, () => {
+        fetch.call(feed, config)
+          .then((item) => {
+            expect(item).to.not.be.undefined.and.null;
+            expect(item).to.be.a('array').and.to.not.be.empty;
+            expect(item).to.have.lengthOf(2);
+            done();
+          }, done);
       });
     });
 
@@ -302,7 +267,7 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFeedReqChartMogul.restore());
 
     it('should call requestChartMogulFor()', (done) => {
-      feed.fetchMRRMovements(req, res, (err) => {
+      feed.fetchMRRMovements(config, (err) => {
         if (err) return done(err);
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
@@ -311,7 +276,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', (done) => {
-      feed.fetchMRRMovements(req, res, (err) => {
+      feed.fetchMRRMovements(config, (err) => {
         if (err) return done(err);
         expect(res.locals.data).to.contains.all.keys('format', 'unit', 'items');
         expect(res.locals.data.format).to.be.a('string').and.eql('currency');
@@ -342,7 +307,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should call requestChartMogulFor()', (done) => {
-      mogulFeed.fetchNetMRRMovements(req, res, (err) => {
+      mogulFeed.fetchNetMRRMovements(config, (err) => {
         if (err) return done(err);
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
@@ -352,7 +317,7 @@ describe('ChartMogul : Feeder', () => {
 
     it('should call findMaxNetMRR() and calcNetMRRMovement()', (done) => {
       const mrrEntries = Config.request.chartMogul.mrr.entries;
-      mogulFeed.fetchNetMRRMovements(req, res, (err) => {
+      mogulFeed.fetchNetMRRMovements(config, (err) => {
         if (err) return done(err);
         expect(spyFindMaxNetMRR.called).to.be.true;
         expect(spyFindMaxNetMRR.calledWith(mrrEntries)).to.be.true;
@@ -363,7 +328,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', (done) => {
-      mogulFeed.fetchNetMRRMovements(req, res, (err) => {
+      mogulFeed.fetchNetMRRMovements(config, (err) => {
         if (err) return done(err);
         expect(res.locals.data).to.contains.all.keys('item');
         expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
@@ -384,7 +349,7 @@ describe('ChartMogul : Feeder', () => {
 
 
     it('should call fetchAndFilterCustomers', (done) => {
-      feed.fetchNbLeads(req, res, (err) => {
+      feed.fetchNbLeads(config, (err) => {
         if (err) return done(err);
         expect(spyFetchAndFilter.called).to.be.true;
         expect(spyFetchAndFilter.calledWith(Config.chartMogul.leads.startPage))
@@ -394,7 +359,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', (done) => {
-      feed.fetchNbLeads(req, res, (err) => {
+      feed.fetchNbLeads(config, (err) => {
         if (err) return done(err);
         expect(res.locals.data).to.contains.all.keys('item');
         expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;

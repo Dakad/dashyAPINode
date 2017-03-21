@@ -13,8 +13,8 @@
     "apiUrl": "https://api.chartmogul.mock/v1",
     "apiToken": "CHARTMOGUL_API_TOKEN",
     "apiSecret": "CHARTMOGUL_API_SECRET",
-    "leads":{
-      "startPage" : 1
+    "leads": {
+      "startPage": 1
     }
   },
   "pipeDrive": {
@@ -259,7 +259,8 @@
                 "address_zip": "E1G0R9"
               }
             },
-            { "name": "Ida Lizzie Garrett",
+            {
+              "name": "Ida Lizzie Garrett",
               "status": "Lead",
               "customer-since": "2014-10-12T14:42:19+00:00",
               "company": "Suchaube",
@@ -386,7 +387,8 @@
           "has_more": false,
           "per_page": 7,
           "page": 123
-        }]
+        }
+      ]
     },
     "pipedrive": {
       "pipelines": [

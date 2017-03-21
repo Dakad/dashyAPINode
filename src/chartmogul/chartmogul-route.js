@@ -47,7 +47,8 @@ class ChartMogulRouter extends BaseRouter {
    * @memberOf ChartMogulRouter
    */
   handler() {
-    this.router_.get('/leads', this.feed_.fetchNbLeads.bind(this.feed_));
+    this.router_
+      .get('/leads', (ctx, next) => this.feed_.fetchNbLeads(ctx, next));
 
     // this.router_.all('/mrr', this.feed_.fetchMrr);
 
@@ -63,6 +64,42 @@ class ChartMogulRouter extends BaseRouter {
 
     // this.router_.all('/arpa', this.feed_.fetchArpa);
   }
+
+
+  /**
+   * Config the request for ChartMogul depending on theparams received.
+   *
+   * @param {any} ctx The context of the request and response.
+   * @param {Promise} next The next middleware to call.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  configByParams(ctx, next) {
+    const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(today.getMonth() - 1);
+    ctx.state.config = {
+      'start-date': Util.convertDate(today),
+      'end-date': Util.convertDate(lastMonth),
+      'interval': 'month',
+    };
+    return next();
+  }
+
+  /**
+   * The firstMiddleware where the request must go first.
+   *
+   * @param {any} ctx The context of the request and response.
+   * @param {Promise} next The next middleware to call;
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  firstMiddleware(ctx, next) {
+    return next();
+  }
+
 
 };
 

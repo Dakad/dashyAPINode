@@ -4,9 +4,8 @@
  * @overview Base Router Handler for url /
  *
  * Handle the different routes possbiles;
- * @module  base/baserouter
+ * @module  components/router
  * @requires config
- * @requires components/router
  * @requires ./components/logger
  *
  */
@@ -41,6 +40,10 @@ const Singleton = {
 // Methods
 
 
+// -------------------------------------------------------------------
+// Exports
+
+
 /**
  * Router for the root path /.
  *
@@ -48,6 +51,7 @@ const Singleton = {
  * @class BaseRouter
  */
 class BaseRouter extends Router {
+
 
   /**
    * Creates an instance of Router by providing the URL
@@ -68,11 +72,19 @@ class BaseRouter extends Router {
    * @override
    */
   handler() {
-    this.router_.get('/zen', function(req, res, next) {
+    this.router_.get('/zen', (ctx, next) => {
       const jokes = Config.zen;
-      const num = Math.floor(Math.random() * (jokes.length));
-      res.locals.data.joke = jokes[num];
-      next();
+      ctx.state.data.joke = jokes[Math.floor(Math.random() * (jokes.length))];
+      return next();
+    });
+  }
+
+  /**
+   * @override
+   */
+  handleResponse(ctx, next) {
+    return next().then(() => {
+      ctx.body = ctx.state.data;
     });
   }
 
@@ -80,17 +92,10 @@ class BaseRouter extends Router {
   /**
    * @override
    */
-  sendResponse(req, res) {
-    return res.json(res.locals.data);
-  }
-
-
-  /**
-   * @override
-   */
-  sendErr(err, req, res, next) {
+  handleErr(err, ctx, next) {
     Logger.error(err);
-    return res.status(500).send('Something went south !');
+    ctx.status = 500;
+    ctx.body = 'Something went south !';
   }
 
 
@@ -109,22 +114,21 @@ class BaseRouter extends Router {
   /**
    * Middleware to check the inconming request.
    *  1. Check if the req is right
-   *  2. Insert a config Object in the res.locals
-   *  3. Insert a data Object into the res.locals with the geckoBoard ApiKey.
+   *  2. Insert a config Object in the req
+   *  3. Insert a data Object into the req containnig the geckoBoard ApiKey.
    *
-   * @param {any} req The request.
-   * @param {any} res The response.
-   * @param {any} next The next middleware to call;
+   * @param {any} ctx The context of the request and response.
+   * @param {Function} next The next middleware to call;
+   * @return {Function} the next middleware()
    */
-  static checkMiddleware(req, res, next) {
+  static checkMiddleware(ctx, next) {
     Logger.warn('First Middleware : Missing some check before continue');
-    res.locals.config = {};
-
-    // ApiKey for GeckoBoard
-    res.locals.data = {
+    ctx.state.config = {};
+    ctx.state.data = {
+      // ApiKey for GeckoBoard
       api: Config.geckoBoard.apiKey,
     };
-    next();
+    return next();
   };
 
 

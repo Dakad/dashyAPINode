@@ -56,9 +56,9 @@ describe('Base : BaseRouter', () => {
       httpMocks.createResponse()
     );
     BaseRouter.checkMiddleware(ctx, () => {
-      expect(ctx.body).to.be.a('object');
-      expect(ctx.body).to.have.any.keys('api');
-      expect(ctx.body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+      expect(ctx.state.data).to.be.a('object');
+      expect(ctx.state.data).to.have.any.keys('api');
+      expect(ctx.state.data.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
     });
   });
 
@@ -78,7 +78,7 @@ describe('Base : BaseRouter', () => {
 
     it('should send the geckoBoard API', (done) => {
       Supertest(openedServer)
-        .get('/')
+        .get('/zen')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object')
@@ -94,10 +94,10 @@ describe('Base : BaseRouter', () => {
         .get('/zen')
         .expect(200)
         .expect(({body}) => {
-          expect(body).to.have.any.keys('api', 'joke');
+          console.log(body);
+          expect(body).to.contains.keys('api', 'joke');
           expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
-          expect(body.joke).to.be.a('string')
-
+          expect(body.joke).to.be.a('string');
         })
         .end(done);
       ;

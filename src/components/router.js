@@ -27,30 +27,20 @@ const express = require('express');
 // -------------------------------------------------------------------
 // Properties
 
-/**
- * Express Router. The only to be exposed to the server component.
- * @private
- */
-const router = express.Router();
-
 
 // -------------------------------------------------------------------
 // Methods
 
 
-// -------------------------------------------------------------------
-// Exports
-
-
 /**
- * Use to create subRouter to handle a specific root path.
+ * Used to create subRouter to handle a specific root path.
  *
  * is ABSTRACT, cannot be instanciated directly.
  * Only inherited (extends);
  * @abstract
  * @class Router
  */
-module.exports = class Router {
+class Router {
 
   /**
    * Creates an instance of Router.
@@ -61,10 +51,11 @@ module.exports = class Router {
    */
   constructor(url, feeder) {
     this.url_ = url;
-    this.router_ = express.Router();
     this.feed_ = feeder;
-
-    // this.route_.use(this.feed_.checkParams());
+    /**
+     * @private Express Router. The only to be exposed to the server component.
+     */
+    this.router_ = express.Router();
   }
 
   /**
@@ -85,6 +76,7 @@ module.exports = class Router {
    *  2. Before that, it's the middleware to send the response.
    *  3. Otherwise, the middlewares defined on parent class will take over.
    *
+   * @protected
    * @abstract
    * @throws {TypeError} Must implement this method in the child.
    * @memberof Router
@@ -94,6 +86,41 @@ module.exports = class Router {
   }
 
   /**
+   * The middleware in charge of sending the response.
+   *
+   * @protected
+   * @abstract
+   * @throws {TypeError} Must implement this method in the child.
+   * @memberof Router
+   *
+   * @param {any} req - The incomming request
+   * @param {any} res - The response containing all data in res.locals
+   * @return {any} The data
+   */
+  sendResponse(req, res) {
+    throw new TypeError('You have to implement the method !');
+  }
+
+
+  /**
+   * The midldleware in charge of the error.
+   *
+   * @abstract
+   * @throws {TypeError} Must implement this method in the child.
+   * @memberof Router
+   *
+   * @param {Error} err
+   * @param {any} req
+   * @param {any} res
+   * @param {any} next
+   * @return {string|Object} The error message
+   */
+  sendErr(err, req, res, next) {
+    throw new TypeError('You have to implement the method !');
+  }
+
+
+  /**
    * Collect all route assigned to this router.
    *
    * @return {express.Router} the router;
@@ -101,29 +128,19 @@ module.exports = class Router {
   init() {
     this.handler();
 
+    // -------------------------------------------------------------------
+    // Must be the last middleware to send a response.
+    this.router_.use(this.sendResponse);
+
+    // -------------------------------------------------------------------
+    // Must be the last to handle the error.
+    this.router_.use(this.sendErr);
+
     return {'url': this.getURL(), 'routes': this.router_};
   }
 
-  /**
-   * Add a new Router.
-   * @static
-   * @param {Router} router the new Route to add.
-   */
-  static add(router) {
-    router.use(router.getURL(), router.init());
-  };
-
-
-  /**
-   * Init the routing for the app.
-   * @param {Array<Router>} routers Array of routes
-   * @return {express.Routeur} an express Router set with all routes.
-   */
-  static init(...routers) {
-    // router.use(checkMiddleware);
-
-    return router;
-  };
-
-
 };
+
+// -------------------------------------------------------------------
+// Exports
+module.exports = Router;

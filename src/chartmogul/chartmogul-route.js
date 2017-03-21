@@ -47,7 +47,7 @@ class ChartMogulRouter extends BaseRouter {
    * @memberOf ChartMogulRouter
    */
   handler() {
-    this.router_.all('/leads', this.feed_.fetchNbLeads);
+    this.router_.get('/leads', this.feed_.fetchNbLeads.bind(this.feed_));
 
     // this.router_.all('/mrr', this.feed_.fetchMrr);
 

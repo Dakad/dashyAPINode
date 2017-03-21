@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 /**
  * TDD for the ChartMogulRouter.
  */
@@ -7,7 +9,8 @@
 // Dependencies
 // Packages
 const expect = require('chai').expect;
-const sinon = require('sinon');
+// const sinon = require('sinon');
+const Supertest = require('supertest');
 // const httpMocks = require('node-mocks-http');
 
 // Built-in
@@ -24,10 +27,7 @@ const server = new Server(0);
 
 let openedServer;
 let router;
-let req;
-let res;
-let next;
-let spyNext;
+// let spyNext;
 
 
 // -------------------------------------------------------------------
@@ -35,10 +35,7 @@ let spyNext;
 
 
 describe('ChartMogul : Router', () => {
-  // before(() => router = new ChartMogulRouter(feed));
-
-
-  beforeEach((done) => {
+  before((done) => {
     router = new ChartMogulRouter(feed);
     server.initRouters(router.init());
     server.init().then(() => {
@@ -47,7 +44,7 @@ describe('ChartMogul : Router', () => {
   });
 
 
-  afterEach(() => openedServer.close());
+  after(() => openedServer.close());
 
 
   it('should have the url path set to /chartmogul', () => {
@@ -55,11 +52,23 @@ describe('ChartMogul : Router', () => {
   });
 
 
-  it('should go into BaseRouter.checkMiddleware', () => {
-    // TODO Check if got the expected response with SuperAgentMock
+  it('should go into ChartMogulRouter.handler', (done) => {
+    // TODO Check if got the expected response with SuperAgentMock.
+      Supertest(openedServer)
+        .get('/chartmogul/leads')
+        .expect(200)
+        .expect(({
+          body,
+        }) => {
+          expect(body).to.be.a('object');
+          expect(body).to.have.any.keys('api');
+          expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+        })
+        .end(done); ;
   });
 
-  it('should call the fetchMrr', () => {
-
+  it.skip('should call the fetchMrr', () => {
+    // TODO Put a spy on it.
+    // TODO  Must check if the middleware is really called
   });
 });

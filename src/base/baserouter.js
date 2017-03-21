@@ -41,17 +41,13 @@ const Singleton = {
 // Methods
 
 
-// -------------------------------------------------------------------
-// Exports
-
-
 /**
  * Router for the root path /.
  *
  * is SINGLETON.
  * @class BaseRouter
  */
-module.exports = class BaseRouter extends Router {
+class BaseRouter extends Router {
 
   /**
    * Creates an instance of Router by providing the URL
@@ -72,28 +68,31 @@ module.exports = class BaseRouter extends Router {
    * @override
    */
   handler() {
-    this.router_.get(['/', '/zen'], function(req, res, next) {
+    this.router_.get('/zen', function(req, res, next) {
       const jokes = Config.zen;
       const num = Math.floor(Math.random() * (jokes.length));
       res.locals.data.joke = jokes[num];
       next();
     });
-
-    // -------------------------------------------------------------------
-    // Must be the last middleware to send a response.
-
-    this.router_.use(function(req, res) {
-      return res.json(res.locals.data);
-    });
-
-
-    // -------------------------------------------------------------------
-    // Must be the last to handle the error.
-    this.router_.use(function(err, req, res, next) {
-      Logger.error(err);
-      return res.status(500).send('Something went south !');
-    });
   }
+
+
+  /**
+   * @override
+   */
+  sendResponse(req, res) {
+    return res.json(res.locals.data);
+  }
+
+
+  /**
+   * @override
+   */
+  sendErr(err, req, res, next) {
+    Logger.error(err);
+    return res.status(500).send('Something went south !');
+  }
+
 
   /**
    * @static
@@ -132,3 +131,7 @@ module.exports = class BaseRouter extends Router {
 };
 
 
+// -------------------------------------------------------------------
+// Exports
+
+module.exports = BaseRouter;

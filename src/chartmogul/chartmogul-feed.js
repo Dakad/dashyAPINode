@@ -189,9 +189,8 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNbLeads(config) {
-    const today = new Date().toLocaleDateString();
-    const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    const today = config['start-date'];
+    const lastMonth = config['end-date'];
     const item = [
       {'value': 0},
       {'value': 0},
@@ -202,11 +201,10 @@ class ChartMogulFeed extends Feeder {
     return this.fetchAndFilterCustomers(this.leads_.startPage, true)
       .then((leads) => {
         leads.forEach((lead) => {
-          leadDate = new Date(lead['lead_created_at']).toLocaleDateString();
+          leadDate = lead['lead_created_at'].slice(0, 10);
           if (leadDate === today) {
             item[0].value += 1;
           }
-
           if (leadDate === lastMonth) {
             item[1].value += 1;
           }
@@ -225,20 +223,20 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchMrr(config) {
-    return this.requestChartMogulFor('/metrics/mrr', config.state.config)
-      .then((data) => {
-        config.state.data.item = [];
+    return this.requestChartMogulFor('/metrics/mrr', config)
+      .then(({summary}) => {
+        return [
+          // The mrr for today
+          {
+            'value': summary.current / 100,
+            'prefix': '€',
+          },
 
-        // The mrr for today
-        config.state.data.item.push({
-          'value': data.summary.current / 100,
-        });
-
-        // Take the last one because it'll be for the end of month
-
-        config.state.data.item.push({
-          'value': data.summary.previous / 100,
-        });
+          // Take the last one because it'll be for the end of month
+          {
+            'value': summary.previous / 100,
+          },
+        ];
       })
       ;
   }
@@ -253,14 +251,11 @@ class ChartMogulFeed extends Feeder {
    */
   fetchNbCustomers(config) {
     return this.requestChartMogulFor('/metrics/customer-count')
-      .then((data) => {
-        config.state.data.item.push({
-          value: data.summary.current,
-        });
-
-        config.state.data.item.push({
-          value: data.summary.previous,
-        });
+      .then(({summary}) => {
+        return [
+          {value: summary.current},
+          {value: summary.previous},
+        ];
       })
       ;
   }
@@ -276,12 +271,12 @@ class ChartMogulFeed extends Feeder {
    */
   fetchNetMRRChurnRate(config) {
     return this.requestChartMogulFor('/metrics/mrr-churn-rate')
-      .then((data) => {
-        config.state.data.item.push({
-          value: data.summary.previous,
-        });
-      })
-      ;
+      .then(({summary}) => {
+        return [
+          {value: summary.current},
+          {value: summary.previous},
+        ];
+      });
   }
 
 
@@ -361,7 +356,7 @@ class ChartMogulFeed extends Feeder {
 
         const current = Util.toMoneyFormat(summary.current, '', ',');
         const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');
-        config.state.data.item = [{
+        return [{
           'text': `
             <p style="font-size:1.7em">${current}</p>
             <h1 style="font-size:1.7em;color:#1c99e3">${best}</h1>
@@ -372,7 +367,7 @@ class ChartMogulFeed extends Feeder {
   }
 
   /**
-   * THe middleware inf charge of fetching the other MRR Movements.
+   * THe middleware in charge of fetching the other MRR Movements.
    *
    * @param {any} config The context of the request and response.
    * @return {Promise} the next middleware()
@@ -391,7 +386,7 @@ class ChartMogulFeed extends Feeder {
           };
         });
       */
-        Object.assign(config.state.data, {
+        return Object.assign({}, {
           'format': 'currency',
           'unit': 'EUR',
           'items': mrrsEntries.map((item) => ({
@@ -399,8 +394,7 @@ class ChartMogulFeed extends Feeder {
             'value': otherMrr[item.entrie] / 100,
           })),
         });
-      })
-      ;
+      });
   }
 
 
@@ -414,12 +408,12 @@ class ChartMogulFeed extends Feeder {
    */
   fetchArr(config) {
     return this.requestChartMogulFor('/metrics/arr')
-      .then((data) => {
-        config.state.data.item.push({
-          value: data.summary.previous / 100,
-        });
-      })
-      ;
+      .then(({summary}) => {
+        return [
+          {value: summary.current / 100, prefix: '€'},
+          {value: summary.previous / 100},
+        ];
+      });
   }
 
   /**
@@ -432,12 +426,12 @@ class ChartMogulFeed extends Feeder {
    */
   fetchArpa(config) {
     return this.requestChartMogulFor('/metrics/arpa')
-      .then((data) => {
-        config.state.data.item.push({
-          value: data.summary.previous / 100,
-        });
-      })
-      ;
+      .then(({summary}) => {
+        return [
+          {value: summary.current / 100, prefix: '€'},
+          {value: summary.previous / 100},
+        ];
+      });
   }
 
 

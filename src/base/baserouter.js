@@ -72,6 +72,7 @@ class BaseRouter extends Router {
    * @override
    */
   handler() {
+    this.router_.use(this.handleResponse);
     this.router_.get('/zen', (ctx, next) => {
       const jokes = Config.zen;
       ctx.state.data.joke = jokes[Math.floor(Math.random() * (jokes.length))];

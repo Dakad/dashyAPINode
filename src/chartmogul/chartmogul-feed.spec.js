@@ -236,23 +236,21 @@ describe('ChartMogul : Feeder', () => {
 
     middlewares.forEach(({fetch, url, config}) => {
       it(`feed.${fetch.name}() should call requestChartMogulFor()`,
-        (done) => {
-          fetch.call(feed, config)
+        () => {
+          return fetch.call(feed, config)
             .then((item) => {
               expect(spyFeedReqChartMogul.called).to.be.true;
               expect(spyFeedReqChartMogul.calledWith(url)).to.be.true;
-              done();
-            }, done);
+            });
         });
 
       it(`feed.${fetch.name}() should fill data with items`, () => {
-        fetch.call(feed, config)
+        return fetch.call(feed, config)
           .then((item) => {
             expect(item).to.not.be.undefined.and.null;
             expect(item).to.be.a('array').and.to.not.be.empty;
             expect(item).to.have.lengthOf(2);
-            done();
-          }, done);
+          });
       });
     });
 
@@ -266,23 +264,21 @@ describe('ChartMogul : Feeder', () => {
 
     afterEach(() => spyFeedReqChartMogul.restore());
 
-    it('should call requestChartMogulFor()', (done) => {
-      feed.fetchMRRMovements(config, (err) => {
+    it('should call requestChartMogulFor()', () => {
+      return feed.fetchMRRMovements({}, (err) => {
         if (err) return done(err);
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
-        done();
       });
     });
 
-    it('should fill data with items', (done) => {
-      feed.fetchMRRMovements(config, (err) => {
-        if (err) return done(err);
-        expect(res.locals.data).to.contains.all.keys('format', 'unit', 'items');
-        expect(res.locals.data.format).to.be.a('string').and.eql('currency');
-        expect(res.locals.data.items).to.be.a('array').and.to.not.be.empty;
-        // expect(res.locals.data.items).to.have.lengthOf(4);
-        done();
+    it('should fill data with items', () => {
+      return feed.fetchMRRMovements({}).then((data) => {
+        expect(data).to.contains.all.keys('format', 'unit', 'items');
+        expect(data.format).to.be.a('string').and.eq('currency');
+        expect(data.unit).to.be.a('string');
+        expect(data.items).to.a('array').and.to.not.be.empty;
+        // expect(data.items).to.have.lengthOf(4);
       });
     });
 
@@ -306,33 +302,26 @@ describe('ChartMogul : Feeder', () => {
       spyFindMaxNetMRR.restore();
     });
 
-    it('should call requestChartMogulFor()', (done) => {
-      mogulFeed.fetchNetMRRMovements(config, (err) => {
-        if (err) return done(err);
+    it('should call requestChartMogulFor()', () => {
+      return mogulFeed.fetchNetMRRMovements({}).then(() => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
-        done();
       });
     });
 
-    it('should call findMaxNetMRR() and calcNetMRRMovement()', (done) => {
+    it('should call findMaxNetMRR() and calcNetMRRMovement()', () => {
       const mrrEntries = Config.request.chartMogul.mrr.entries;
-      mogulFeed.fetchNetMRRMovements(config, (err) => {
-        if (err) return done(err);
+      return mogulFeed.fetchNetMRRMovements({}).then(() => {
         expect(spyFindMaxNetMRR.called).to.be.true;
         expect(spyFindMaxNetMRR.calledWith(mrrEntries)).to.be.true;
         expect(spyCalcNetMRRMovement.called).to.be.true;
         expect(spyCalcNetMRRMovement.callCount).to.be.eql(mrrEntries.length);
-        done();
       });
     });
 
-    it('should fill data with items', (done) => {
-      mogulFeed.fetchNetMRRMovements(config, (err) => {
-        if (err) return done(err);
-        expect(res.locals.data).to.contains.all.keys('item');
-        expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
-        done();
+    it('should fill data with items', () => {
+      return mogulFeed.fetchNetMRRMovements({}).then((item) => {
+        expect(item).to.be.a('array').and.to.not.be.empty;
       });
     });
 
@@ -348,23 +337,18 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFetchAndFilter.restore());
 
 
-    it('should call fetchAndFilterCustomers', (done) => {
-      feed.fetchNbLeads(config, (err) => {
-        if (err) return done(err);
+    it('should call fetchAndFilterCustomers', () => {
+      return feed.fetchNbLeads({}).then((item) => {
         expect(spyFetchAndFilter.called).to.be.true;
         expect(spyFetchAndFilter.calledWith(Config.chartMogul.leads.startPage))
           .to.be.true;
-        done();
       });
     });
 
-    it('should fill data with items', (done) => {
-      feed.fetchNbLeads(config, (err) => {
-        if (err) return done(err);
-        expect(res.locals.data).to.contains.all.keys('item');
-        expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
-        expect(res.locals.data.item).to.have.lengthOf(2);
-        done();
+    it('should fill data with items', () => {
+      return feed.fetchNbLeads({}).then((item) => {
+        expect(item).to.be.a('array').and.to.not.be.empty;
+        expect(item).to.have.lengthOf(2);
       });
     });
   });

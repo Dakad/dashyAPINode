@@ -37,32 +37,8 @@ class ChartMogulRouter extends BaseRouter {
    */
   constructor(feed) {
     super('/chartmogul', feed);
-  }
-
-
-  /**
-   *
-   * @override
-   *
-   * @memberOf ChartMogulRouter
-   */
-  handler() {
-    this.router_
-      .get('/leads', (ctx, next) => this.feed_.fetchNbLeads(ctx, next));
-
-    // this.router_.all('/mrr', this.feed_.fetchMrr);
-
-    // this.router_.all('/customers', this.feed_.fetchNbCustomers);
-
-    // this.router_.all('/mrr/churn', this.feed_.fetchNetMRRChurnRate);
-
-    // this.router_.all('/mrr/net', this.feed_.findMaxNetMRR);
-
-    // this.router_.all('/mrr/move', this.feed_.fetchNetMRRMovements);
-
-    // this.router_.all('/arr', this.feed_.fetchArr);
-
-    // this.router_.all('/arpa', this.feed_.fetchArpa);
+    this.router_.use(this.firstMiddleware);
+    this.router_.use(this.configByParams);
   }
 
 
@@ -98,6 +74,39 @@ class ChartMogulRouter extends BaseRouter {
    */
   firstMiddleware(ctx, next) {
     return next();
+  }
+
+
+  /**
+   *
+   * @override
+   *
+   * @memberOf ChartMogulRouter
+   */
+  handler() {
+    super.handler();
+    this.router_
+      .get('/leads', (ctx, next) => {
+        return this.feed_.fetchNbLeads(ctx.state.config)
+          .then((item) => {
+            ctx.state.data.item = item;
+            return next();
+          });
+      });
+
+    // this.router_.all('/mrr', this.feed_.fetchMrr);
+
+    // this.router_.all('/customers', this.feed_.fetchNbCustomers);
+
+    // this.router_.all('/mrr/churn', this.feed_.fetchNetMRRChurnRate);
+
+    // this.router_.all('/mrr/net', this.feed_.findMaxNetMRR);
+
+    // this.router_.all('/mrr/move', this.feed_.fetchNetMRRMovements);
+
+    // this.router_.all('/arr', this.feed_.fetchArr);
+
+    // this.router_.all('/arpa', this.feed_.fetchArpa);
   }
 
 

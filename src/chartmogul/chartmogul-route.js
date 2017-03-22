@@ -11,11 +11,11 @@
 // Dependencies
 
 // Packages
-
+const Promise = require('bluebird');
 // Built-in
 
 // Mine
-// const Util = require('../components/util');
+const Util = require('../components/util');
 const BaseRouter = require('../base/baserouter');
 
 // -------------------------------------------------------------------
@@ -60,7 +60,7 @@ class ChartMogulRouter extends BaseRouter {
       'end-date': Util.convertDate(lastMonth),
       'interval': 'month',
     };
-    return next();
+    return Promise.resolve(next());
   }
 
   /**
@@ -73,7 +73,7 @@ class ChartMogulRouter extends BaseRouter {
    * @memberOf ChartMogulFeed
    */
   firstMiddleware(ctx, next) {
-    return next();
+    return Promise.resolve(next());
   }
 
 

@@ -5,7 +5,7 @@ const Koa = require('koa');
 
 const app = new Koa();
 
-app.use(function responseTime(ctx, next) {
+app.use(function handleErr(ctx, next) {
 
   return next().catch((err) => {
     ctx.status = 200;

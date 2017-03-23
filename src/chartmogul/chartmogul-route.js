@@ -10,8 +10,8 @@
 // -------------------------------------------------------------------
 // Dependencies
 
-// Packages
-const Promise = require('bluebird');
+// npm
+
 // Built-in
 
 // Mine
@@ -37,21 +37,20 @@ class ChartMogulRouter extends BaseRouter {
    */
   constructor(feed) {
     super('/chartmogul', feed);
-    this.router_.use(this.firstMiddleware);
-    this.router_.use(this.configByParams);
   }
 
 
   /**
+   * The firstMiddleware where the request must go first.
    * Config the request for ChartMogul depending on theparams received.
    *
    * @param {any} ctx The context of the request and response.
-   * @param {Promise} next The next middleware to call.
-   * @return {Promise} the next middleware()
+   * @param {Function} next The next middleware to call.
+   * @return {Function} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  configByParams(ctx, next) {
+  async configByParams(ctx, next) {
     const today = new Date();
     const lastMonth = new Date();
     lastMonth.setMonth(today.getMonth() - 1);
@@ -60,20 +59,7 @@ class ChartMogulRouter extends BaseRouter {
       'end-date': Util.convertDate(lastMonth),
       'interval': 'month',
     };
-    return Promise.resolve(next());
-  }
-
-  /**
-   * The firstMiddleware where the request must go first.
-   *
-   * @param {any} ctx The context of the request and response.
-   * @param {Promise} next The next middleware to call;
-   * @return {Promise} the next middleware()
-   *
-   * @memberOf ChartMogulFeed
-   */
-  firstMiddleware(ctx, next) {
-    return Promise.resolve(next());
+    return next();
   }
 
 
@@ -85,28 +71,52 @@ class ChartMogulRouter extends BaseRouter {
    */
   handler() {
     super.handler();
-    this.router_
-      .get('/leads', (ctx, next) => {
-        return this.feed_.fetchNbLeads(ctx.state.config)
-          .then((item) => {
-            ctx.state.data.item = item;
-            return next();
-          });
-      });
 
-    // this.router_.all('/mrr', this.feed_.fetchMrr);
+    this.router_.use(this.configByParams);
 
-    // this.router_.all('/customers', this.feed_.fetchNbCustomers);
+    this.router_.post('/leads', async (ctx, next) => {
+      ctx.state.data.item = await this.feed_.fetchNbLeads(ctx.state.config);
+      return next();
+    });
 
-    // this.router_.all('/mrr/churn', this.feed_.fetchNetMRRChurnRate);
+    this.router_.post('/mrr', async ({state}, next) => {
+      state.data.item = await this.feed_.fetchMrr(state.config, next);
+      return next();
+    });
 
-    // this.router_.all('/mrr/net', this.feed_.findMaxNetMRR);
+    this.router_.post('/customers', async ({state}, next) => {
+      state.data.item = await this.feed_.fetchNbCustomers(state.config, next);
+      return next();
+    });
 
-    // this.router_.all('/mrr/move', this.feed_.fetchNetMRRMovements);
+    this.router_.post('/mrr/churn', async ({state}, next) => {
+      const item = await this.feed_.fetchNetMRRChurnRate(state.config, next);
+      state.data.item = item;
+      return next();
+    });
 
-    // this.router_.all('/arr', this.feed_.fetchArr);
+    this.router_.post('/mrr/net', async ({state}, next) => {
+      const item = await this.feed_.fetchNetMRRMovement(state.config, next);
+      state.data.item = item;
+      return next();
+    });
 
-    // this.router_.all('/arpa', this.feed_.fetchArpa);
+
+    this.router_.post('/mrr/move', async ({state}, next) => {
+      const item = await this.feed_.fetchMRRMovements(state.config, next);
+      state.data.item = item;
+      return next();
+    });
+
+    this.router_.post('/arr', async ({state}, next) => {
+      state.data.item = await this.feed_.fetchArr(state.config, next);
+      return next();
+    });
+
+    this.router_.post('/arpa', async ({state}, next) => {
+      state.data.item = await this.feed_.fetchArpa(state.config, next);
+      return next();
+    });
   }
 
 

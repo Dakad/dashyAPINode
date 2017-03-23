@@ -52,8 +52,11 @@ describe('Component : Util', () => {
 
   describe('convertDate', () => {
     it('shoud return 2015-12-17', () => {
-      const dte = new Date('2015-12-17');
+      const dte = '2015-12-17';
       expect(Util.convertDate(dte))
+        .to.be.a('string')
+        .and.to.be.equal('2015-12-17')
+      expect(Util.convertDate(new Date(dte)))
         .to.be.a('string')
         .and.to.be.equal('2015-12-17')
     });

@@ -40,13 +40,16 @@ module.exports = class Util {
   /**
    * Convert a date into ISO 8601 date format but only in format YYYY-MM-DD.
    *
-   * @param {Date} date - The normal date,
+   * @param {Date|string} date - The normal date,
    * @return {String} The formatted string corresponding to the date or if not
    *    provided use the current date.
    */
   static convertDate(date) {
     if (arguments.length === 0 || date === null) {
       date = new Date();
+    }
+    if(typeof date === 'string') {
+      date = new Date(date);
     }
     return date.toISOString().slice(0, 10);
   };

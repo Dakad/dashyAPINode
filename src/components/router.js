@@ -45,7 +45,7 @@ class Router {
    * Creates an instance of Router by providing the URL
    *    and the feeder middleware for this routeur.
    * @param {string} url The prefix URL to handle. By default, it's on /.
-   * @param {Feed} feeder The Feeder allocated to this router.
+   * @param {CharMogulFeed} feeder The Feeder allocated to this router.
    *
    * @memberOf Router
    */
@@ -90,13 +90,13 @@ class Router {
    *
    * ** Only 2 rules must be observed and respected. **
    *
-   *  1. The last middleware added, must be the error handler.
-   *  2. Before that, it's the middleware to send the response.
+   *  1. The first middleware added, must be the error handler.
+   *  2. After that, it's the middleware to send the response.
    *  3. Otherwise, the middlewares defined on parent class will take over.
    *
    * @protected
    * @abstract
-   * @throws {TypeError} Must implement this method in the child.
+   * @throws {TypeError} Must implement this method in the child class.
    * @memberof Router
    */
   handler() {
@@ -110,13 +110,14 @@ class Router {
    *
    * @protected
    * @abstract
-   * @throws {TypeError} Must implement this method in the child.
+   * @throws {TypeError} Must implement this method in the child class.
    * @memberof Router
    *
-   * @param {any} ctx
-   * @return {any} The data
+   * @param {Application.Context} ctx The context of the request and response.
+   * @param {Function} next The next middleware to call.
+   * @return {Function} the next middleware()
    */
-  handleResponse(ctx) {
+  async handleResponse(ctx, next) {
     throw new TypeError('You have to implement the method !');
   }
 
@@ -129,9 +130,8 @@ class Router {
    * @memberof Router
    *
    * @param {Error} err
-   * @param {any} ctx
-   * @param {any} next
-   * @return {any} The error message
+   * @param {Application.Context} ctx The context of the request and response.
+   * @param {Function} next The next middleware to call.
    */
   handleErr(err, ctx, next) {
     throw new TypeError('You have to implement the method !');

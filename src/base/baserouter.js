@@ -40,10 +40,6 @@ const Singleton = {
 // Methods
 
 
-// -------------------------------------------------------------------
-// Exports
-
-
 /**
  * Router for the root path /.
  *
@@ -83,10 +79,14 @@ class BaseRouter extends Router {
   /**
    * @override
    */
-  handleResponse(ctx, next) {
-    return next().then(() => {
-      ctx.body = ctx.state.data;
-    });
+  async handleResponse(ctx, next) {
+    ctx.state.data = {
+      api: Config.geckoBoard.apiKey,
+    };
+    // Call the next middleware and wait for it;
+    await next();
+    // The response is in the state;
+    ctx.body = ctx.state.data;
   }
 
 
@@ -123,12 +123,8 @@ class BaseRouter extends Router {
    * @return {Function} the next middleware()
    */
   static checkMiddleware(ctx, next) {
-    Logger.warn('First Middleware : Missing some check before continue');
+    // TODO First Middleware : Missing some check before continue');
     ctx.state.config = {};
-    ctx.state.data = {
-      // ApiKey for GeckoBoard
-      api: Config.geckoBoard.apiKey,
-    };
     return next();
   };
 

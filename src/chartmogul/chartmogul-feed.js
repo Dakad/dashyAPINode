@@ -337,7 +337,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNetMRRMovements(config) {
+  fetchNetMRRMovement(config) {
     const query = {
       'start-date': Util.convertDate(this.bestNetMRRMove_.startDate),
       'end-date': Util.convertDate(),

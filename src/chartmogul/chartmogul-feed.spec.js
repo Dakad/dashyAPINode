@@ -303,7 +303,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should call requestChartMogulFor()', () => {
-      return mogulFeed.fetchNetMRRMovements({}).then(() => {
+      return mogulFeed.fetchNetMRRMovement({}).then(() => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
       });
@@ -311,7 +311,7 @@ describe('ChartMogul : Feeder', () => {
 
     it('should call findMaxNetMRR() and calcNetMRRMovement()', () => {
       const mrrEntries = Config.request.chartMogul.mrr.entries;
-      return mogulFeed.fetchNetMRRMovements({}).then(() => {
+      return mogulFeed.fetchNetMRRMovement({}).then(() => {
         expect(spyFindMaxNetMRR.called).to.be.true;
         expect(spyFindMaxNetMRR.calledWith(mrrEntries)).to.be.true;
         expect(spyCalcNetMRRMovement.called).to.be.true;
@@ -320,7 +320,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', () => {
-      return mogulFeed.fetchNetMRRMovements({}).then((item) => {
+      return mogulFeed.fetchNetMRRMovement({}).then((item) => {
         expect(item).to.be.a('array').and.to.not.be.empty;
       });
     });

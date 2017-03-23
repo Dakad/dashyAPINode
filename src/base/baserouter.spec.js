@@ -10,7 +10,7 @@
 // Dependencies
 
 // Package npm
-const expect = require('chai').expect;
+const {expect} = require('chai');
 const httpMocks = require('node-mocks-http');
 const Supertest = require('supertest');
 

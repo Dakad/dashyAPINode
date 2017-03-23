@@ -6,7 +6,7 @@
 // -------------------------------------------------------------------
 // Dependencies
 // Packages
-const expect = require('chai').expect;
+const {expect} = require('chai');
 const sinon = require('sinon');
 
 

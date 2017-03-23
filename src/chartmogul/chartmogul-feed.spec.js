@@ -26,7 +26,7 @@ const mockReqConf = require('./superagent-mock-config');
 // Properties
 const feed = new ChartMogulFeed();
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const {expect} = chai;
 
 let spyFeedReqChartMogul;
 let superagentMock = mockRequest(request, mockReqConf,

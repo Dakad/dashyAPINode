@@ -8,7 +8,7 @@
 // -------------------------------------------------------------------
 // Dependencies
 // Packages
-const expect = require('chai').expect;
+const {expect} = require('chai');
 // const sinon = require('sinon');
 const Supertest = require('supertest');
 // const httpMocks = require('node-mocks-http');
@@ -56,7 +56,7 @@ describe('ChartMogul : Router', () => {
     it('should return a object', (done) => {
       router.configByParams(ctx, (err) => {
         if (err) return done(err);
-        expect(res.locals).to.have.property('config');
+        expect().to.have.property('config');
         done();
       });
     });

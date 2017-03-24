@@ -169,12 +169,15 @@ class ChartMogulFeed extends Feeder {
   fetchAndFilterCustomers(startingPage, onlyLead = false) {
     return this.requestChartMogulFor('/customers', {
       page: startingPage,
+      status: (onlyLead) ? 'Lead' : 'Active',
     }).then(({entries, has_more: hasMore}) => {
       const filtered = this.filterCustomers(entries, onlyLead);
       if (hasMore) {
         return this.fetchAndFilterCustomers(startingPage + 1, onlyLead)
           .then((data) => data.concat(filtered));
       }
+      this.leads_.startPage = startingPage;
+      console.log(startingPage);
       return filtered;
     });
   }
@@ -197,6 +200,7 @@ class ChartMogulFeed extends Feeder {
     ];
 
     let leadDate;
+    console.log(this.leads_.startPage);
 
     return this.fetchAndFilterCustomers(this.leads_.startPage, true)
       .then((leads) => {
@@ -224,20 +228,18 @@ class ChartMogulFeed extends Feeder {
    */
   fetchMrr(config) {
     return this.requestChartMogulFor('/metrics/mrr', config)
-      .then(({summary}) => {
-        return [
+      .then(({entries: [previous, current]}) => [
           // The mrr for today
           {
-            'value': summary.current / 100,
+            'value': current.mrr / 100,
             'prefix': '€',
           },
 
-          // Take the last one because it'll be for the end of month
+          // Take the first one because it'll be for the end of month
           {
-            'value': summary.previous / 100,
+            'value': previous.mrr / 100,
           },
-        ];
-      })
+        ]);
       ;
   }
 
@@ -250,11 +252,12 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNbCustomers(config) {
-    return this.requestChartMogulFor('/metrics/customer-count')
-      .then(({summary}) => {
+    return this.requestChartMogulFor('/metrics/customer-count', config)
+      .then(({entries}) => {
+        const [previous, current] = entries;
         return [
-          {value: summary.current},
-          {value: summary.previous},
+          {value: current['customers']},
+          {value: previous['customers']},
         ];
       })
       ;
@@ -270,13 +273,11 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNetMRRChurnRate(config) {
-    return this.requestChartMogulFor('/metrics/mrr-churn-rate')
-      .then(({summary}) => {
-        return [
-          {value: summary.current},
-          {value: summary.previous},
-        ];
-      });
+    return this.requestChartMogulFor('/metrics/mrr-churn-rate', config)
+      .then(({entries: [previous, current]}) => [
+          {value: current['mrr-churn-rate']},
+          {value: previous['mrr-churn-rate']},
+        ]);
   }
 
 
@@ -308,19 +309,20 @@ class ChartMogulFeed extends Feeder {
   /**
    * Calc the NET MRR and return only the max
    * @private
-   * @param {Array<Object>} entries - All entries.
+   * @param {Array<Object>} mrrs - MRR Values.
    * @return {number} The MAX NET
    * @memberOf ChartMogulFeed
    */
-  findMaxNetMRR(entries) {
-    if (!Array.isArray(entries)) {
-      throw new TypeError('Invalid arguements for entries - Must be an array');
+  findMaxNetMRR(mrrs) {
+    if (!Array.isArray(mrrs)) {
+      throw new TypeError('Invalid arguements for mrrs - Must be an array');
     }
-    entries.forEach((entry) => {
-      const netMrr = this.calcNetMRRMovement(entry);
+
+    mrrs.forEach((mrr) => {
+      const netMrr = this.calcNetMRRMovement(mrr);
       if (netMrr > this.bestNetMRRMove_.val) {
         Object.assign(this.bestNetMRRMove_, {
-          'startDate': entry.date,
+          'startDate': mrr.date,
           'val': netMrr,
         });
       }
@@ -341,10 +343,11 @@ class ChartMogulFeed extends Feeder {
     const query = {
       'start-date': Util.convertDate(this.bestNetMRRMove_.startDate),
       'end-date': Util.convertDate(),
-      'interval': 'month',
+      'interval': config['interval'],
     };
     return this.requestChartMogulFor('/metrics/mrr', query)
-      .then(({summary, entries}) => {
+      .then(({entries}) => {
+        // console.log(entries[entries.length - 1]);
         // Never made the fetch for the max.
         if (!this.bestNetMRRMove_.lastFetch || this.bestNetMRRMove_.val === 0) {
           this.bestNetMRRMove_.lastFetch = new Date().getTime();
@@ -354,13 +357,12 @@ class ChartMogulFeed extends Feeder {
         // TODO Refactor Only after a specific amount of time
         // {3 days, 1 week , only Monday}
 
-        const current = Util.toMoneyFormat(summary.current, '', ',');
-        const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');
+        const netMrr = this.calcNetMRRMovement(entries.pop());
+        const current = Util.toMoneyFormat(netMrr, ' ', ',');
+        const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, ' ', ',');
         return [{
-          'text': `
-            <p style="font-size:1.7em">${current}</p>
-            <h1 style="font-size:1.7em;color:#1c99e3">${best}</h1>
-            `,
+          'text': `<p style="font-size:1.6em">${current}</p>` +
+          `<h1 style="font-size:1.6em;color:#1c99e3">${best}</h1>`,
         }];
       })
       ;
@@ -375,7 +377,7 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchMRRMovements(config) {
-    return this.requestChartMogulFor('/metrics/mrr')
+    return this.requestChartMogulFor('/metrics/mrr', config)
       .then((data) => {
         const otherMrr = data.entries.pop();
 
@@ -407,11 +409,11 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchArr(config) {
-    return this.requestChartMogulFor('/metrics/arr')
-      .then(({summary}) => {
+    return this.requestChartMogulFor('/metrics/arr', config)
+      .then(({entries: [previous, current]}) => {
         return [
-          {value: summary.current / 100, prefix: '€'},
-          {value: summary.previous / 100},
+          {value: current.arr / 100, prefix: '€'},
+          {value: previous.arr / 100},
         ];
       });
   }
@@ -425,11 +427,11 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchArpa(config) {
-    return this.requestChartMogulFor('/metrics/arpa')
-      .then(({summary}) => {
+    return this.requestChartMogulFor('/metrics/arpa', config)
+      .then(({entries: [previous, current]}) => {
         return [
-          {value: summary.current / 100, prefix: '€'},
-          {value: summary.previous / 100},
+          {value: current.arpa / 100, prefix: '€'},
+          {value: previous.arpa / 100},
         ];
       });
   }

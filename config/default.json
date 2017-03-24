@@ -2,7 +2,7 @@
   "api": {
     "port": 8080,
     "token": "TOKEN_FOR_API",
-    "dirLogs": "./logs/",
+    "dirLogs": "./logs",
     "msg": {
       "err": {
         "check": {
@@ -44,7 +44,7 @@
       "startDate" : "2014-09-01"
     },
     "leads":{
-      "startPage" : 12
+      "startPage" : 8
     }
   },
   "pipeDrive": {

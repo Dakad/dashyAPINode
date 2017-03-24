@@ -14,7 +14,7 @@ TIMEOUT		= 5000
 
 ESLINT		= $(DIR_BIN)/eslint --cache
 JSDOC		= $(DIR_BIN)/jsdoc
-MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) -R $(REPORTER) 
+MOCHA		= $(DIR_BIN)/mocha --colors --timeout $(TIMEOUT) -R $(REPORTER) 
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
 NYC			= $(DIR_BIN)/nyc --cache
@@ -32,7 +32,6 @@ lint:
 	@echo "#####  ESLint : DONE";
 
 
-
 test: lint
 	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
 	@NODE_ENV=test $(MOCHA) $(ALL_TESTS);
@@ -48,12 +47,13 @@ test-cover: lint
 
 
 test-docs:
-	export NODE_ENV="test";
-	@test -d $(DIR_DOC) || mkdir $(DIR_DOC)
-	@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
+	export NODE_ENV=test;
+	#@test -d $(DIR_DOC) || mkdir $(DIR_DOC);
+	#@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
 	@NODE_ENV=test $(MOCHA) --reporter mochawesome $(ALL_TEST);
-	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
-			> $(DIR_DOC)/test/index.md
+	#@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
+			> $(DIR_DOC)/test/index.md;
+	@echo "#####  Testing Docs : DONE";
 
 bench:
 	@$(MAKE) -C benchmarks
@@ -65,8 +65,8 @@ docs: clean test-cover
 		-c .jsdocrc.json \
 		-d $(DIR_DOC)/doc \
 		-r \
-		-t $(DOC_TEMPL) \
 		-R README.md \
+		-t $(DOC_TEMPL) \
 		--verbose \
 		$(DIR_SRC) ;
 	@open $(DIR_DOC)/doc/index.html
@@ -84,10 +84,10 @@ setup:
 	@node --harmony setup.js
 
 
-build: test test-docs docs
-	@echo "##### Deleting the logs folder .... ";
-	@rm -rf $(DIR_LOG); \
-	@NODE_ENV=prod node --harmony $(DIR_SRC)/app.js \
+build: test test-docs
+	@echo "##### Clear the logs folder .... ";
+	@rm -rf $(DIR_LOG)/*;
+	@NODE_ENV=production node --harmony $(DIR_SRC)/app.js;
 
 clean:
 	@echo "##### Clear logs folder";

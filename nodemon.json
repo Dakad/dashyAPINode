@@ -3,7 +3,6 @@
   "ignore": [
     "./**/*.spec"
   ],
-  "verbose": true,
   "execMap": {
     "js": "node --harmony"
   },

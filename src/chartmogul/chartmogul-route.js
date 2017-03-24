@@ -55,8 +55,8 @@ class ChartMogulRouter extends BaseRouter {
     const lastMonth = new Date();
     lastMonth.setMonth(today.getMonth() - 1);
     ctx.state.config = {
-      'start-date': Util.convertDate(today),
-      'end-date': Util.convertDate(lastMonth),
+      'start-date': Util.convertDate(lastMonth),
+      'end-date': Util.convertDate(today),
       'interval': 'month',
     };
     return next();

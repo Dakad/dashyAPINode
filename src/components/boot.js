@@ -33,25 +33,23 @@ const Server = require('./server');
 
 const BaseRouter = require('../base/baserouter');
 
-const PipeDriveRouter = require('../pipedrive/pipedrive-route');
-const PipeDriveFeed = require('../pipedrive/pipedrive-feed');
+const ChartMogulRouter = require('../chartmogul/chartmogul-route');
+const ChartMogulFeed = require('../chartmogul/chartmogul-feed');
+
 // -------------------------------------------------------------------
 // Properties
 
 
 /**
  * Routes Containers
- * @private {Array<Router>}
+ * @type {Array<Router>}
+ * @private
  */
 const routes_ = [
   BaseRouter.getInstance(),
-  new PipeDriveRouter(new PipeDriveFeed()),
+  new ChartMogulRouter(new ChartMogulFeed()),
 
 ];
-
-
-// -------------------------------------------------------------------
-// Exports
 
 /**
  * Boot for the app.
@@ -65,7 +63,7 @@ const routes_ = [
  * @private
  * @see components/boot
  */
-module.exports = class Boot {
+class Boot {
 
 
   /**
@@ -85,25 +83,24 @@ module.exports = class Boot {
           process.abort(); // Without the setup, musn't use the app.
           reject(err);
         }
+        return true;
       };
 
-      Logger.info(`[BOOT]\t App is running`);
-
+      Logger.info('[BOOT]\t App is running');
       Promise.promisify(fs.stat)(Config.api.dirLogs).then(
         (stats) => checkIfSetup(null, stats.isDirectory()),
         (err) => checkIfSetup(err)
       ).then(() => {
-        Logger.info(`[BOOT]\t Check logs folder: OK`);
-
-        Logger.warn('Must provided all routes handler for the Server');
+        Logger.info('[BOOT]\t Check logs folder: OK');
         return server.init(routes_.map((rt) => rt.init()));
     }).then(function(app) {
-      Logger.info(`[BOOT]\t Init server : OK`);
-      Logger.info(`[BOOT]\t Starting server .... `);
+      Logger.info('[BOOT]\t Init server : OK');
+      Logger.info('[BOOT]\t Starting server .... ');
       return server.start();
-    }).then((address) => {
-      Logger.info(`[SERVER]\t Server Ready & Listening on http://${address.address || 'localhost'}:${address.port}`);
-      Logger.info(`[BOOT]\t App ready`);
+    }).then(({address='localhost', port}) => {
+      Logger.info('[SERVER]\t Server Ready');
+      Logger.info(`[SERVER]\t Server Listening on http://${address}:${port}`);
+      Logger.info('[BOOT]\t App ready');
       resolve();
     }).catch(function(err) {
       if (err.code === 'EADDRINUSE') {
@@ -117,3 +114,9 @@ module.exports = class Boot {
 }
 
 };
+
+
+// -------------------------------------------------------------------
+// Exports
+
+module.exports = Boot;

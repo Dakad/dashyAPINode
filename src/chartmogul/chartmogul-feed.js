@@ -227,11 +227,9 @@ class ChartMogulFeed extends Feeder {
         let leadDateInMs;
 
         leads.forEach((lead) => {
-          // The lead_created_at is the date in ISO 8601
-          // Cut out the time part. just keep the date
-          leadDate = lead['lead_created_at'];
           // console.log('Lead : '+leadDate);
-          leadDateInMs = new Date(leadDate).getTime();
+          leadDate = Util.convertDate(lead['lead_created_at']);
+          leadDateInMs = new Date(lead['lead_created_at']).getTime();
 
 
           if (leadDate === Util.convertDate(today)) {

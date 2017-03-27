@@ -36,9 +36,6 @@ const mrrsEntries = [
   {'entrie': 'mrr-reactivation', 'label': 'Reactivation'},
 ];
 
-/*
-const ;
-*/
 
 /**
  * Feeder for ChartMogul route
@@ -177,7 +174,6 @@ class ChartMogulFeed extends Feeder {
           .then((data) => data.concat(filtered));
       }
       this.leads_.startPage = startingPage;
-      console.log(startingPage);
       return filtered;
     });
   }

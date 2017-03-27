@@ -1,16 +1,17 @@
 {
-
-    "editor.fontSize": 14,
-    "workbench.activityBar.visible": true,
-    "editor.formatOnSave": false,
-    "editor.tabCompletion": true,
-    "eslint.enable": true,
-    "eslint.workingDirectories": [
-        "./src", "./test"
-    ],
-    "eslint.autoFixOnSave": true,
-    "nodeTdd.buildOnCreate": true,
-    "nodeTdd.showCoverage": true,
-    "nodeTdd.buildOnActivation": true,
-    "vsicons.presets.angular": false
-  }
+  "editor.minimap.enabled": true,
+  "editor.fontSize": 14,
+  "workbench.activityBar.visible": true,
+  "editor.formatOnSave": false,
+  "editor.tabCompletion": true,
+  "eslint.enable": true,
+  "eslint.workingDirectories": [
+    "./src",
+    "./test"
+  ],
+  "eslint.autoFixOnSave": true,
+  "nodeTdd.buildOnCreate": true,
+  "nodeTdd.showCoverage": true,
+  "nodeTdd.buildOnActivation": true,
+  "vsicons.presets.angular": false
+}

@@ -71,9 +71,9 @@ describe('ChartMogul : Router', () => {
       return router.configByParams(ctx, () => {
         expect(ctx.state.config)
           .to.have.any.keys('start-date', 'end-date', 'interval');
-        expect(ctx.state.config['start-date'])
-          .to.be.eql(Util.convertDate(currentDate));
         expect(ctx.state.config['end-date'])
+          .to.be.eql(Util.convertDate(currentDate));
+        expect(ctx.state.config['start-date'])
           .to.be.equal(Util.convertDate(lastMonth));
         expect(ctx.state.config['interval']).to.be.eql('month');
         done();
@@ -184,7 +184,6 @@ describe('ChartMogul : Router', () => {
         .post('/chartmogul/mrr/move')
         .expect(200)
         .expect(({body}) => {
-          console.log(body);
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('api', 'item');
           expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');

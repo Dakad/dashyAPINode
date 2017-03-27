@@ -14,7 +14,7 @@ TIMEOUT		= 5000
 
 ESLINT		= $(DIR_BIN)/eslint --cache
 JSDOC		= $(DIR_BIN)/jsdoc
-MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT)
+MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) -R $(REPORTER) 
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
 NYC			= $(DIR_BIN)/nyc --cache
@@ -28,30 +28,22 @@ dev:
 
 lint:
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;
-	@$(ESLINT) --color $(DIR_SRC); 
+	@$(ESLINT) --color $(DIR_SRC) --fix; 
 	@echo "#####  ESLint : DONE";
 
-
-lint-fix:
-	@echo "#####  ESLint Fixing $(DIR_SRC)" ;
-	@$(ESLINT) --fix $(DIR_SRC);
-	@echo "#####  Fixing : DONE";
 
 
 test: lint
 	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
-	@NODE_ENV=test $(MOCHA) -R $(REPORTER) $(ALL_TESTS);
+	@NODE_ENV=test $(MOCHA) $(ALL_TESTS);
 	@echo "#####  Mocha Testing : DONE";
 
-
 test-watch:
-	@NODE_ENV=test $(MOCHA) --watch \
-		--reporter $(REPORTER) \
-		$(ALL_TESTS) \
+	@NODE_ENV=test $(MOCHA) --watch $(ALL_TESTS);
 
 
 test-cover: lint
-	@NODE_ENV=test $(NYC) report --reporter=lcov $(_MOCHA) -R $(REPORTER) $(ALL_TESTS)
+	@NODE_ENV=test $(NYC) report --reporter=lcov $(_MOCHA) $(ALL_TESTS)
 
 
 test-docs:
@@ -103,4 +95,4 @@ clean:
 
 all: test 
 
-.PHONY: docs setup test
+.PHONY: docs setup test build dev

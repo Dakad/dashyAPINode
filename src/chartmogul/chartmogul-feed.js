@@ -113,6 +113,7 @@ class ChartMogulFeed extends Feeder {
 
 
   /**
+<<<<<<< HEAD
    * Config the request for ChartMogul depending on theparams received.
    *
    * @param {any} req - The request
@@ -148,6 +149,8 @@ class ChartMogulFeed extends Feeder {
 
 
   /**
+=======
+>>>>>>> remotes/origin/koa
    * Perfom a filtering on the customers[].
    *
    * @private
@@ -218,6 +221,7 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware inf chargin of fetch the leads.
    *
+<<<<<<< HEAD
    * @param {any} req
    * @param {any} res
    * @param {any} next
@@ -228,6 +232,16 @@ class ChartMogulFeed extends Feeder {
     const today = new Date().toLocaleDateString();
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
+=======
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNbLeads(config) {
+    const today = config['start-date'];
+    const lastMonth = config['end-date'];
+>>>>>>> remotes/origin/koa
     const item = [
       {'value': 0},
       {'value': 0},
@@ -235,6 +249,7 @@ class ChartMogulFeed extends Feeder {
 
     let leadDate;
 
+<<<<<<< HEAD
     this.fetchAndFilterCustomers(this.leads_.startPage, true)
       .then((leads) => {
         leads.forEach((lead) => {
@@ -243,19 +258,34 @@ class ChartMogulFeed extends Feeder {
             item[0].value += 1;
           }
 
+=======
+    return this.fetchAndFilterCustomers(this.leads_.startPage, true)
+      .then((leads) => {
+        leads.forEach((lead) => {
+          leadDate = lead['lead_created_at'].slice(0, 10);
+          if (leadDate === today) {
+            item[0].value += 1;
+          }
+>>>>>>> remotes/origin/koa
           if (leadDate === lastMonth) {
             item[1].value += 1;
           }
         });
 
+<<<<<<< HEAD
         res.locals.data.item = item;
         next();
       }).catch(next);
+=======
+        return item;
+      });
+>>>>>>> remotes/origin/koa
   }
 
   /**
    * The middleware in charge of fetching the MRR.
    *
+<<<<<<< HEAD
    * @param {any} req
    * @param {any} res
    * @param {any} next
@@ -281,11 +311,36 @@ class ChartMogulFeed extends Feeder {
         next();
       })
       .catch((err) => next(err));
+=======
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchMrr(config) {
+    return this.requestChartMogulFor('/metrics/mrr', config)
+      .then(({summary}) => {
+        return [
+          // The mrr for today
+          {
+            'value': summary.current / 100,
+            'prefix': '€',
+          },
+
+          // Take the last one because it'll be for the end of month
+          {
+            'value': summary.previous / 100,
+          },
+        ];
+      })
+      ;
+>>>>>>> remotes/origin/koa
   }
 
   /**
    * The middleware in charge of fetching the customers count.
    *
+<<<<<<< HEAD
    * @param {any} req
    * @param {any} res
    * @param {any} next
@@ -307,12 +362,29 @@ class ChartMogulFeed extends Feeder {
         next();
       })
       .catch((err) => next(err));
+=======
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNbCustomers(config) {
+    return this.requestChartMogulFor('/metrics/customer-count')
+      .then(({summary}) => {
+        return [
+          {value: summary.current},
+          {value: summary.previous},
+        ];
+      })
+      ;
+>>>>>>> remotes/origin/koa
   }
 
 
   /**
    * The middleware in charge of fetching the NET MRR Churn Rate.
    *
+<<<<<<< HEAD
    * @param {any} req
    * @param {any} res
    * @param {any} next
@@ -334,6 +406,21 @@ class ChartMogulFeed extends Feeder {
         next();
       })
       .catch(next);
+=======
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNetMRRChurnRate(config) {
+    return this.requestChartMogulFor('/metrics/mrr-churn-rate')
+      .then(({summary}) => {
+        return [
+          {value: summary.current},
+          {value: summary.previous},
+        ];
+      });
+>>>>>>> remotes/origin/koa
   }
 
 
@@ -389,6 +476,7 @@ class ChartMogulFeed extends Feeder {
    * THe middleware inf charge of fetching and calc the NET MRR Movements
    * based on others MRR Movements.
    *
+<<<<<<< HEAD
    * @param {any} req
    * @param {any} res
    * @param {any} next
@@ -396,12 +484,24 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNetMRRMovements(req, res, next) {
+=======
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNetMRRMovement(config) {
+>>>>>>> remotes/origin/koa
     const query = {
       'start-date': Util.convertDate(this.bestNetMRRMove_.startDate),
       'end-date': Util.convertDate(),
       'interval': 'month',
     };
+<<<<<<< HEAD
     this.reqCharMogul = this.requestChartMogulFor('/metrics/mrr', query)
+=======
+    return this.requestChartMogulFor('/metrics/mrr', query)
+>>>>>>> remotes/origin/koa
       .then(({summary, entries}) => {
         // Never made the fetch for the max.
         if (!this.bestNetMRRMove_.lastFetch || this.bestNetMRRMove_.val === 0) {
@@ -409,17 +509,26 @@ class ChartMogulFeed extends Feeder {
           this.findMaxNetMRR(entries);
         }
 
+<<<<<<< HEAD
         // TODO Only after a specific amount of time
+=======
+        // TODO Refactor Only after a specific amount of time
+>>>>>>> remotes/origin/koa
         // {3 days, 1 week , only Monday}
 
         const current = Util.toMoneyFormat(summary.current, '', ',');
         const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');
+<<<<<<< HEAD
         res.locals.data.item = [{
+=======
+        return [{
+>>>>>>> remotes/origin/koa
           'text': `
             <p style="font-size:1.7em">${current}</p>
             <h1 style="font-size:1.7em;color:#1c99e3">${best}</h1>
             `,
         }];
+<<<<<<< HEAD
         next();
       })
       .catch(next);
@@ -436,6 +545,22 @@ class ChartMogulFeed extends Feeder {
    */
   fetchMRRMovements(req, res, next) {
     this.requestChartMogulFor('/metrics/mrr')
+=======
+      })
+      ;
+  }
+
+  /**
+   * THe middleware in charge of fetching the other MRR Movements.
+   *
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchMRRMovements(config) {
+    return this.requestChartMogulFor('/metrics/mrr')
+>>>>>>> remotes/origin/koa
       .then((data) => {
         const otherMrr = data.entries.pop();
 
@@ -446,7 +571,11 @@ class ChartMogulFeed extends Feeder {
           };
         });
       */
+<<<<<<< HEAD
         Object.assign(res.locals.data, {
+=======
+        return Object.assign({}, {
+>>>>>>> remotes/origin/koa
           'format': 'currency',
           'unit': 'EUR',
           'items': mrrsEntries.map((item) => ({
@@ -454,16 +583,21 @@ class ChartMogulFeed extends Feeder {
             'value': otherMrr[item.entrie] / 100,
           })),
         });
+<<<<<<< HEAD
 
         next();
       })
       .catch(next);
+=======
+      });
+>>>>>>> remotes/origin/koa
   }
 
 
   /**
    * The middleware in charge of fetching the ARR.
    *
+<<<<<<< HEAD
    * @param {any} req
    * @param {any} res
    * @param {any} next
@@ -485,11 +619,27 @@ class ChartMogulFeed extends Feeder {
         next();
       })
       .catch(next);
+=======
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchArr(config) {
+    return this.requestChartMogulFor('/metrics/arr')
+      .then(({summary}) => {
+        return [
+          {value: summary.current / 100, prefix: '€'},
+          {value: summary.previous / 100},
+        ];
+      });
+>>>>>>> remotes/origin/koa
   }
 
   /**
    * The middleware in charge of fetching the ARPA.
    *
+<<<<<<< HEAD
    * @param {any} req
    * @param {any} res
    * @param {any} next
@@ -511,6 +661,21 @@ class ChartMogulFeed extends Feeder {
         next();
       })
       .catch(next);
+=======
+   * @param {any} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchArpa(config) {
+    return this.requestChartMogulFor('/metrics/arpa')
+      .then(({summary}) => {
+        return [
+          {value: summary.current / 100, prefix: '€'},
+          {value: summary.previous / 100},
+        ];
+      });
+>>>>>>> remotes/origin/koa
   }
 
 

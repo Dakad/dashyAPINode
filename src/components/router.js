@@ -1,5 +1,4 @@
 'use strict';
-/* eslint-disable new-cap */
 
 /**
  * @overview Router Handler
@@ -17,7 +16,12 @@
 // Dependencies
 
 // Package npm
+<<<<<<< HEAD
 const express = require('express');
+=======
+const KoaRouter = require('koa-trie-router');
+const mount = require('koa-mount');
+>>>>>>> remotes/origin/koa
 
 // Built-in
 
@@ -31,9 +35,8 @@ const express = require('express');
 // -------------------------------------------------------------------
 // Methods
 
-
 /**
- * Used to create subRouter to handle a specific root path.
+ * Use to create subRouter to handle a specific root path.
  *
  * is ABSTRACT, cannot be instanciated directly.
  * Only inherited (extends);
@@ -43,19 +46,20 @@ const express = require('express');
 class Router {
 
   /**
-   * Creates an instance of Router.
-   * @param {string|RegExp|Array<string>|Array<RegExp>} url The URL to handle
-   * @param {Feed} feeder The Feeder allocated to this router.
+   * Creates an instance of Router by providing the URL
+   *    and the feeder middleware for this routeur.
+   * @param {string} url The prefix URL to handle. By default, it's on /.
+   * @param {CharMogulFeed} feeder The Feeder allocated to this router.
    *
    * @memberOf Router
    */
-  constructor(url, feeder) {
+  constructor(url = '/', feeder) {
     this.url_ = url;
     this.feed_ = feeder;
     /**
-     * @private Express Router. The only to be exposed to the server component.
+     * @private Koa Router. The only to be exposed to the server component.
      */
-    this.router_ = express.Router();
+    this.router_ = new KoaRouter();
   }
 
   /**
@@ -67,37 +71,56 @@ class Router {
     return this.url_;
   }
 
+
+  /**
+   * Collect all route assigned to this router.
+   *
+   * @return {KoaRouter} the router;
+   */
+  init() {
+    this.router_.use((ctx, next) => {
+      return next()
+        .catch((err) => this.handleErr(err, ctx, next));
+    });
+
+    this.router_.use(this.handleResponse);
+    this.handler();
+    return mount(this.url_, this.router_.middleware());
+  }
+
+
   /**
    * Here goes the jointure of the middle into the router.
    *
    * ** Only 2 rules must be observed and respected. **
    *
-   *  1. The last middleware added, must be the error handler.
-   *  2. Before that, it's the middleware to send the response.
+   *  1. The first middleware added, must be the error handler.
+   *  2. After that, it's the middleware to send the response.
    *  3. Otherwise, the middlewares defined on parent class will take over.
    *
    * @protected
    * @abstract
-   * @throws {TypeError} Must implement this method in the child.
+   * @throws {TypeError} Must implement this method in the child class.
    * @memberof Router
    */
   handler() {
     throw new TypeError('You have to implement the method !');
   }
 
+
   /**
    * The middleware in charge of sending the response.
    *
    * @protected
    * @abstract
-   * @throws {TypeError} Must implement this method in the child.
+   * @throws {TypeError} Must implement this method in the child class.
    * @memberof Router
    *
-   * @param {any} req - The incomming request
-   * @param {any} res - The response containing all data in res.locals
-   * @return {any} The data
+   * @param {Application.Context} ctx The context of the request and response.
+   * @param {Function} next The next middleware to call.
+   * @return {Function} the next middleware()
    */
-  sendResponse(req, res) {
+  async handleResponse(ctx, next) {
     throw new TypeError('You have to implement the method !');
   }
 
@@ -110,34 +133,13 @@ class Router {
    * @memberof Router
    *
    * @param {Error} err
-   * @param {any} req
-   * @param {any} res
-   * @param {any} next
-   * @return {string|Object} The error message
+   * @param {Application.Context} ctx The context of the request and response.
+   * @param {Function} next The next middleware to call.
    */
-  sendErr(err, req, res, next) {
+  handleErr(err, ctx, next) {
     throw new TypeError('You have to implement the method !');
   }
 
-
-  /**
-   * Collect all route assigned to this router.
-   *
-   * @return {express.Router} the router;
-   */
-  init() {
-    this.handler();
-
-    // -------------------------------------------------------------------
-    // Must be the last middleware to send a response.
-    this.router_.use(this.sendResponse);
-
-    // -------------------------------------------------------------------
-    // Must be the last to handle the error.
-    this.router_.use(this.sendErr);
-
-    return {'url': this.getURL(), 'routes': this.router_};
-  }
 
 };
 

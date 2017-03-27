@@ -32,11 +32,16 @@ const Logger = require('./logger');
 const Server = require('./server');
 
 const BaseRouter = require('../base/baserouter');
+<<<<<<< HEAD
 
 const PipeDriveRouter = require('../pipedrive/pipedrive-route');
 const PipeDriveFeed = require('../pipedrive/pipedrive-feed');
 
+=======
+>>>>>>> remotes/origin/koa
 
+const PipeDriveRouter = require('../pipedrive/pipedrive-route');
+const PipeDriveFeed = require('../pipedrive/pipedrive-feed');
 // -------------------------------------------------------------------
 // Properties
 
@@ -68,6 +73,10 @@ const routes_ = [
  * @see components/boot
  */
 module.exports = class Boot {
+<<<<<<< HEAD
+=======
+
+>>>>>>> remotes/origin/koa
 
   /**
    * Init the boot action.
@@ -94,27 +103,26 @@ module.exports = class Boot {
         (stats) => checkIfSetup(null, stats.isDirectory()),
         (err) => checkIfSetup(err)
       ).then(() => {
-        Logger.info(`[BOOT]\t Check Setup : OK`);
-
+        Logger.info(`[BOOT]\t Check logs folder: OK`);
         Logger.warn('Must provided all routes handler for the Server');
         return server.init(routes_.map((rt) => rt.init()));
-      }).then(function(app) {
-        Logger.info(`[BOOT]\t Init server : OK`);
-        Logger.info(`[BOOT]\t Starting server .... `);
-        return server.start();
-      }).then((address) => {
-        Logger.info(`[SERVER]\t Server Ready & Listening on http://${address.address || 'localhost'}:${address.port}`);
-        Logger.info(`[BOOT]\t App ready`);
-        resolve();
-      }).catch(function(err) {
-        if (err.code === 'EADDRINUSE') {
-          Logger.error('[SERVER]\t Address already in use');
-        }
-        Logger.error(err);
-        reject(err);
-        process.abort();
-      });
+    }).then(function(app) {
+      Logger.info(`[BOOT]\t Init server : OK`);
+      Logger.info(`[BOOT]\t Starting server .... `);
+      return server.start();
+    }).then((address) => {
+      Logger.info(`[SERVER]\t Server Ready & Listening on http://${address.address || 'localhost'}:${address.port}`);
+      Logger.info(`[BOOT]\t App ready`);
+      resolve();
+    }).catch(function(err) {
+      if (err.code === 'EADDRINUSE') {
+        Logger.error('[SERVER]\t Address already in use');
+      }
+      Logger.error(err);
+      reject(err);
+      process.abort();
     });
-  }
+  });
+}
 
 };

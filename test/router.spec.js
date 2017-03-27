@@ -6,7 +6,7 @@
 // -------------------------------------------------------------------
 // Dependencies
 // Packages
-const expect = require('chai').expect;
+const {expect} = require('chai');
 const sinon = require('sinon');
 
 
@@ -48,14 +48,5 @@ describe('Component : Router', () => {
     goodRouter.init();
     expect(spyHandler.called).to.be.true;
   });
-
-  it('should on init() return {url,routes}', () => {
-    const initedRouter = goodRouter.init();
-    expect(initedRouter).to.not.be.null;
-    expect(initedRouter).to.have.all.keys('url','routes');
-    expect(initedRouter.url).to.be.equal(goodRouter.getURL());
-  });
-
-
 
 });

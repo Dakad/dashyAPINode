@@ -4,9 +4,14 @@
  * @overview Base Router Handler for url /
  *
  * Handle the different routes possbiles;
+<<<<<<< HEAD
  * @module  base/baserouter
  * @requires config
  * @requires components/router
+=======
+ * @module  components/router
+ * @requires config
+>>>>>>> remotes/origin/koa
  * @requires ./components/logger
  *
  */
@@ -49,6 +54,10 @@ const Singleton = {
  */
 class BaseRouter extends Router {
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> remotes/origin/koa
   /**
    * Creates an instance of Router by providing the URL
    *    and the feeder middleware for this routeur.
@@ -68,6 +77,7 @@ class BaseRouter extends Router {
    * @override
    */
   handler() {
+<<<<<<< HEAD
     this.router_.get('/zen', function(req, res, next) {
       const jokes = Config.zen;
       const num = Math.floor(Math.random() * (jokes.length));
@@ -82,15 +92,43 @@ class BaseRouter extends Router {
    */
   sendResponse(req, res) {
     return res.json(res.locals.data);
+=======
+    this.router_.use(this.handleResponse);
+    this.router_.get('/zen', (ctx, next) => {
+      const jokes = Config.zen;
+      ctx.state.data.joke = jokes[Math.floor(Math.random() * (jokes.length))];
+      return next();
+    });
+  }
+
+  /**
+   * @override
+   */
+  async handleResponse(ctx, next) {
+    ctx.state.data = {
+      api: Config.geckoBoard.apiKey,
+    };
+    // Call the next middleware and wait for it;
+    await next();
+    // The response is in the state;
+    ctx.body = ctx.state.data;
+>>>>>>> remotes/origin/koa
   }
 
 
   /**
    * @override
    */
+<<<<<<< HEAD
   sendErr(err, req, res, next) {
     Logger.error(err);
     return res.status(500).send('Something went south !');
+=======
+  handleErr(err, ctx, next) {
+    Logger.error(err);
+    ctx.status = 500;
+    ctx.body = 'Something went south !';
+>>>>>>> remotes/origin/koa
   }
 
 
@@ -109,6 +147,7 @@ class BaseRouter extends Router {
   /**
    * Middleware to check the inconming request.
    *  1. Check if the req is right
+<<<<<<< HEAD
    *  2. Insert a config Object in the res.locals
    *  3. Insert a data Object into the res.locals with the geckoBoard ApiKey.
    *
@@ -125,6 +164,19 @@ class BaseRouter extends Router {
       api: Config.geckoBoard.apiKey,
     };
     next();
+=======
+   *  2. Insert a config Object in the req
+   *  3. Insert a data Object into the req containnig the geckoBoard ApiKey.
+   *
+   * @param {any} ctx The context of the request and response.
+   * @param {Function} next The next middleware to call;
+   * @return {Function} the next middleware()
+   */
+  static checkMiddleware(ctx, next) {
+    // TODO First Middleware : Missing some check before continue');
+    ctx.state.config = {};
+    return next();
+>>>>>>> remotes/origin/koa
   };
 
 

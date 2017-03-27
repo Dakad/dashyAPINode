@@ -40,9 +40,11 @@ module.exports = class Server {
    */
   constructor(port) {
     this.numPort_ = port;
-    this.app_ = express();
+    this.app_ = new Koa();
+
     this.getApp = () => this.app_;
   }
+
 
   /**
    * Init the server by setting/using all his middlewares :
@@ -50,13 +52,15 @@ module.exports = class Server {
    * @param {Array<Router>} routers All routes handled by the server.
    * @return {Promise} a fullfied promise containing the app instance.
    */
-  init(routers) {
+  init(routers = []) {
     return new Promise((resolve, reject) => {
       this.app_.use(morgan('short'));
       this.app_.use(morgan('combined', {
         skip: (req, res) => req.statusCode < 400,
         stream: Logger.stream,
       }));
+
+      this.app_.use(handleError(Logger.error));
 
       if (!Util.isEmptyOrNull(routers)) {
         this.initRouters(routers);
@@ -75,7 +79,7 @@ module.exports = class Server {
     if (Array.isArray(routers)) {
       routers.forEach((rt) => this.initRouters(rt));
     } else {
-      this.app_.use(routers.url, routers.routes);
+      this.app_.use(routers);
     }
   }
 

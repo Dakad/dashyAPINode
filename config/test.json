@@ -386,7 +386,8 @@
           "has_more": false,
           "per_page": 7,
           "page": 123
-        }]
+        }
+      ]
     },
     "pipedrive": {
       "pipelines": [

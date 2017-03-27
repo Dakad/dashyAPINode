@@ -9,7 +9,11 @@
 // Packages
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+<<<<<<< HEAD
 const httpMocks = require('node-mocks-http');
+=======
+// const httpMocks = require('node-mocks-http');
+>>>>>>> remotes/origin/koa
 const sinon = require('sinon');
 const request = require('superagent');
 const mockRequest = require('superagent-mock');
@@ -18,7 +22,10 @@ const mockRequest = require('superagent-mock');
 
 // Mine
 const Config = require('../../config/test.json');
+<<<<<<< HEAD
 const Util = require('../components/util');
+=======
+>>>>>>> remotes/origin/koa
 const ChartMogulFeed = require('./chartmogul-feed');
 const mockReqConf = require('./superagent-mock-config');
 
@@ -27,7 +34,11 @@ const mockReqConf = require('./superagent-mock-config');
 // Properties
 const feed = new ChartMogulFeed();
 chai.use(chaiAsPromised);
+<<<<<<< HEAD
 const expect = chai.expect;
+=======
+const {expect} = chai;
+>>>>>>> remotes/origin/koa
 
 let spyFeedReqChartMogul;
 let superagentMock = mockRequest(request, mockReqConf,
@@ -38,6 +49,7 @@ let superagentMock = mockRequest(request, mockReqConf,
 
 
 describe('ChartMogul : Feeder', () => {
+<<<<<<< HEAD
   let req;
   let res;
 
@@ -81,6 +93,10 @@ describe('ChartMogul : Feeder', () => {
       });
     });
   });
+=======
+  beforeEach(() => { });
+
+>>>>>>> remotes/origin/koa
 
   describe('requestChartMogulFor', () => {
     let spySuperAgent;
@@ -257,11 +273,25 @@ describe('ChartMogul : Feeder', () => {
 
   describe('MiddleWare - basicFetchers', (done) => {
     const middlewares = [
+<<<<<<< HEAD
       {'fetch': feed.fetchMrr, 'url': '/metrics/mrr'},
       {'fetch': feed.fetchNbCustomers, 'url': '/metrics/customer-count'},
       {'fetch': feed.fetchNetMRRChurnRate, 'url': '/metrics/mrr-churn-rate'},
       {'fetch': feed.fetchArr, 'url': '/metrics/arr'},
       {'fetch': feed.fetchArpa, 'url': '/metrics/arpa'},
+=======
+      {'fetch': feed.fetchMrr, 'url': '/metrics/mrr', 'config': {}},
+      {
+        'fetch': feed.fetchNbCustomers, 'url': '/metrics/customer-count',
+        'config': {},
+      },
+      {
+        'fetch': feed.fetchNetMRRChurnRate, 'url': '/metrics/mrr-churn-rate',
+        'config': {},
+      },
+      {'fetch': feed.fetchArr, 'url': '/metrics/arr', 'config': {}},
+      {'fetch': feed.fetchArpa, 'url': '/metrics/arpa', 'config': {}},
+>>>>>>> remotes/origin/koa
     ];
 
     beforeEach(() => {
@@ -270,6 +300,7 @@ describe('ChartMogul : Feeder', () => {
 
     afterEach(() => spyFeedReqChartMogul.restore());
 
+<<<<<<< HEAD
     middlewares.forEach((middleware) => {
       it(`feed.${middleware.fetch.name}() should call requestChartMogulFor()`,
         (done) => {
@@ -288,6 +319,25 @@ describe('ChartMogul : Feeder', () => {
           expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
           expect(res.locals.data.item).to.have.lengthOf(2);
         });
+=======
+    middlewares.forEach(({fetch, url, config}) => {
+      it(`feed.${fetch.name}() should call requestChartMogulFor()`,
+        () => {
+          return fetch.call(feed, config)
+            .then((item) => {
+              expect(spyFeedReqChartMogul.called).to.be.true;
+              expect(spyFeedReqChartMogul.calledWith(url)).to.be.true;
+            });
+        });
+
+      it(`feed.${fetch.name}() should fill data with items`, () => {
+        return fetch.call(feed, config)
+          .then((item) => {
+            expect(item).to.not.be.undefined.and.null;
+            expect(item).to.be.a('array').and.to.not.be.empty;
+            expect(item).to.have.lengthOf(2);
+          });
+>>>>>>> remotes/origin/koa
       });
     });
 
@@ -301,6 +351,7 @@ describe('ChartMogul : Feeder', () => {
 
     afterEach(() => spyFeedReqChartMogul.restore());
 
+<<<<<<< HEAD
     it('should call requestChartMogulFor()', (done) => {
       feed.fetchMRRMovements(req, res, (err) => {
         if (err) return done(err);
@@ -318,6 +369,23 @@ describe('ChartMogul : Feeder', () => {
         expect(res.locals.data.items).to.be.a('array').and.to.not.be.empty;
         // expect(res.locals.data.items).to.have.lengthOf(4);
         done();
+=======
+    it('should call requestChartMogulFor()', () => {
+      return feed.fetchMRRMovements({}, (err) => {
+        if (err) return done(err);
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
+      });
+    });
+
+    it('should fill data with items', () => {
+      return feed.fetchMRRMovements({}).then((data) => {
+        expect(data).to.contains.all.keys('format', 'unit', 'items');
+        expect(data.format).to.be.a('string').and.eq('currency');
+        expect(data.unit).to.be.a('string');
+        expect(data.items).to.a('array').and.to.not.be.empty;
+        // expect(data.items).to.have.lengthOf(4);
+>>>>>>> remotes/origin/koa
       });
     });
 
@@ -341,6 +409,7 @@ describe('ChartMogul : Feeder', () => {
       spyFindMaxNetMRR.restore();
     });
 
+<<<<<<< HEAD
     it('should call requestChartMogulFor()', (done) => {
       mogulFeed.fetchNetMRRMovements(req, res, (err) => {
         if (err) return done(err);
@@ -354,10 +423,23 @@ describe('ChartMogul : Feeder', () => {
       const mrrEntries = Config.request.chartMogul.mrr.entries;
       mogulFeed.fetchNetMRRMovements(req, res, (err) => {
         if (err) return done(err);
+=======
+    it('should call requestChartMogulFor()', () => {
+      return mogulFeed.fetchNetMRRMovement({}).then(() => {
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
+      });
+    });
+
+    it('should call findMaxNetMRR() and calcNetMRRMovement()', () => {
+      const mrrEntries = Config.request.chartMogul.mrr.entries;
+      return mogulFeed.fetchNetMRRMovement({}).then(() => {
+>>>>>>> remotes/origin/koa
         expect(spyFindMaxNetMRR.called).to.be.true;
         expect(spyFindMaxNetMRR.calledWith(mrrEntries)).to.be.true;
         expect(spyCalcNetMRRMovement.called).to.be.true;
         expect(spyCalcNetMRRMovement.callCount).to.be.eql(mrrEntries.length);
+<<<<<<< HEAD
         done();
       });
     });
@@ -368,6 +450,14 @@ describe('ChartMogul : Feeder', () => {
         expect(res.locals.data).to.contains.all.keys('item');
         expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
         done();
+=======
+      });
+    });
+
+    it('should fill data with items', () => {
+      return mogulFeed.fetchNetMRRMovement({}).then((item) => {
+        expect(item).to.be.a('array').and.to.not.be.empty;
+>>>>>>> remotes/origin/koa
       });
     });
 
@@ -383,6 +473,7 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFetchAndFilter.restore());
 
 
+<<<<<<< HEAD
     it('should call fetchAndFilterCustomers', (done) => {
       feed.fetchNbLeads(req, res, (err) => {
         if (err) return done(err);
@@ -400,6 +491,20 @@ describe('ChartMogul : Feeder', () => {
         expect(res.locals.data.item).to.be.a('array').and.to.not.be.empty;
         expect(res.locals.data.item).to.have.lengthOf(2);
         done();
+=======
+    it('should call fetchAndFilterCustomers', () => {
+      return feed.fetchNbLeads({}).then((item) => {
+        expect(spyFetchAndFilter.called).to.be.true;
+        expect(spyFetchAndFilter.calledWith(Config.chartMogul.leads.startPage))
+          .to.be.true;
+      });
+    });
+
+    it('should fill data with items', () => {
+      return feed.fetchNbLeads({}).then((item) => {
+        expect(item).to.be.a('array').and.to.not.be.empty;
+        expect(item).to.have.lengthOf(2);
+>>>>>>> remotes/origin/koa
       });
     });
   });

@@ -28,7 +28,7 @@ dev:
 
 lint:
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;
-	@$(ESLINT) --color $(DIR_SRC) --fix; 
+	@$(ESLINT) --color --fix $(DIR_SRC); 
 	@echo "#####  ESLint : DONE";
 
 

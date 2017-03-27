@@ -10,7 +10,10 @@
   "chartMogul": {
     "apiUrl": "https://api.chartmogul.com/v1",
     "apiToken": "NHuEIxAwQ0Yv4l1CyrTpLQ",
-    "apiSecret": "7c9523422df0343497e733bd91280e54"
+    "apiSecret": "7c9523422df0343497e733bd91280e54",
+    "leads": {
+      "startPage": 6
+    }
   },
   "pipeDrive": {
     "apiUrl": "https://api.pipedrive.com/v1",

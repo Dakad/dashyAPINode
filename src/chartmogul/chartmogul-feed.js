@@ -129,6 +129,8 @@ class ChartMogulFeed extends Feeder {
     const month = today.getMonth() + 1;
     const lastMonthDate =
       new Date(`${today.getFullYear()}-${month - 1}-1`).getTime();
+
+    console.log(lastMonthDate);
     let leadDate;
     let customerDate;
 
@@ -141,15 +143,13 @@ class ChartMogulFeed extends Feeder {
           return false;
         }
         if (onlyLead && (customer.status === 'Lead')) {
-          leadDate = customer['lead_created_at'].slice(0, 10);
-          leadDate = new Date(leadDate).getTime();
+          leadDate = new Date(customer['lead_created_at']).getTime();
 
           // Check [ lastMonth <= lead <= today ]
           return (leadDate >= lastMonthDate && leadDate <= today.getTime());
         }
-        customerDate = customer['customer-since'].slice(0, 10);
-        customerDate = new Date(customerDate).getTime();
 
+        customerDate = new Date(customer['customer-since']).getTime();
         return (customerDate >= lastMonthDate
           && customerDate <= today.getTime());
       })
@@ -194,44 +194,48 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNbLeads(config) {
-    // const today = new Date();
+    const today = new Date();
     const firstInMonth = new Date();
-    firstInMonth.setDate(1);
+    firstInMonth.setUTCDate(1);
+    firstInMonth.setUTCHours(0, 0, 0, 0);
+
     // const currentMonth = today.getMonth() + 1;
     // const firstDayInMonth = new
     // Date(`${today.getFullYear()}-${currentMonth}-1`);
     // The first day of the previous month
     // The last day of the previous month at 00:00:00:00
     const endLastMonth = new Date();
-    endLastMonth.setDate(0);
+    endLastMonth.setUTCDate(0);
+    endLastMonth.setUTCHours(0, 0, 0, 0);
 
     // Get the date for the end of the previous month
     let previousMonth = new Date(endLastMonth);
     // Set the day to the first day.
-    previousMonth.setDate(1);
+    previousMonth.setUTCDate(1);
+
+    console.log(firstInMonth, previousMonth, endLastMonth);
 
     const item = [
       {'value': 0},
       {'value': 0},
     ];
 
-
     return this.fetchAndFilterCustomers(this.leads_.startPage, true)
       .then((leads) => {
-        console.log(leads.length);
+        console.log('Nb Filtered : ' + leads.length);
         let leadDate;
         let leadDateInMs;
 
         leads.forEach((lead) => {
           // The lead_created_at is the date in ISO 8601
           // Cut out the time part. just keep the date
-          leadDate = lead['lead_created_at'].slice(0, 10);
+          leadDate = lead['lead_created_at'];
+          // console.log('Lead : '+leadDate);
           leadDateInMs = new Date(leadDate).getTime();
 
-          console.log(leadDate);
 
-          // if (leadDateInMs === Util.convertDate(today)) {
-          if (leadDateInMs >= firstInMonth) {
+          if (leadDate === Util.convertDate(today)) {
+            // if (leadDateInMs >= firstInMonth) {
             item[0].value += 1;
           }
           // Only the Leads made within the previous month month

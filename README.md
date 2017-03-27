@@ -50,7 +50,7 @@ This API exploits the following technologies:
 |------------|----------------|---------------|
 | [Bluebird](https://www.npmjs.com/package/bluebird)| Full featured Promise Library to handle async operations |[Site web](http://bluebirdjs.com/docs/why-bluebird.html), [Promise](https://www.promisejs.org/)|
 | [ECMAScript 6](https://www.npmjs.com/package/express)| New features added or improved to ECMAScript standard. Better way to code in JS. Only used some of them | [Site web](http://www.ecma-international.org/ecma-262/6.0/), [Overview](http://es6-features.org/)|
-| [Express](https://www.npmjs.com/package/express)| Light, fast & featured framework to build Web Apps. | [Site web](http://expressjs.com/)|
+| [koa](https://www.npmjs.com/package/koa)| Light (~570 SLOC codebase +- 32 Kb), fast & minimalist framework to build web apps. | [Site web](http://koajs.com/)|
 | [ESLint](https://www.npmjs.com/package/eslint)| Lint JS. Reports syntax and style issues. |[Site web](http://eslint.org/)|
 | [Winston](https://www.npmjs.com/package/winston)| Logger library |[Site web](http://eslint.org/)|
 | [Mocha](https://www.npmjs.com/package/mocha)| Testing framework for Node to make test easier |[Site web](http://eslint.org/)|

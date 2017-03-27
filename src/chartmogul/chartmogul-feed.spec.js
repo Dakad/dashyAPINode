@@ -18,6 +18,7 @@ const mockRequest = require('superagent-mock');
 
 // Mine
 const Config = require('../../config/test.json');
+const Util = require('../components/util');
 const ChartMogulFeed = require('./chartmogul-feed');
 const mockReqConf = require('./superagent-mock-config');
 
@@ -30,7 +31,7 @@ const {expect} = chai;
 
 let spyFeedReqChartMogul;
 let superagentMock = mockRequest(request, mockReqConf,
-  (log) => console.log('superagent call', log.url));
+  ({method, url}) => console.log('superagentMock call', method, url));
 
 // -------------------------------------------------------------------
 // Test Units
@@ -331,7 +332,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe.skip('MiddleWare : fetchNbLeads', () => {
+  describe.only('MiddleWare : fetchNbLeads', () => {
     let spyFetchAndFilter;
     beforeEach(() => {
       spyFetchAndFilter = sinon.spy(feed, 'fetchAndFilterCustomers');
@@ -340,7 +341,7 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFetchAndFilter.restore());
 
 
-    it('should call fetchAndFilterCustomers', () => {
+    it.skip('should call fetchAndFilterCustomers', () => {
       return feed.fetchNbLeads({}).then((item) => {
         expect(spyFetchAndFilter.called).to.be.true;
         expect(spyFetchAndFilter.calledWith(Config.chartMogul.leads.startPage))
@@ -349,7 +350,17 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', () => {
-      return feed.fetchNbLeads({}).then((item) => {
+      const today = new Date();
+      const lastMonth = new Date();
+      lastMonth.setMonth(today.getMonth() - 1);
+      lastMonth.setDate(1);
+      const conf = {
+        'start-date': Util.convertDate(lastMonth),
+        'end-date': Util.convertDate(today),
+        'interval': 'month',
+      };
+      return feed.fetchNbLeads(conf).then((item) => {
+        console.log(item);
         expect(item).to.be.a('array').and.to.not.be.empty;
         expect(item).to.have.lengthOf(2);
       });

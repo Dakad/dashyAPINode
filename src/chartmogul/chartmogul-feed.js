@@ -124,28 +124,34 @@ class ChartMogulFeed extends Feeder {
       return [];
     }
 
-    const currentDate = new Date().getTime();
-    const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    const today = new Date();
+    // MUST KEEP THAT, cause the JS month start with 0
+    const month = today.getMonth() + 1;
+    const lastMonthDate =
+      new Date(`${today.getFullYear()}-${month - 1}-1`).getTime();
     let leadDate;
     let customerDate;
 
     return customers
       .filter((customer) => {
+        // ? Has Cancelled or never been a lead ?
         if (customer.status === 'Cancelled' ||
           (onlyLead && !customer['lead_created_at'])
         ) {
           return false;
         }
         if (onlyLead && (customer.status === 'Lead')) {
-          leadDate = new Date(customer['lead_created_at']).getTime();
-          // If [ lastMonth <= lead <= today ]
-          return (leadDate >= lastMonth.getTime()
-            && leadDate <= currentDate);
+          leadDate = customer['lead_created_at'].slice(0, 10);
+          leadDate = new Date(leadDate).getTime();
+
+          // Check [ lastMonth <= lead <= today ]
+          return (leadDate >= lastMonthDate && leadDate <= today.getTime());
         }
-        customerDate = new Date(customer['customer-since']).getTime();
-        return (customerDate >= lastMonth.getTime()
-          && customerDate <= currentDate);
+        customerDate = customer['customer-since'].slice(0, 10);
+        customerDate = new Date(customerDate).getTime();
+
+        return (customerDate >= lastMonthDate
+          && customerDate <= today.getTime());
       })
       .map((entry) => {
         return this.leads_.necessaryKeys.reduce((nEntry, key) => {
@@ -182,30 +188,55 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware inf chargin of fetch the leads.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
   fetchNbLeads(config) {
-    const today = config['start-date'];
-    const lastMonth = config['end-date'];
+    // const today = new Date();
+    const firstInMonth = new Date();
+    firstInMonth.setDate(1);
+    // const currentMonth = today.getMonth() + 1;
+    // const firstDayInMonth = new
+    // Date(`${today.getFullYear()}-${currentMonth}-1`);
+    // The first day of the previous month
+    // The last day of the previous month at 00:00:00:00
+    const endLastMonth = new Date();
+    endLastMonth.setDate(0);
+
+    // Get the date for the end of the previous month
+    let previousMonth = new Date(endLastMonth);
+    // Set the day to the first day.
+    previousMonth.setDate(1);
+
     const item = [
       {'value': 0},
       {'value': 0},
     ];
 
-    let leadDate;
-    console.log(this.leads_.startPage);
 
     return this.fetchAndFilterCustomers(this.leads_.startPage, true)
       .then((leads) => {
+        console.log(leads.length);
+        let leadDate;
+        let leadDateInMs;
+
         leads.forEach((lead) => {
+          // The lead_created_at is the date in ISO 8601
+          // Cut out the time part. just keep the date
           leadDate = lead['lead_created_at'].slice(0, 10);
-          if (leadDate === today) {
+          leadDateInMs = new Date(leadDate).getTime();
+
+          console.log(leadDate);
+
+          // if (leadDateInMs === Util.convertDate(today)) {
+          if (leadDateInMs >= firstInMonth) {
             item[0].value += 1;
           }
-          if (leadDate === lastMonth) {
+          // Only the Leads made within the previous month month
+          if (leadDateInMs >= previousMonth.getTime()
+            && leadDateInMs <= endLastMonth.getTime()) {
             item[1].value += 1;
           }
         });
@@ -217,7 +248,7 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the MRR.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
@@ -225,24 +256,24 @@ class ChartMogulFeed extends Feeder {
   fetchMrr(config) {
     return this.requestChartMogulFor('/metrics/mrr', config)
       .then(({entries: [previous, current]}) => [
-          // The mrr for today
-          {
-            'value': current.mrr / 100,
-            'prefix': '€',
-          },
+        // The mrr for today
+        {
+          'value': current.mrr / 100,
+          'prefix': '€',
+        },
 
-          // Take the first one because it'll be for the end of month
-          {
-            'value': previous.mrr / 100,
-          },
-        ]);
-      ;
+        // Take the first one because it'll be for the end of month
+        {
+          'value': previous.mrr / 100,
+        },
+      ]);
+    ;
   }
 
   /**
    * The middleware in charge of fetching the customers count.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
@@ -263,7 +294,7 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the NET MRR Churn Rate.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
@@ -271,9 +302,9 @@ class ChartMogulFeed extends Feeder {
   fetchNetMRRChurnRate(config) {
     return this.requestChartMogulFor('/metrics/mrr-churn-rate', config)
       .then(({entries: [previous, current]}) => [
-          {value: current['mrr-churn-rate']},
-          {value: previous['mrr-churn-rate']},
-        ]);
+        {value: current['mrr-churn-rate']},
+        {value: previous['mrr-churn-rate']},
+      ]);
   }
 
 
@@ -330,7 +361,7 @@ class ChartMogulFeed extends Feeder {
    * THe middleware inf charge of fetching and calc the NET MRR Movements
    * based on others MRR Movements.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
@@ -357,8 +388,8 @@ class ChartMogulFeed extends Feeder {
         const current = Util.toMoneyFormat(netMrr, ' ', ',');
         const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, ' ', ',');
         return [{
-          'text': `<p style="font-size:1.6em">${current}</p>` +
-          `<h1 style="font-size:1.6em;color:#1c99e3">${best}</h1>`,
+          'text': `< p style= "font-size:1.6em" > ${current}</p > ` +
+          `< h1 style= "font-size:1.6em;color:#1c99e3" > ${best}</h1 > `,
         }];
       })
       ;
@@ -367,7 +398,7 @@ class ChartMogulFeed extends Feeder {
   /**
    * THe middleware in charge of fetching the other MRR Movements.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
@@ -399,7 +430,7 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the ARR.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
@@ -417,7 +448,7 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the ARPA.
    *
-   * @param {any} config The context of the request and response.
+   * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
@@ -437,4 +468,5 @@ class ChartMogulFeed extends Feeder {
 
 // -------------------------------------------------------------------
 // Exports
+
 module.exports = ChartMogulFeed;

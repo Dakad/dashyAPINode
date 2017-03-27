@@ -51,9 +51,12 @@
       "request": "launch",
       "name": "Mocha Tests",
       "cwd": "${workspaceRoot}",
+      "env": {
+        "NODE_ENV": "test"
+      },
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha",
       "windows": {
-        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha.cmd"
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/_mocha"
       },
       "runtimeArgs": [
         "-u",
@@ -61,16 +64,17 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceRoot}/test"
+        "--watch",
+        "${workspaceRoot}/test/**/*.spec.js",
+        "${workspaceRoot}/src/**/*.spec.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "type": "node2",
+      "type": "node",
       "request": "attach",
-      "port": 5858,
-      "smartStep": true
-    
+      "name": "Attach to Process",
+      "port": 5858
     }
   ]
 }

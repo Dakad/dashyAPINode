@@ -49,5 +49,4 @@ describe('Component : Router', () => {
     expect(spyHandler.called).to.be.true;
   });
 
-
 });

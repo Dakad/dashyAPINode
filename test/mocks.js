@@ -63,6 +63,4 @@ module.exports = {
   'getBadRouter' : (...args) => new BadMockRouter(...args), 
   'getRouter' : (...args) => new MockRouter(...args), 
   'getFeeder' : (...args) => new MockFeeder(...args), 
-
-
 };

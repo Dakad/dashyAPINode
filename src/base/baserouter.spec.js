@@ -18,6 +18,20 @@ const Supertest = require('supertest');
 // Mine
 const Server = require('../components/server');
 const BaseRouter = require('./baserouter');
+
+// -------------------------------------------------------------------
+// Properties
+const server = new Server(0);
+let baseRouter;
+let openedServer;
+
+
+// -------------------------------------------------------------------
+// Test
+
+
+describe('Base : BaseRouter', () => {
+  beforeEach(() => baseRouter = BaseRouter.getInstance());
 // -------------------------------------------------------------------
 // Properties
 const server = new Server(0);
@@ -104,4 +118,3 @@ describe('Base : BaseRouter', () => {
     });
   });
 });
-

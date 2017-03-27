@@ -4,8 +4,9 @@
  * @overview Base Router Handler for url /
  *
  * Handle the different routes possbiles;
- * @module  components/router
+ * @module  base/baserouter
  * @requires config
+ * @requires components/router
  * @requires ./components/logger
  *
  */
@@ -48,7 +49,6 @@ const Singleton = {
  */
 class BaseRouter extends Router {
 
-
   /**
    * Creates an instance of Router by providing the URL
    *    and the feeder middleware for this routeur.
@@ -68,6 +68,20 @@ class BaseRouter extends Router {
    * @override
    */
   handler() {
+    this.router_.get('/zen', function(req, res, next) {
+      const jokes = Config.zen;
+      const num = Math.floor(Math.random() * (jokes.length));
+      res.locals.data.joke = jokes[num];
+      next();
+    });
+  }
+
+
+  /**
+   * @override
+   */
+  sendResponse(req, res) {
+    return res.json(res.locals.data);
     this.router_.use(this.handleResponse);
     this.router_.get('/zen', (ctx, next) => {
       const jokes = Config.zen;

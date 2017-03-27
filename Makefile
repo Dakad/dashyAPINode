@@ -14,7 +14,7 @@ TIMEOUT		= 5000
 
 ESLINT		= $(DIR_BIN)/eslint --cache
 JSDOC		= $(DIR_BIN)/jsdoc
-MOCHA		= $(DIR_BIN)/mocha --colors --timeout $(TIMEOUT) -R $(REPORTER) 
+MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) -R $(REPORTER) 
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
 NYC			= $(DIR_BIN)/nyc --cache
@@ -37,7 +37,6 @@ test: lint
 	@NODE_ENV=test $(MOCHA) $(ALL_TESTS);
 	@echo "#####  Mocha Testing : DONE";
 
-
 test-watch:
 	@NODE_ENV=test $(MOCHA) --watch $(ALL_TESTS);
 
@@ -51,13 +50,8 @@ test-docs:
 	#@test -d $(DIR_DOC) || mkdir $(DIR_DOC);
 	#@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
 	@NODE_ENV=test $(MOCHA) --reporter mochawesome $(ALL_TEST);
-	#@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
-			> $(DIR_DOC)/test/index.md;
-	@echo "#####  Testing Docs : DONE";
-
-bench:
-	@$(MAKE) -C benchmarks
-
+	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
+			> $(DIR_DOC)/test/index.md
 
 docs: clean test-cover
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";

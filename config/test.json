@@ -13,8 +13,8 @@
     "apiUrl": "https://api.chartmogul.mock/v1",
     "apiToken": "CHARTMOGUL_API_TOKEN",
     "apiSecret": "CHARTMOGUL_API_SECRET",
-    "leads": {
-      "startPage": 1
+    "leads":{
+      "startPage" : 1
     }
   },
   "pipeDrive": {

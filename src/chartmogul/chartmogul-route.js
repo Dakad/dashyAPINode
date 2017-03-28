@@ -74,6 +74,16 @@ class ChartMogulRouter extends BaseRouter {
 
     this.router_.use(this.configByParams);
 
+    this.router_.get('/', async (ctx, next) => {
+      ctx.state.data = {
+        'leads': 'POST /leads',
+        'mrr': 'POST /mrr',
+        'Nb Clients': 'POST /customers',
+        'Net MRR Churn': 'POST /mrr/churn',
+      };
+      return next();
+    });
+
     this.router_.post('/leads', async (ctx, next) => {
       ctx.state.data.item = await this.feed_.fetchNbLeads(ctx.state.config);
       console.log(ctx.state.data.item);

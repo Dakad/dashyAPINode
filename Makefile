@@ -22,7 +22,7 @@ ISTANBUL	= $(DIR_BIN)/istanbul
 
 
 dev:
-	@NODE_ENV=dev \
+	@NODE_ENV=production \
 	$(NODEMON) $(DIR_SRC)/app.js
 
 

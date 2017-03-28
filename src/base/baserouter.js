@@ -85,10 +85,7 @@ class BaseRouter extends Router {
     // Call the next middleware and wait for it;
     await next();
     // The response is in the state;
-    ctx.body = {
-      'api_key': Config.geckoBoard.apiKey,
-      'data': ctx.state.data,
-    };
+    ctx.body = ctx.state.data;
   }
 
 

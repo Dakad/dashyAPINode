@@ -76,55 +76,55 @@ class ChartMogulRouter extends BaseRouter {
 
     this.router_.get('/', async (ctx, next) => {
       ctx.state.data = {
-        'leads': 'POST /leads',
-        'mrr': 'POST /mrr',
-        'Nb Clients': 'POST /customers',
-        'Net MRR Churn': 'POST /mrr/churn',
+        'leads': 'GET /leads',
+        'mrr': 'GET /mrr',
+        'Nb Clients': 'GET /customers',
+        'Net MRR Churn': 'GET /mrr/churn',
       };
       return next();
     });
 
-    this.router_.post('/leads', async (ctx, next) => {
+    this.router_.get('/leads', async (ctx, next) => {
       ctx.state.data.item = await this.feed_.fetchNbLeads(ctx.state.config);
       console.log(ctx.state.data.item);
       return next();
     });
 
-    this.router_.post('/mrr', async ({state}, next) => {
+    this.router_.get('/mrr', async ({state}, next) => {
       state.data.item = await this.feed_.fetchMrr(state.config, next);
       return next();
     });
 
-    this.router_.post('/customers', async ({state}, next) => {
+    this.router_.get('/customers', async ({state}, next) => {
       state.data.item = await this.feed_.fetchNbCustomers(state.config, next);
       return next();
     });
 
-    this.router_.post('/mrr/churn', async ({state}, next) => {
+    this.router_.get('/mrr/churn', async ({state}, next) => {
       const item = await this.feed_.fetchNetMRRChurnRate(state.config, next);
       state.data.item = item;
       return next();
     });
 
-    this.router_.post('/mrr/net', async ({state}, next) => {
+    this.router_.get('/mrr/net', async ({state}, next) => {
       const item = await this.feed_.fetchNetMRRMovement(state.config, next);
       state.data.item = item;
       return next();
     });
 
 
-    this.router_.post('/mrr/move', async ({state}, next) => {
+    this.router_.get('/mrr/move', async ({state}, next) => {
       const item = await this.feed_.fetchMRRMovements(state.config, next);
       state.data.item = item;
       return next();
     });
 
-    this.router_.post('/arr', async ({state}, next) => {
+    this.router_.get('/arr', async ({state}, next) => {
       state.data.item = await this.feed_.fetchArr(state.config, next);
       return next();
     });
 
-    this.router_.post('/arpa', async ({state}, next) => {
+    this.router_.get('/arpa', async ({state}, next) => {
       state.data.item = await this.feed_.fetchArpa(state.config, next);
       return next();
     });

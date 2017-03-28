@@ -257,7 +257,6 @@ class ChartMogulFeed extends Feeder {
           'value': previous.mrr / 100,
         },
       ]);
-    ;
   }
 
   /**
@@ -375,24 +374,18 @@ class ChartMogulFeed extends Feeder {
         // {3 days, 1 week , only Monday}
 
         const netMrr = this.calcNetMRRMovement(entries.pop());
-        const current = Util.toMoneyFormat(netMrr, ' ', ',');
-        const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, ' ', ',');
+        const current = Util.toMoneyFormat(netMrr, '', ',').trim();
+        const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',').trim();
         return [{
-          'text': `< p style= "font-size:1.6em" > ${current}</p > ` +
-          `< h1 style= "font-size:1.6em;color:#1c99e3" > ${best}</h1 > `,
+          "text": `
+            <p style="font-size:1.5em">${current}</p>
+            <h1 style="font-size:1.5em;color:#1c99e3">${best}</h1>
+            `,
         }];
       })
       ;
   }
 
-  /**
-   * THe middleware in charge of fetching the other MRR Movements.
-   *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
-   *
-   * @memberOf ChartMogulFeed
-   */
   fetchMRRMovements(config) {
     return this.requestChartMogulFor('/metrics/mrr', config)
       .then((data) => {
@@ -415,7 +408,6 @@ class ChartMogulFeed extends Feeder {
         });
       });
   }
-
 
   /**
    * The middleware in charge of fetching the ARR.

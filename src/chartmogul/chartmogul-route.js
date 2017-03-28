@@ -103,6 +103,7 @@ class ChartMogulRouter extends BaseRouter {
     this.router_.get('/mrr/churn', async ({state}, next) => {
       const item = await this.feed_.fetchNetMRRChurnRate(state.config, next);
       state.data.item = item;
+      state.data.type = 'reverse';
       return next();
     });
 
@@ -114,8 +115,7 @@ class ChartMogulRouter extends BaseRouter {
 
 
     this.router_.get('/mrr/move', async ({state}, next) => {
-      const item = await this.feed_.fetchMRRMovements(state.config, next);
-      state.data.item = item;
+      state.data = await this.feed_.fetchMRRMovements(state.config, next);
       return next();
     });
 

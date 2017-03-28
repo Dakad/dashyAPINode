@@ -81,13 +81,14 @@ class BaseRouter extends Router {
    * @override
    */
   async handleResponse(ctx, next) {
-    ctx.state.data = {
-      api: Config.geckoBoard.apiKey,
-    };
+    ctx.state.data = {};
     // Call the next middleware and wait for it;
     await next();
     // The response is in the state;
-    ctx.body = ctx.state.data;
+    ctx.body = {
+      'api_key': Config.geckoBoard.apiKey,
+      'data': ctx.state.data,
+    };
   }
 
 

@@ -304,7 +304,7 @@ class ChartMogulFeed extends Feeder {
   fetchNetMRRChurnRate(config) {
     return this.requestChartMogulFor('/metrics/mrr-churn-rate', config)
       .then(({entries: [previous, current]}) => [
-        {value: current['mrr-churn-rate']},
+        {prefix: '%', value: current['mrr-churn-rate']},
         {value: previous['mrr-churn-rate']},
       ]);
   }

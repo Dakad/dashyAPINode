@@ -68,20 +68,6 @@ class BaseRouter extends Router {
    * @override
    */
   handler() {
-    this.router_.get('/zen', function(req, res, next) {
-      const jokes = Config.zen;
-      const num = Math.floor(Math.random() * (jokes.length));
-      res.locals.data.joke = jokes[num];
-      next();
-    });
-  }
-
-
-  /**
-   * @override
-   */
-  sendResponse(req, res) {
-    return res.json(res.locals.data);
     this.router_.use(this.handleResponse);
     this.router_.get('/zen', (ctx, next) => {
       const jokes = Config.zen;
@@ -89,6 +75,7 @@ class BaseRouter extends Router {
       return next();
     });
   }
+
 
   /**
    * @override

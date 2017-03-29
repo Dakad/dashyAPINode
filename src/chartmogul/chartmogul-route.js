@@ -40,7 +40,7 @@ class ChartMogulRouter extends BaseRouter {
   constructor(feed) {
     super('/chartmogul', feed);
 
-    setInterval(()=> this.handlePolling(), 90000);
+    setInterval(()=> this.handlePolling(), 45000);
   }
 
 

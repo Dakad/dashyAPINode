@@ -136,7 +136,7 @@ class ChartMogulFeed extends Feeder {
       .filter((customer) => {
         // ? Has Cancelled or never been a lead ?
         if (onlyLead) {
-        // if (customer.status === 'Cancelled' ||
+          // if (customer.status === 'Cancelled' ||
           if (!customer['lead_created_at']) {
             return false;
           }
@@ -220,8 +220,8 @@ class ChartMogulFeed extends Feeder {
           // console.log('Lead : '+leadDate);
           const leadDateInMs = new Date(lead['lead_created_at']).getTime();
 
-          if ((leadDateInMs) >= today) {
-            // if (leadDateInMs >= firstInMonth) {
+          // if (leadDateInMs >= today) {
+          if (leadDateInMs >= firstInMonth) {
             item[0].value += 1;
           }
           // Only the Leads made within the previous month
@@ -386,14 +386,14 @@ class ChartMogulFeed extends Feeder {
       ;
   }
 
-/**
-   * THe middleware in charge of fetching the other MRR Movements.
-   *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
-   *
-   * @memberOf ChartMogulFeed
-   */
+  /**
+     * THe middleware in charge of fetching the other MRR Movements.
+     *
+     * @param {Object} config The context of the request and response.
+     * @return {Promise} the next middleware()
+     *
+     * @memberOf ChartMogulFeed
+     */
   fetchMRRMovements(config) {
     return this.requestChartMogulFor('/metrics/mrr', config)
       .then((data) => {

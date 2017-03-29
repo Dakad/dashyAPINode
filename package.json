@@ -19,7 +19,7 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=6.9.5"
+    "node": ">=7.7.4"
   },
   "author": "David A. <david.adegnon@apptweak.com>",
   "license": "MIT",

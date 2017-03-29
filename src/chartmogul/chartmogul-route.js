@@ -11,6 +11,8 @@
 // Dependencies
 
 // npm
+const Config = require('config');
+const request = require('superagent');
 
 // Built-in
 
@@ -37,6 +39,8 @@ class ChartMogulRouter extends BaseRouter {
    */
   constructor(feed) {
     super('/chartmogul', feed);
+
+    setInterval(()=> this.handlePolling(),90000);
   }
 
 
@@ -53,7 +57,7 @@ class ChartMogulRouter extends BaseRouter {
   async configByParams(ctx, next) {
     const today = new Date();
     const lastMonth = new Date();
-    lastMonth.setMonth(today.getMonth() - 1);
+    lastMonth.setDate(0);
     ctx.state.config = {
       'start-date': Util.convertDate(lastMonth),
       'end-date': Util.convertDate(today),
@@ -85,9 +89,17 @@ class ChartMogulRouter extends BaseRouter {
     });
 
     this.router_.get('/leads', async (ctx, next) => {
-      ctx.state.data.item = await this.feed_.fetchNbLeads(ctx.state.config);
-      console.log(ctx.state.data.item);
-      return next();
+      const data = await this.feed_.fetchNbLeads(ctx.state.config);
+      console.log(data);
+      const widgetId = '144091-a92890e0-f5e8-0134-4b24-22000b498417';
+      request.post('https://push.geckoboard.com/v1/send/'+widgetId)
+        .send({
+          "api_key": Config.geckoBoard.apiKey,
+          "data": {
+             "item": data
+          }
+        })
+
     });
 
     this.router_.get('/mrr', async ({state}, next) => {
@@ -130,6 +142,26 @@ class ChartMogulRouter extends BaseRouter {
     });
   }
 
+
+
+  async handlePolling(){
+      const data = await this.feed_.fetchNbLeads();
+      console.log(data);
+      const widgetId = '144091-6b060040-f61f-0134-9c3b-22000b4a867a ';
+      request.post('https://push.geckoboard.com/v1/send/'+widgetId)
+        .type('json')
+        .send({
+          "api_key": Config.geckoBoard.apiKey,
+          "data": {
+             "item": data
+          }
+        })
+        .end((err)=>console.error(err))
+
+        ;
+
+
+  }
 
 };
 

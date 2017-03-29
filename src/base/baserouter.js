@@ -16,7 +16,6 @@
 // Dependencies
 
 // Package npm
-const Config = require('config');
 
 // Built-in
 

@@ -144,7 +144,7 @@ class ChartMogulRouter extends BaseRouter {
   /**
    * @override
    */
-  async handlePolling() {
+  async handlePushing() {
       const data = await this.feed_.fetchNbLeads();
       console.log(data);
       const widgetId = '144091-6b060040-f61f-0134-9c3b-22000b4a867a ';

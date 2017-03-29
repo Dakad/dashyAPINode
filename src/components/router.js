@@ -106,6 +106,20 @@ class Router {
 
 
   /**
+   * The middleware in charge of contacting the widget for the poll data.
+   *
+   * @protected
+   * @abstract
+   * @throws {TypeError} Must implement this method in the child class.
+   * @memberof Router
+   *
+   */
+  async handlePushing() {
+    throw new TypeError('You have to implement the method !');
+  }
+
+
+  /**
    * The middleware in charge of sending the response.
    *
    * @protected

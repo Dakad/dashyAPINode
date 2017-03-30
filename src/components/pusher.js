@@ -55,12 +55,9 @@ class Pusher {
   async push() {
     const data = await this.fnPromData_();
     request.post('https://push.geckoboard.com/v1/send/' + this.widgetId_)
-      .send({
-        'api_key': Config.geckoBoard.apiKey,
-        'data': {
-          'item': data,
-        },
-      }).end((err, res)=>(err)? Logger.error(err) : Logger.info(res.body));
+      .send({'api_key': Config.geckoBoard.apiKey})
+      .send({'data': data})
+      .end((err, {body}) => (err) ? Logger.error(body) : Logger.info(body));
   }
 
 

@@ -136,7 +136,7 @@ class ChartMogulRouter extends BaseRouter {
     // TODO Export the Widgets' ID into the conf file
     [
       ['144091-6b060040-f61f-0134-9c3b-22000b4a867a', // Leads Month
-        () => this.feed_.fetchNbLeads(),
+        async () => ({'item': await this.feed_.fetchNbLeads()}),
       ],
     ].forEach((p) => this.listPushers_.push(new Pusher(p[0], p[1], p[2])));
   };

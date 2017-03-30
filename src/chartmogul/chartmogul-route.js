@@ -11,15 +11,13 @@
 // Dependencies
 
 // npm
-const Config = require('config');
-const request = require('superagent');
 
 // Built-in
 
 // Mine
 const Util = require('../components/util');
+const Pusher = require('../components/pusher');
 const BaseRouter = require('../base/baserouter');
-
 // -------------------------------------------------------------------
 // Properties
 
@@ -38,9 +36,7 @@ class ChartMogulRouter extends BaseRouter {
    * @memberOf ChartMogulRouter
    */
   constructor(feed) {
-    super('/chartmogul', feed);
-
-    setInterval(()=> this.handlePolling(), 45000);
+    super(feed, '/chartmogul', 100);
   }
 
 
@@ -89,16 +85,8 @@ class ChartMogulRouter extends BaseRouter {
     });
 
     this.router_.get('/leads', async (ctx, next) => {
-      const data = await this.feed_.fetchNbLeads(ctx.state.config);
-      console.log(data);
-      const widgetId = '144091-a92890e0-f5e8-0134-4b24-22000b498417';
-      request.post('https://push.geckoboard.com/v1/send/'+widgetId)
-        .send({
-          'api_key': Config.geckoBoard.apiKey,
-          'data': {
-             'item': data,
-          },
-        });
+      stat.data = await this.feed_.fetchNbLeads(ctx.state.config);
+      return next();
     });
 
     this.router_.get('/mrr', async ({state}, next) => {
@@ -144,22 +132,20 @@ class ChartMogulRouter extends BaseRouter {
   /**
    * @override
    */
-  async handlePushing() {
-      const data = await this.feed_.fetchNbLeads();
-      console.log(data);
-      const widgetId = '144091-6b060040-f61f-0134-9c3b-22000b4a867a ';
-      request.post('https://push.geckoboard.com/v1/send/'+widgetId)
-        .type('json')
-        .send({
-          'api_key': Config.geckoBoard.apiKey,
-          'data': {
-             'item': data,
-          },
-        })
-        .end((err)=>console.error(err));
-  }
+  handlerPusher() {
+    // TODO Export the Widgets' ID into the conf file
+    [
+      ['144091-6b060040-f61f-0134-9c3b-22000b4a867a', // Leads Month
+        () => this.feed_.fetchNbLeads(),
+      ],
+    ].forEach((p) => this.listPushers_.push(new Pusher(p[0], p[1], p[2])));
+  };
 
 };
+
+
+// -------------------------------------------------------------------
+// Exports
 
 
 module.exports = ChartMogulRouter;

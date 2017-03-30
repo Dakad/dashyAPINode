@@ -51,14 +51,15 @@ class BaseRouter extends Router {
   /**
    * Creates an instance of Router by providing the URL
    *    and the feeder middleware for this routeur.
-   * @param {string} url The prefix URL to handle. By default, it's on /.
    * @param {Feed} feeder The Feeder allocated to this router.
+   * @param {string} url The prefix URL to handle. By default, it's on /.
+   * @param {number} pushTimeOut The intervall of sec before the pushing
    * @private
    * @constructor
    * @memberOf Router
    */
-  constructor(url = '/', feeder) {
-    super(url, feeder);
+  constructor(feeder, url = '/', timeOut) {
+    super(feeder, url, timeOut);
     this.router_.use(BaseRouter.checkMiddleware);
   }
 
@@ -67,7 +68,7 @@ class BaseRouter extends Router {
    * @override
    */
   handler() {
-    this.router_.use(this.handleResponse);
+    // this.router_.use(this.sendResponse);
     this.router_.get('/zen', (ctx, next) => {
       const jokes = Config.zen;
       ctx.state.data.joke = jokes[Math.floor(Math.random() * (jokes.length))];
@@ -79,7 +80,7 @@ class BaseRouter extends Router {
   /**
    * @override
    */
-  async handleResponse(ctx, next) {
+  async sendResponse(ctx, next) {
     ctx.state.data = {};
     // Call the next middleware and wait for it;
     await next();
@@ -91,7 +92,7 @@ class BaseRouter extends Router {
   /**
    * @override
    */
-  handleErr(err, ctx, next) {
+  sendErr(err, ctx, next) {
     Logger.error(err);
     ctx.status = 500;
     ctx.body = 'Something went south !';
@@ -126,6 +127,8 @@ class BaseRouter extends Router {
     return next();
   };
 
+  /** @override  */
+  handlerPusher() {}
 
 };
 

@@ -14,11 +14,12 @@
 
 // npm
 const Config = require('config');
+const request = require('superagent');
 
 // Built-in
 
 // Mine
-
+const Logger = require('./logger');
 
 // -------------------------------------------------------------------
 // Properties
@@ -32,24 +33,59 @@ const Config = require('config');
 class Pusher {
   /**
    * Creates an instance of Pusher.
-   * @param {any} widgetId
+   * @param {string} widgetId - The GeckoBoard Widget Key.
+   * @param {Function} promData - The function to call
+   * @param {number} timeOut A specific time.
    *
    * @memberOf Pusher
    */
-  constructor(widgetId) {
+  constructor(widgetId, promData, timeOut = 0) {
     this.widgetId_ = widgetId;
-    this.data_ = {};
+    this.fnPromData_ = promData;
+    this.timeOut_ = timeOut;
   }
 
+
   /**
-   * Get the widget ID.
-   * @return {string} The widget ID.
+   * Push the data to the Gecko Widget.
+   *
    *
    * @memberOf Pusher
    */
+  async push() {
+    const data = await this.fnPromData_();
+    request.post('https://push.geckoboard.com/v1/send/' + this.widgetId_)
+      .send({
+        'api_key': Config.geckoBoard.apiKey,
+        'data': {
+          'item': data,
+        },
+      }).end((err, res)=>(err)? Logger.error(err) : Logger.info(res.body));
+  }
+
+
+  /**
+  * Get the widget ID.
+  * @return {string} The widget ID.
+  *
+  * @memberOf Pusher
+  */
   getWidget() {
     return this.widgetId_;
   }
+
+
+  /**
+   * Get the intervall timeout.
+   *
+   * @return {number} The timeout;
+   *
+   * @memberOf Pusher
+   */
+  getTimeOut() {
+    return this.timeOut_;
+  }
+
 }
 
 

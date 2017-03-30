@@ -48,7 +48,7 @@ module.exports = class Util {
     if (arguments.length === 0 || date === null) {
       date = new Date();
     }
-    if(typeof date === 'string') {
+    if (typeof date === 'string') {
       date = new Date(date);
     }
     return date.toISOString().slice(0, 10);
@@ -64,15 +64,37 @@ module.exports = class Util {
    * @param {character} separator - The Unit separator
    * @return {string} a formatted string corresponding to the currency.
    */
-  static toMoneyFormat(num, delimiter=' ', separator='.') {
+  static toMoneyFormat(num, delimiter = ' ', separator = '.') {
     // return Number(num.toFixed(2)).toLocaleString('en-GB', {
     //   style: 'currency',
     //   currency: 'EUR',
     // });
-    return '€ '+ num.toFixed(2)
-        .replace(/(\d)(?=(\d{3})+\.)/g, `$1${delimiter}`)
-        .replace('.', separator);
+    return '€ ' + num.toFixed(2)
+      .replace(/(\d)(?=(\d{3})+\.)/g, `$1${delimiter}`)
+      .replace('.', separator);
   }
+
+  /**
+   * @param {string|Array|Object} str - The src to hash
+   * @return {number} Hascode
+   */
+  static hashCode(str) {
+    if (!str
+        || (Array.isArray(str) && str.length === 0)
+        || Object.keys(str).length === 0
+    ){
+      return 0;
+    }
+
+    if(typeof str !== 'string') {
+      str = JSON.stringify(str);
+    }
+
+    // 5 is also a prime as 31 in JAVA
+    return str
+        .split('')
+        .reduce((hash, c) => ((hash << 5) - hash) + c.charCodeAt(0), 0);
+  };
 
 
   /**

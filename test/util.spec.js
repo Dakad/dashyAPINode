@@ -75,7 +75,7 @@ describe('Component : Util', () => {
     const outputs2 = ['€ 1.00', '€ 12.00', '€ 123.00', '€ 1,234.00', '€ 12,345.00', '€ 123,456.00', '€ 1,234,567.00', '€ 12,345.67']
     const outputs3 = ['€ 1,00', '€ 12,00', '€ 123,00', '€ 1 234,00', '€ 12 345,00', '€ 123 456,00', '€ 1 234 567,00', '€ 12 345,67']
 
-    
+
     it('should format the number into currency with no delimeter', () => {
       let money;
       inputs.forEach((num,i)=> {
@@ -91,6 +91,37 @@ describe('Component : Util', () => {
         expect(money.startsWith('€'),`2:${i} - Out : ${money}`).to.be.true;
         expect(money,`2:${i} - Out = ${money}`).to.be.eq(outputs3[i]);
       });
+    });
+  });
+
+  describe.only('hashCode', () =>{
+
+    it('should return 0 on emtpy', () => {
+      expect(Util.hashCode(undefined)).to.be.equals(0);
+      expect(Util.hashCode()).to.be.equals(0);
+      expect(Util.hashCode([])).to.be.equals(0);
+      expect(Util.hashCode({})).to.be.equals(0);
+      expect(Util.hashCode('')).to.be.equals(0);
+    });
+
+
+    it('should return the same hashcode multicall', () => {
+      for (var nb in [1,2,3,4,5]) {
+        expect(Util.hashCode('undefined')).to.be.equals(-1038130864);
+        expect(Util.hashCode('a')).to.be.equals(97);
+        expect(Util.hashCode('azerty')).to.be.equals(-1402147925);
+      }
+    });
+
+
+    it('should return a hashCode on non string', () => {
+      for (var nb in [1,2,3,4,5]) {
+        expect(Util.hashCode({})).to.be.equals(Util.hashCode({}));
+        expect(Util.hashCode('{}')).to.be.equals(Util.hashCode('{}'));
+        expect(Util.hashCode({})).to.be.equals(Util.hashCode({}));
+        expect(Util.hashCode(['a','b','test']))
+          .to.be.equals(Util.hashCode(['a','b','test']));
+      }
     });
   });
 

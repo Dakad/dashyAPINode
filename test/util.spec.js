@@ -118,7 +118,13 @@ describe('Component : Util', () => {
       for (var nb in [1,2,3,4,5]) {
         expect(Util.hashCode({})).to.be.equals(Util.hashCode({}));
         expect(Util.hashCode('{}')).to.be.equals(Util.hashCode('{}'));
-        expect(Util.hashCode({})).to.be.equals(Util.hashCode({}));
+        expect(Util.hashCode({
+          a:1, b : '2', c: 3,
+          d : ['a','b','test']
+        })).to.be.equals(Util.hashCode({
+          a:1, b : '2', c: 3,
+          d : ['a','b','test']
+        }));
         expect(Util.hashCode(['a','b','test']))
           .to.be.equals(Util.hashCode(['a','b','test']));
       }

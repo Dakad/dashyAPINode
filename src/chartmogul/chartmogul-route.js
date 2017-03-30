@@ -36,7 +36,7 @@ class ChartMogulRouter extends BaseRouter {
    * @memberOf ChartMogulRouter
    */
   constructor(feed) {
-    super(feed, '/chartmogul', 100);
+    super(feed, '/chartmogul', 50);
   }
 
 
@@ -137,6 +137,12 @@ class ChartMogulRouter extends BaseRouter {
     [
       ['144091-6b060040-f61f-0134-9c3b-22000b4a867a', // Leads Month
         async () => ({'item': await this.feed_.fetchNbLeads()}),
+      ],
+      ['144091-122cb660-f785-0134-c10c-22000b248df5', // Leads Month
+        async () => ({
+          'absolute': true,
+          'item': await this.feed_.fetchNbLeadsToday(),
+        }),
       ],
     ].forEach((p) => this.listPushers_.push(new Pusher(p[0], p[1], p[2])));
   };

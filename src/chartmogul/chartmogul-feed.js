@@ -180,7 +180,7 @@ class ChartMogulFeed extends Feeder {
 
 
   /**
-   * The middleware inf chargin of fetch the leads.
+   * The middleware in chargin of fetch the leads.
    *
    * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
@@ -188,8 +188,6 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNbLeads(config) {
-    const today = new Date().setHours(0, 0, 0, 0);
-
     // The first day of the previous month
     // The last day of the previous month at 00:00:00:00
     const firstInMonth = new Date();
@@ -234,6 +232,56 @@ class ChartMogulFeed extends Feeder {
         return item;
       });
   }
+
+
+  /**
+   * The middleware in chargin of fetch the leads for today.
+   *
+   * @param {Object} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchNbLeadsToday(config) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const last30Days = new Date();
+    last30Days.setDate(today.getDate() - 30);
+    last30Days.setHours(0, 0, 0, 0);
+
+    console.log(
+      '\nToday : ' + today,
+      '\nPrev30 : ' + last30Days);
+
+    const item = [
+      {'value': 0},
+      {'value': 0},
+    ];
+
+    return this.fetchAndFilterCustomers(this.leads_.startPage, true)
+      .then((leads) => {
+        console.log('Nb Filtered : ' + leads.length);
+        leads.forEach((lead) => {
+          // const leadDate = Util.convertDate(lead['lead_created_at']);
+          // console.log('Lead : '+leadDate);
+          const leadDateInMs = new Date(lead['lead_created_at']).getTime();
+
+          if (leadDateInMs >= today) {
+            item[0].value += 1;
+          }
+          // Only the Leads made within the previous month
+          if (leadDateInMs >= last30Days.getTime()
+            && leadDateInMs < today.getTime()) {
+            item[1].value += 1;
+          }
+        });
+        item[1].value = Math.round(item[1].value / 30); // Calc the avg on 30 days
+        console.log(item);
+        return item;
+      });
+  }
+
 
   /**
    * The middleware in charge of fetching the MRR.
@@ -453,6 +501,33 @@ class ChartMogulFeed extends Feeder {
       });
   }
 
+
+  /**
+   * The middleware in charge of fetching the Biggest Plans.
+   *
+   * @param {Object} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchBiggestPlansPurchased(config) {
+    // Recup all plans
+    return this.requestChartMogulFor('/plans')
+      .then(({entries}) => {
+        // For each plan, GET the customers' count
+        const customersCountByPlan = entries.map((plan) => {
+          return this.requestChartMogulFor('/metrics/customers', {
+            'start-date': config['start-date'],
+            'end-date': config['end-date'],
+            'plans': plan.name,
+          });
+        });
+        return Promise.race(customersCountByPlan);
+      }).then((customers) => {
+
+      // });
+      }).catch((err) => console.err);
+  }
 
 }
 

@@ -85,7 +85,7 @@ class ChartMogulRouter extends BaseRouter {
     });
 
     this.router_.get('/leads', async (ctx, next) => {
-      stat.data = await this.feed_.fetchNbLeads(ctx.state.config);
+      ctx.state.data = await this.feed_.fetchNbLeads(ctx.state.config);
       return next();
     });
 

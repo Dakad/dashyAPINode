@@ -538,7 +538,7 @@ class ChartMogulFeed extends Feeder {
           .map(({entries}, i) => ({
             'plan': listPlans[i],
             'total': entries.reduce((tot, {customers}) => tot += customers, 0),
-          })).filter(({total}) => total > 1)
+          })).filter(({total}) => total > 1) // Keep out the custom plans
           .sort((p1, p2) => p2.total - p1.total)
           .slice(0, 5);
       }).then((biggestPlans) => {
@@ -570,7 +570,8 @@ class ChartMogulFeed extends Feeder {
       }).catch((err) => console.err);
   }
 
-}
+
+} // End of Class
 
 // -------------------------------------------------------------------
 // Exports

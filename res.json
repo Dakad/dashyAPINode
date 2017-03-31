@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "date": "2017-02-28",
+      "customers": 1
+    },
+    {
+      "date": "2017-03-24",
+      "customers": 1
+    }
+  ],
+  "summary": {
+    "current": 1,
+    "previous": 1,
+    "percentage-change": 0.0
+  }
+}

@@ -513,21 +513,60 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchBiggestPlansPurchased(config) {
+    // TODO Replace by calling the cache
+    let listPlans = [];
     // Recup all plans
     return this.requestChartMogulFor('/plans')
-      .then(({entries}) => {
+      .then(({plans}) => {
         // For each plan, GET the customers' count
-        const customersCountByPlan = entries.map((plan) => {
-          return this.requestChartMogulFor('/metrics/customers', {
+        const customersCount = plans.map((plan) => {
+          listPlans = [...listPlans, {
+            'external_id': plan.external_id,
+            'name': plan.name,
+            'uuid': plan.uuid,
+          }];
+          return this.requestChartMogulFor('/metrics/customer-count', {
             'start-date': config['start-date'],
             'end-date': config['end-date'],
             'plans': plan.name,
           });
         });
-        return Promise.race(customersCountByPlan);
-      }).then((customers) => {
-
-      // });
+        return Promise.all(customersCount);
+      }).then((plansCustomerCounts) => {
+        // Count plansCustomerCount
+        return plansCustomerCounts
+          .map(({entries}, i) => ({
+            'plan': listPlans[i],
+            'total': entries.reduce((tot, {customers}) => tot += customers, 0),
+          })).filter(({total}) => total > 1)
+          .sort((p1, p2) => p2.total - p1.total)
+          .slice(0, 5);
+      }).then((biggestPlans) => {
+        // TODO Format to correspond Gecko Widget
+        return biggestPlans.map(({total, plan}, i) => {
+          const item = {
+            'title': {
+              'text': plan.name,
+            },
+            'description': total + ' subscribers',
+          };
+          // First Position
+          if (i === 0) {
+            item.label = {
+              'name': 'Best !',
+              'color': '#88dd42',
+            };
+          }
+          // Last one
+          if (i === biggestPlans.length - 1) {
+            item.label = {
+              'name': 'At least !',
+              'color': '#155460',
+            };
+          }
+          return item;
+        });
+        // });
       }).catch((err) => console.err);
   }
 

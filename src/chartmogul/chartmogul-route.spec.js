@@ -82,7 +82,7 @@ describe('ChartMogul : Router', () => {
   });
 
 
-  describe('should have inti the pushers', () => {
+  describe('should have init the pushers', () => {
     router;
   });
 

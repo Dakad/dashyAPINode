@@ -75,27 +75,13 @@ describe('Base : BaseRouter', () => {
       });
 
 
-      it('should send the geckoBoard API', (done) => {
-        Supertest(openedServer)
-          .get('/zen')
-          .expect(200)
-          .expect(({body}) => {
-            expect(body).to.be.a('object')
-              .and.to.have.any.keys('api');
-            expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
-          })
-          .end(done);
-        ;
-      });
-
       it('should get a good joke', (done) => {
         Supertest(openedServer)
           .get('/zen')
           .expect(200)
           .expect(({body}) => {
             console.log(body);
-            expect(body).to.contains.keys('api', 'joke');
-            expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+            expect(body).to.contains.keys('joke');
             expect(body.joke).to.be.a('string');
           })
           .end(done);

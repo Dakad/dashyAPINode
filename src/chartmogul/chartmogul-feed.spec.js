@@ -69,9 +69,9 @@ describe('ChartMogul : Feeder', () => {
       expect(promise).to.be.rejected.and.notify(done);
     });
 
-    it('should return a Promise.fulfilled - /customers', (done) => {
-      const promise = feed.requestChartMogulFor('/customers');
-      expect(promise).to.be.fulfilled;
+    it('should return a Promise.fulfilled - /metrics/mrr', (done) => {
+      const promise = feed.requestChartMogulFor('/metrics/mrr');
+      expect(promise).to.eventually.be.fulfilled;
       expect(promise.then).to.be.a('function');
       expect(promise.catch).to.be.a('function');
       expect(promise)
@@ -128,17 +128,17 @@ describe('ChartMogul : Feeder', () => {
       expect(feed.filterCustomers(new Set())).to.be.a('array').and.to.be.empty;
     });
 
-    it('should return Array[1]', () => {
+    it('should return Array[4]', () => {
       const customers = Config.request.chartMogul.customers[0].entries;
       const res = feed.filterCustomers(customers);
       expect(res).to.not.be.empty;
-      expect(res).to.have.lengthOf(1);
+      expect(res).to.have.lengthOf(4);
     });
-    it('should return Array[2] onlyLead', () => {
+    it('should return Array[6] onlyLead', () => {
       const customers = Config.request.chartMogul.customers[0].entries;
       const res = feed.filterCustomers(customers, true);
       expect(res).to.not.be.empty;
-      expect(res).to.have.lengthOf(2);
+      expect(res).to.have.lengthOf(6);
     });
     it('should return []', () => {
       const customers = Config.request.chartMogul.customers[2].entries;
@@ -167,18 +167,16 @@ describe('ChartMogul : Feeder', () => {
 
     it('should call spyFeedReqChartMogul()', () => {
       const nbCalls = Config.request.chartMogul.customers[0].total_pages;
-      feed.fetchAndFilterCustomers(1)
+      return feed.fetchAndFilterCustomers(1)
         .then((data) => {
           expect(spyFeedReqChartMogul.called).to.be.true;
           expect(spyFetchAndFilter.callCount)
             .to.be.eq(nbCalls);
           expect(spyFeedReqChartMogul.firstCall.calledWith('/customers', {
             'page': 1,
-            'status': 'Active',
           })).to.be.true;
           expect(spyFeedReqChartMogul.secondCall.calledWith('/customers', {
             'page': 2,
-            'status': 'Active',
           })).to.be.true;
           // expect(spyFetchAndFilter.firstCall.args[0])
           //   .to.be.equal(1);
@@ -187,19 +185,19 @@ describe('ChartMogul : Feeder', () => {
         });
     });
 
-    it('should return customers : [1]', () => {
+    it('should return customers : [4]', () => {
       const customers = feed.fetchAndFilterCustomers(1);
-      customers.done((data) => {
+      return customers.done((data) => {
         expect(data).to.be.a('array').and.to.not.be.empty;
-        expect(data).to.have.lengthOf(1);
+        expect(data).to.have.lengthOf(4);
       });
     });
 
-    it('should return leads : [7]', () => {
+    it('should return leads : [11]', () => {
       const leads = feed.fetchAndFilterCustomers(1, true);
-      leads.done((data) => {
+      return leads.done((data) => {
         expect(data).to.be.a('array').and.to.not.be.empty;
-        expect(data).to.have.lengthOf(7);
+        expect(data).to.have.lengthOf(11);
       });
     });
 
@@ -210,7 +208,7 @@ describe('ChartMogul : Feeder', () => {
       });
 
       leads = feed.fetchAndFilterCustomers(3, true);
-      leads.done((data) => {
+      return leads.done((data) => {
         expect(data).to.be.a('array').and.to.be.empty;
       });
     });
@@ -332,7 +330,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe.only('MiddleWare : fetchNbLeads', () => {
+  describe('MiddleWare : fetchNbLeads', () => {
     let spyFetchAndFilter;
     beforeEach(() => {
       spyFetchAndFilter = sinon.spy(feed, 'fetchAndFilterCustomers');

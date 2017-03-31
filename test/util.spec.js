@@ -94,7 +94,7 @@ describe('Component : Util', () => {
     });
   });
 
-  describe.only('hashCode', () =>{
+  describe('hashCode', () =>{
 
     it('should return 0 on emtpy', () => {
       expect(Util.hashCode(undefined)).to.be.equals(0);
@@ -106,7 +106,7 @@ describe('Component : Util', () => {
 
 
     it('should return the same hashcode multicall', () => {
-      for (var nb in [1,2,3,4,5]) {
+      for (let nb in [1,2,3,4,5]) {
         expect(Util.hashCode('undefined')).to.be.equals(-1038130864);
         expect(Util.hashCode('a')).to.be.equals(97);
         expect(Util.hashCode('azerty')).to.be.equals(-1402147925);

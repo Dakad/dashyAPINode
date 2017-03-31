@@ -82,7 +82,7 @@ module.exports = class Util {
     if (!str
         || (Array.isArray(str) && str.length === 0)
         || Object.keys(str).length === 0
-    ){
+    ) {
       return 0;
     }
 

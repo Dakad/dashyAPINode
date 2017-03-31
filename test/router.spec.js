@@ -13,7 +13,7 @@ const sinon = require('sinon');
 // Built-in
 
 // Mine
-// const Router = require('../src/components/router');
+const Router = require('../src/components/router');
 const TestUtil = require('./mocks');
 
 
@@ -47,6 +47,24 @@ describe('Component : Router', () => {
     const spyHandler = sinon.spy(goodRouter,'handler');
     goodRouter.init();
     expect(spyHandler.called).to.be.true;
+  });
+
+  it('should on init(), call initPushser & handlerPusher()', ()=>{
+    const spyInit = sinon.spy(goodRouter,'initPusher');
+    const spyHandler = sinon.spy(goodRouter,'handlerPusher');
+    const clock = sinon.useFakeTimers();
+
+    goodRouter.init();
+    expect(spyInit.called).to.be.true;
+    expect(spyHandler.called).to.be.true;
+
+    // Avance the clock to launch the push function
+    clock.tick(Router.PUSH_TIME_OUT);
+
+    //TODO Add unit test on the listPuhser.forEach setInterval
+
+    spyHandler.restore();
+    clock.restore();
   });
 
 });

@@ -19,7 +19,7 @@
 // const Util = require('../src/components/util');
 const Router = require('../src/components/router');
 const Feeder = require('../src/components/feeder');
-
+const Pusher = require('../src/components/pusher');
 
 // -------------------------------------------------------------------
 // Properties
@@ -29,16 +29,22 @@ const Feeder = require('../src/components/feeder');
 
 class BadMockRouter extends Router {
   constructor(url) {
-    super(url);
+    super(null,url);
   }
 }
 
 class MockRouter extends Router {
   constructor(url) {
-    super(url);
+    super(null,url);
   }
   handler() {
     return "Handler implemented, So we good !";
+  }
+
+  handlerPusher(){
+    this.listPushers_.push(new Pusher('widgetId', () => 'widget1'));
+    this.listPushers_.push(new Pusher('widgetId2', () => 'widget2'));
+    // return "Handler Pusher implemented, So we good !";
   }
 }
 

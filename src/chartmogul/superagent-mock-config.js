@@ -45,6 +45,9 @@ exports = module.exports = [{
       const maxCustomers = Config.request.chartMogul.customers.length;
       let {page = 1} = query;
       page = (page > maxCustomers) ? maxCustomers : page;
+
+      // Put a delay because the amount of customers is huuuge
+      // context.delay = 12000; // This will delay the response by 12 seconds
       return Config.request.chartMogul.customers[page - 1];
     }
 

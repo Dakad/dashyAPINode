@@ -66,7 +66,7 @@ describe('ChartMogul : Router', () => {
     it('should return an object with the default params', (done) => {
       const currentDate = new Date();
       const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 1);
+      lastMonth.setDate(0);
 
       return router.configByParams(ctx, () => {
         expect(ctx.state.config)
@@ -81,6 +81,10 @@ describe('ChartMogul : Router', () => {
     });
   });
 
+
+  describe('should have inti the pushers', () => {
+    router;
+  });
 
   describe('Call the routes with the server', () => {
     beforeEach((done) => {
@@ -100,23 +104,21 @@ describe('ChartMogul : Router', () => {
 
     it('check if mount the router', () => {
       Supertest(openedServer)
-        .post('/chartmogul/zen')
+        .get('/chartmogul/zen')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'joke');
-          expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('joke');
           expect(body.joke).to.be.a('string');
         });
     });
     it('should go into handler()', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/leads')
+        .get('/chartmogul/mrr')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eql('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(2);
         })
@@ -125,12 +127,11 @@ describe('ChartMogul : Router', () => {
 
     it('/mrr', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/mrr')
+        .get('/chartmogul/mrr')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(2);
         })
@@ -139,12 +140,11 @@ describe('ChartMogul : Router', () => {
 
     it('/customers', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/customers')
+        .get('/chartmogul/customers')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(2);
         })
@@ -153,12 +153,11 @@ describe('ChartMogul : Router', () => {
 
     it('/mrr/churn', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/mrr/churn')
+        .get('/chartmogul/mrr/churn')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(2);
         })
@@ -167,12 +166,11 @@ describe('ChartMogul : Router', () => {
 
     it('/mrr/net', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/mrr/net')
+        .get('/chartmogul/mrr/net')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(1);
         })
@@ -181,27 +179,24 @@ describe('ChartMogul : Router', () => {
 
     it('/mrr/move', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/mrr/move')
+        .get('/chartmogul/mrr/move')
         .expect(200)
         .expect(({body}) => {
-          expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');
-          expect(body.item).to.be.a('object')
+          console.log(body);
+          expect(body).to.be.a('object')
             .and.to.contains.all.keys('format', 'unit', 'items');
-          expect(body.item.items).to.be.a('array');
+          expect(body.items).to.be.a('array');
         })
         .end(done);
     });
 
     it('/arr', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/arr')
+        .get('/chartmogul/arr')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(2);
         })
@@ -210,12 +205,11 @@ describe('ChartMogul : Router', () => {
 
     it('/arpa', (done) => {
       Supertest(openedServer)
-        .post('/chartmogul/arpa')
+        .get('/chartmogul/arpa')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('api', 'item');
-          expect(body.api).to.be.eq('GECKOBOARD_WIDGET_API_KEY');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(2);
         })

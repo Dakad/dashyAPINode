@@ -15,7 +15,8 @@
 // -------------------------------------------------------------------
 // Dependencies
 
-// Package npm
+// npm
+const Config = require('config');
 
 // Built-in
 
@@ -68,7 +69,7 @@ class BaseRouter extends Router {
    * @override
    */
   handler() {
-    // this.router_.use(this.sendResponse);
+    this.router_.use(this.sendResponse);
     this.router_.get('/zen', (ctx, next) => {
       const jokes = Config.zen;
       ctx.state.data.joke = jokes[Math.floor(Math.random() * (jokes.length))];

@@ -26,10 +26,11 @@ const mount = require('koa-mount');
 
 // -------------------------------------------------------------------
 // Properties
-
+const defPushTimeOut = 1000 * 100; // 1min40
 
 // -------------------------------------------------------------------
 // Methods
+
 
 /**
  * Use to create subRouter to handle a specific root path.
@@ -41,6 +42,7 @@ const mount = require('koa-mount');
  */
 class Router {
 
+
   /**
    * Creates an instance of Router.
    * @param {CharMogulFeed} feeder The Feeder allocated to this router.
@@ -49,7 +51,7 @@ class Router {
    *
    * @memberOf Router
    */
-  constructor(feeder, url = '/', pushTimeOut = 30) {
+  constructor(feeder, url = '/', pushTimeOut=defPushTimeOut) {
     this.url_ = url;
     this.feed_ = feeder;
     this.pushTimeOut_ = 1000 * pushTimeOut;
@@ -169,8 +171,12 @@ class Router {
     throw new TypeError('You have to implement the method !');
   }
 
-
 };
+
+/**
+ * @constant {number} The default timeout between each pushing.
+ */
+Router.PUSH_TIME_OUT = defPushTimeOut;
 
 // -------------------------------------------------------------------
 // Exports

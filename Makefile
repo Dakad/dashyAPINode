@@ -10,7 +10,7 @@ ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -no
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
-TIMEOUT		= 5000
+TIMEOUT		= 10000
 
 ESLINT		= $(DIR_BIN)/eslint --cache
 JSDOC		= $(DIR_BIN)/jsdoc

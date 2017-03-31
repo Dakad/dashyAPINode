@@ -53,7 +53,7 @@ class BaseRouter extends Router {
    *    and the feeder middleware for this routeur.
    * @param {Feed} feeder The Feeder allocated to this router.
    * @param {string} url The prefix URL to handle. By default, it's on /.
-   * @param {number} pushTimeOut The intervall of sec before the pushing
+   * @param {number} timeOut The intervall of sec before the pushing
    * @private
    * @constructor
    * @memberOf Router

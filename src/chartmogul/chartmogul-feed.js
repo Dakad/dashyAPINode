@@ -95,6 +95,7 @@ class ChartMogulFeed extends Feeder {
       if (!destination.startsWith('/')) {
         destination = '/' + destination;
       }
+      // TODO Add Redis Caching System
       request.get(Config.chartMogul.apiUrl + destination)
         .auth(Config.chartMogul.apiToken, Config.chartMogul.apiSecret)
         .query(query)
@@ -276,7 +277,8 @@ class ChartMogulFeed extends Feeder {
             item[1].value += 1;
           }
         });
-        item[1].value = Math.round(item[1].value / 30); // Calc the avg on 30 days
+        // Calc the avg on 30 days
+        item[1].value = Math.round(item[1].value / 30);
         console.log(item);
         return item;
       });

@@ -12,6 +12,8 @@
  * @requires koa-handle-error
  * @requires koa
  * @requires koa-morgan
+ * @requires koa-cors
+ * @requires koa-json
  *
  */
 
@@ -22,7 +24,9 @@
 const Promise = require('bluebird');
 const Koa = require('koa');
 const handleError = require('koa-handle-error');
-const morgan = require('koa-morgan');
+const kMorgan = require('koa-morgan');
+const kCORS = require('kcors');
+const kJSON = require('koa-json');
 
 // Built-in
 
@@ -43,6 +47,7 @@ module.exports = class Server {
     this.numPort_ = port;
     this.app_ = new Koa();
 
+    this.getPort = () => this.numPort_;
     this.getApp = () => this.app_;
   }
 
@@ -57,12 +62,22 @@ module.exports = class Server {
    */
   init(routers = []) {
     return new Promise((resolve, reject) => {
-      this.app_.use(morgan('short'));
-      this.app_.use(morgan('combined', {
+      // Log any req
+      this.app_.use(kMorgan('short'));
+      // Log in files on error req.
+      this.app_.use(kMorgan('combined', {
         skip: (ctxt, next) => ctxt.statusCode < 400,
         stream: Logger.fsStream,
       }));
 
+      this.app_.use(kCORS({
+        allowMethods: ['GET', 'POST'],
+      }));
+
+      this.app_.use(kJSON());
+
+      // Default handler for error
+      // if not set in the router.
       this.app_.use(handleError(Logger.error));
 
       if (!Util.isEmptyOrNull(routers))

@@ -32,7 +32,7 @@ const logger = new Winston.Logger({
     transports: [
         new Winston.transports.File({
             level: 'info',
-            filename: Config.api.dirLogs +'all-logs.log',
+            filename: Config.api.dirLogs +'/all-logs.log',
             handleExceptions: true,
             humanReadableUnhandledException: true,
             json: true,

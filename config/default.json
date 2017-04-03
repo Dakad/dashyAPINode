@@ -36,16 +36,16 @@
   "redis" : {
     "host" : "127.0.0.1",
     "port" : 6379,
-    "password":null,
-    "db" : null
+    "password":"pwd",
+    "db" : 5
   },
   "geckoBoard": {
     "apiKey": "0ecc2de9f3229af5d555b1b14f357ade"
   },
   "chartMogul" : {
     "apiUrl": "https://api.chartmogul.com/v1",
-    "apiToken": "e357296778fe1aa578dba69f17997fabecad4cab",
-    "apiSecret": "e357296778fe1aa578dba69f17997fabecad4cab",
+    "apiToken": "3ff446dfa7017e72bc43c2bf1418007f",
+    "apiSecret": "3ff446dfa7017e72bc43c2bf1418007f",
     "bestNetMRR" : {
       "startDate" : "2014-09-01"
     },

@@ -49,7 +49,7 @@ class Feeder {
   constructor(apiUrl = '') {
     this.apiEndPoint_ = apiUrl;
     this.cache_ = Redis.createClient(Config.redis);
-    this.cache_.on('error', Logger.err);
+    this.cache_.on('error', Logger.error);
 
     this.getApiUrl = () => this.apiEndPoint_;
   }

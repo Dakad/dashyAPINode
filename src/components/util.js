@@ -92,7 +92,7 @@ module.exports = class Util {
 
     // 5 is also a prime as 31 in JAVA
     return str
-        .split('')
+        .split('') // Array<Character>
         .reduce((hash, c) => ((hash << 5) - hash) + c.charCodeAt(0), 0);
   };
 

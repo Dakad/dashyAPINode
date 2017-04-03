@@ -33,6 +33,12 @@
       "for": ""
     }
   },
+  "redis" : {
+    "host" : "127.0.0.1",
+    "port" : 6379,
+    "password":null,
+    "db" : null
+  },
   "geckoBoard": {
     "apiKey": "0ecc2de9f3229af5d555b1b14f357ade"
   },

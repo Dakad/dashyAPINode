@@ -87,6 +87,7 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   requestChartMogulFor(destination, query) {
+    // return super.requestAPI(destination, query, false);
     return new Promise((resolve, reject) => {
       if (!destination) {
         return reject(new Error('Missing the destination for ChartMogul API'));

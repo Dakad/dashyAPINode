@@ -20,7 +20,7 @@
 // Dependencies
 
 
-// Import
+// npm
 const Config = require('config');
 const Promise = require('bluebird');
 

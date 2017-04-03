@@ -28,6 +28,17 @@ const Util = require('../components/util');
 
 // -------------------------------------------------------------------
 // Properties
+
+/** @constant {Number} The HashKey to get from the cache, the nbLeads */
+const KEY_NB_LEADS_LAST_MONTH = Util.hashCode('nbLeadsLastMonth');
+
+/** @constant {Number} The HashKey to get from the cache, the last Month AVG */
+const KEY_AVG_LEADS_LAST_MONTH = Util.hashCode('avgLeadsLastMonth');
+
+/** @constant {Number} The HashKey to get from the cache, the biggest plans */
+const KEY_BIGGEST_PLANS = Util.hashCode('5BiggestPlansPerCustomers');
+
+
 const mrrsEntries = [
   {'entrie': 'mrr-new-business', 'label': 'New Business'},
   {'entrie': 'mrr-expansion', 'label': 'Expansion'},
@@ -51,7 +62,8 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   constructor() {
-    super();
+    super(Config.chartMogul.apiUrl);
+    // TODO Put this var in cache
     /** @private */
     this.bestNetMRRMove_ = {
       'lastFetch': null,
@@ -77,37 +89,77 @@ class ChartMogulFeed extends Feeder {
     };
   }
 
+
+  /** @override */
+  cacheResponse(key, resp) {
+    if (Util.isEmptyOrNull(key)) {
+      return;
+    }
+
+    switch (key.destination) {
+      case '/customers':
+        if (resp.has_more) {
+          super.setInCache(key, resp);
+        }
+        break;
+      case '/plans':
+        super.setInCache(key, resp.plans.map((plan) => ({
+          'external_id': plan.external_id,
+          'name': plan.name,
+          'uuid': plan.uuid,
+        })));
+      default:
+        break;
+    }
+  }
+
   /**
    * Send a request to ChartMogul API.
    *
-   * @param {string} destination - The pipedrive endpoint
+   * @param {string} destination - Which ChartMogul endpoint
    * @param {Object} query - The query params to send to ChartMogul
    * @return {Promise}
    *
    * @memberOf ChartMogulFeed
    */
   requestChartMogulFor(destination, query) {
-    // return super.requestAPI(destination, query, false);
-    return new Promise((resolve, reject) => {
-      if (!destination) {
-        return reject(new Error('Missing the destination for ChartMogul API'));
-      }
-
-      if (!destination.startsWith('/')) {
-        destination = '/' + destination;
-      }
-      // TODO Add Redis Caching System
-      request.get(Config.chartMogul.apiUrl + destination)
-        .auth(Config.chartMogul.apiToken, Config.chartMogul.apiSecret)
-        .query(query)
-        .end((err, res) => {
-          if (err) {
-            return reject(err);
-          } else {
-            return resolve(res.body);
-          }
-        });
+    if (destination && !destination.startsWith('/')) {
+      destination = '/' + destination;
+    }
+    // Create the key to be hash for REDIS
+    const key = Object.assign({}, query, {
+      'destination': destination,
+      'start-date': undefined,
+      'end-date': undefined,
+      'interval': undefined,
     });
+
+    return super.getCached(key) // Get The cached response for this request
+      .then((resCached) => {
+        if (resCached != null) {
+          return JSON.parse(resCached);
+        }
+        // No cached response for this request
+        // return this.requestAPI(destination, query, key);
+        return new Promise((resolve, reject) => {
+          if (!destination) {
+            return reject(
+              new Error('Missing the destination for ChartMogul API')
+            );
+          }
+          // Send my Request to ChartMogul API
+          request.get(Config.chartMogul.apiUrl + destination)
+            .auth(Config.chartMogul.apiToken, Config.chartMogul.apiSecret)
+            .query(query)
+            .end((err, res) => {
+              if (err) {
+                return reject(err);
+              }
+              this.cacheResponse(key, res.body);
+              return resolve(res.body);
+            });
+        });
+      });
   }
 
 
@@ -129,10 +181,11 @@ class ChartMogulFeed extends Feeder {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     // MUST KEEP THAT, cause the JS month start with 0
+    // To avoid some bug if the month is January : 0
     const month = today.getMonth() + 1;
-    const lastMonthDate =
-      new Date(`${today.getFullYear()}-${month - 1}-1`)
-        .getTime();
+    const lastMonthDate = new Date(
+      `${today.getFullYear()}-${month - 1}-1`)
+      .getTime();
 
     return customers
       .filter((customer) => {
@@ -174,7 +227,9 @@ class ChartMogulFeed extends Feeder {
         return this.fetchAndFilterCustomers(startingPage + 1, onlyLead)
           .then((data) => data.concat(filtered));
       }
-      // TODO Add REDIS To cache the res for /customers
+      // TODO Change the code for fetchNbLeads* to support the cache sys.
+      // Save the last page for /customers
+      // Henceforth, only to only call & filter this page
       // this.leads_.startPage = startingPage;
       return filtered;
     });
@@ -203,36 +258,36 @@ class ChartMogulFeed extends Feeder {
     previousMonth.setDate(1);
     previousMonth.setHours(0, 0, 0, 0);
 
-    console.log(
-      '\n1st : ' + firstInMonth,
-      '\nPrev : ' + previousMonth);
-
-    const item = [
-      {'value': 0},
-      {'value': 0},
-    ];
-
-    return this.fetchAndFilterCustomers(this.leads_.startPage, true)
-      .then((leads) => {
-        console.log('Nb Filtered : ' + leads.length);
-        leads.forEach((lead) => {
-          // const leadDate = Util.convertDate(lead['lead_created_at']);
-          // console.log('Lead : '+leadDate);
-          const leadDateInMs = new Date(lead['lead_created_at']).getTime();
-
-          // if (leadDateInMs >= today) {
-          if (leadDateInMs >= firstInMonth) {
-            item[0].value += 1;
-          }
+    return Promise.all([
+      this.fetchAndFilterCustomers(this.leads_.startPage, true),
+      this.getCached(KEY_NB_LEADS_LAST_MONTH),
+    ]).then(([leads, nbLastMonth]) => {
+      console.log('Nb Filtered : ' + leads.length, nbLastMonth);
+      const item = leads.reduce((item, lead) => {
+        // const leadDate = Util.convertDate(lead['lead_created_at']);
+        // console.log('Lead : '+leadDate);
+        const leadDateInMs = new Date(lead['lead_created_at']).getTime();
+        if (leadDateInMs >= firstInMonth) {
+          item[0].value += 1;
+        }
+        // ? No cached value for the lastMonth ?
+        if (nbLastMonth === null
           // Only the Leads made within the previous month
-          if (leadDateInMs >= previousMonth.getTime()
-            && leadDateInMs < firstInMonth.getTime()) {
-            item[1].value += 1;
-          }
-        });
-
+          && leadDateInMs >= previousMonth.getTime()
+          && leadDateInMs < firstInMonth.getTime()) {
+          item[1].value += 1;
+        }
         return item;
-      });
+      }, [
+          {'value': 0},
+          {'value': (nbLastMonth) ? Number.parseInt(nbLastMonth) : 0}]
+      );
+
+      if (nbLastMonth === null) {
+        super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
+      }
+      return item;
+    });
   }
 
 
@@ -261,28 +316,34 @@ class ChartMogulFeed extends Feeder {
       {'value': 0},
     ];
 
-    return this.fetchAndFilterCustomers(this.leads_.startPage, true)
-      .then((leads) => {
-        console.log('Nb Filtered : ' + leads.length);
-        leads.forEach((lead) => {
-          // const leadDate = Util.convertDate(lead['lead_created_at']);
-          // console.log('Lead : '+leadDate);
-          const leadDateInMs = new Date(lead['lead_created_at']).getTime();
+    return Promise.all(
+      this.fetchAndFilterCustomers(this.leads_.startPage, true),
+      this.getCached(KEY_AVG_LEADS_LAST_MONTH)
+    ).then(([leads, avgLastMonth]) => {
+      console.log('Nb Filtered : ' + leads.length, avgLastMonth);
+      leads.forEach((lead) => {
+        // const leadDate = Util.convertDate(lead['lead_created_at']);
+        // console.log('Lead : '+leadDate);
+        const leadDateInMs = new Date(lead['lead_created_at']).getTime();
 
-          if (leadDateInMs >= today) {
-            item[0].value += 1;
-          }
+        if (leadDateInMs >= today) {
+          item[0].value += 1;
+        }
+        if (avgLastMonth === null
           // Only the Leads made within the previous month
-          if (leadDateInMs >= last30Days.getTime()
-            && leadDateInMs < today.getTime()) {
-            item[1].value += 1;
-          }
-        });
-        // Calc the avg on 30 days
-        item[1].value = Math.round(item[1].value / 30);
-        console.log(item);
-        return item;
+          && leadDateInMs >= last30Days.getTime()
+          && leadDateInMs < today.getTime()) {
+          item[1].value += 1;
+        }
       });
+      // Calc the avg on 30 days
+      item[1].value = Math.round(item[1].value / 30);
+
+      if (avgLeadsLastMonth === null) {
+        super.setInCache(KEY_AVG_LEADS_LAST_MONTH, item[1].value);
+      }
+      return item;
+    });
   }
 
 
@@ -514,37 +575,37 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchBiggestPlansPurchased(config) {
-    // TODO Replace by calling the cache
-    let listPlans = [];
     // Recup all plans
     return this.requestChartMogulFor('/plans')
-      .then(({plans}) => {
+      .then((listPlans) => {
+        listPlans = (listPlans.plans) ? listPlans.plans : listPlans;
         // For each plan, GET the customers' count
-        const customersCount = plans.map((plan) => {
-          listPlans = [...listPlans, {
-            'external_id': plan.external_id,
-            'name': plan.name,
-            'uuid': plan.uuid,
-          }];
+        const customersCount = listPlans.map((plan) => {
           return this.requestChartMogulFor('/metrics/customer-count', {
             'start-date': config['start-date'],
             'end-date': config['end-date'],
             'plans': plan.name,
           });
         });
-        return Promise.all(customersCount);
-      }).then((plansCustomerCounts) => {
+        return Promise.all([listPlans, customersCount]);
+      }).then(([listPlans, plansCustomerCounts]) => {
         // Count plansCustomerCount
-        return plansCustomerCounts
-          .map(({entries}, i) => ({
-            'plan': listPlans[i],
-            'total': entries.reduce((tot, {customers}) => tot += customers, 0),
-          })).filter(({total}) => total > 1) // Keep out the custom plans
+        const biggestPlans = plansCustomerCounts
+          .map(({entries}, i) => {
+            console.log(entries);
+            return {
+              'plan': listPlans[i],
+              'total': entries.reduce((tot, {customers}) => tot += customers, 0),
+            };
+          }).filter(({total}) => total > 1) // Keep out the customised plans
           .sort((p1, p2) => p2.total - p1.total)
           .slice(0, 5);
-      }).then((biggestPlans) => {
-        // TODO Format to correspond Gecko Widget
-        return biggestPlans.map(({total, plan}, i) => {
+        return Promise.all([this.getCached(KEY_BIGGEST_PLANS), biggestPlans]);
+      }).then(([lastBiggest, biggestPlans]) => {
+        if (lastBiggest === null) { // First fresh fetch
+          lastBiggest = [];
+        }
+        const items = biggestPlans.map(({total, plan}, i) => {
           const item = {
             'title': {
               'text': plan.name,
@@ -565,9 +626,15 @@ class ChartMogulFeed extends Feeder {
               'color': '#155460',
             };
           }
+          // Check the previous rank
+          const prevRank = lastBiggest.findIndex(({plan: old}) => old === plan);
+          if (prevRank !== -1) {
+            item['previous_rank'] = prevRank + 1;
+          }
           return item;
         });
-        // });
+        this.setInCache(KEY_BIGGEST_PLANS, biggestPlans);
+        return items;
       }).catch((err) => console.err);
   }
 

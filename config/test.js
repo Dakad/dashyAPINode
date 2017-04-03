@@ -1,5 +1,20 @@
+/*eslint-disable */
+
 'use strict';
 
+const today = new Date();
+const firstInMonth = new Date();
+firstInMonth.setDate(1);
+
+const lastInPrevMonth = new Date();
+lastInPrevMonth.setDate(0);
+
+const firstInPrevMonth = new Date();
+firstInPrevMonth.setDate(0);
+firstInPrevMonth.setDate(1);
+
+const dateLastMonth = new Date();
+dateLastMonth.setMonth(today.getMonth() - 1);
 
 const getRandom = (min, max) => {
   return Math.random() * (max - min) + min;
@@ -37,51 +52,51 @@ module.exports = {
     'chartMogul': {
       'plans': {
         'plans': [
-        {
-          'external_id': 'bej-ac-neug-riako',
-          'name': 'Bej ac neug riako',
-          'uuid': '5140ddc9-3d62-5f8a-ad78-8bc5bc31faf0',
-        },
-        {
-          'external_id': 'ferih-uhkogi-uki',
-          'name': 'Ferih uhkogi uki',
-          'uuid': '068cf150-82cf-578c-99d1-1a9a152a4874',
-        },
-        {
-          'external_id': 'fumoce-du-mi-fuvo',
-          'name': 'Fumoce du mi fuvo',
-          'uuid': '78d3839-3649-59f9-b58d-deb49cc919af',
-        },
-        {
-          'external_id': 'lajlafu',
-          'name': 'Lajlafu',
-          'uuid': '83b1c19e-e449-51cb-b40f-14ff4aef7c06',
-        },
-        {
-          'external_id': 'vovokjel-lofu',
-          'name': 'Vovokjel lofu',
-          'uuid': '830dea-33c8-52b1-b010-9ecb1ca97820',
-        },
-        {
-          'external_id': 'la-do-guvwiztup',
-          'name': 'La do guvwiztup',
-          'uuid': '095bfe44-9c6c-5a2c-893c-16785935b37a',
-        },
-        {
-          'external_id': 'fusu-rifmi-gikfuhduf-ra',
-          'name': 'Fusu rifmi gikfuhduf ra',
-          'uuid': '5bafa9f9-8c99-535c-a294-99428f79df96',
-        },
-        {
-          'external_id': 'rapik',
-          'name': 'Rapik',
-          'uuid': '130dc4ee-d5b0-5d6d-995a-5757ce24db9d',
-        },
-        {
-          'external_id': 'behcuat-guab',
-          'name': 'Behcuat guab',
-          'uuid': '32357883-43c4-57f3-9093-63616df4ba1c',
-        }],
+          {
+            'external_id': 'bej-ac-neug-riako',
+            'name': 'Bej ac neug riako',
+            'uuid': '5140ddc9-3d62-5f8a-ad78-8bc5bc31faf0',
+          },
+          {
+            'external_id': 'ferih-uhkogi-uki',
+            'name': 'Ferih uhkogi uki',
+            'uuid': '068cf150-82cf-578c-99d1-1a9a152a4874',
+          },
+          {
+            'external_id': 'fumoce-du-mi-fuvo',
+            'name': 'Fumoce du mi fuvo',
+            'uuid': '78d3839-3649-59f9-b58d-deb49cc919af',
+          },
+          {
+            'external_id': 'lajlafu',
+            'name': 'Lajlafu',
+            'uuid': '83b1c19e-e449-51cb-b40f-14ff4aef7c06',
+          },
+          {
+            'external_id': 'vovokjel-lofu',
+            'name': 'Vovokjel lofu',
+            'uuid': '830dea-33c8-52b1-b010-9ecb1ca97820',
+          },
+          {
+            'external_id': 'la-do-guvwiztup',
+            'name': 'La do guvwiztup',
+            'uuid': '095bfe44-9c6c-5a2c-893c-16785935b37a',
+          },
+          {
+            'external_id': 'fusu-rifmi-gikfuhduf-ra',
+            'name': 'Fusu rifmi gikfuhduf ra',
+            'uuid': '5bafa9f9-8c99-535c-a294-99428f79df96',
+          },
+          {
+            'external_id': 'rapik',
+            'name': 'Rapik',
+            'uuid': '130dc4ee-d5b0-5d6d-995a-5757ce24db9d',
+          },
+          {
+            'external_id': 'behcuat-guab',
+            'name': 'Behcuat guab',
+            'uuid': '32357883-43c4-57f3-9093-63616df4ba1c',
+          }],
 
       },
       'metrics': {
@@ -127,7 +142,7 @@ module.exports = {
             'mrr-reactivation': 0,
           },
           {
-            'date': '2016-01-31',
+            'date': lastInPrevMonth.toISOString().slice(0, 10),
             'mrr': 1008786,
             'mrr-new-business': 356162,
             'mrr-expansion': 8537,
@@ -136,7 +151,7 @@ module.exports = {
             'mrr-reactivation': 0,
           },
           {
-            'date': '2016-02-29',
+            'date': today.toISOString().slice(0, 10),
             'mrr': 1000130,
             'mrr-new-business': 98458,
             'mrr-expansion': 1800,
@@ -158,7 +173,7 @@ module.exports = {
             'arr': 360000,
           },
           {
-            'date': '2015-02-28',
+            'date': lastInPrevMonth.toISOString().slice(0, 10),
             'arr': 36600000,
           },
         ],
@@ -405,12 +420,12 @@ module.exports = {
             {
               'name': 'Iva Warner',
               'status': 'Lead',
-              'customer-since': '2014-09-11T14:34:20+00:00',
+              'customer-since': '',
               'company': 'Zigilovo',
               'country': 'US',
               'state': 'WA',
               'city': 'Brush Prairie',
-              'lead_created_at': '2017-03-02T14:34:20.000Z',
+              'lead_created_at': lastInPrevMonth.toISOString(),
               'free_trial_started_at': '2014-08-28T14:34:20.000Z',
               'address': {
                 'country': 'United States',
@@ -422,12 +437,12 @@ module.exports = {
             {
               'name': 'Maria Isabella Bonechi',
               'status': 'Cancelled',
-              'customer-since': '2014-09-17T09:00:47+00:00',
+              'customer-since': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'company': 'Fuuhu',
               'country': 'FR',
               'state': null,
               'city': 'Paris',
-              'lead_created_at': '2014-09-03T09:00:47.000Z',
+              'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'free_trial_started_at': '2014-09-03T09:00:47.000Z',
               'address': {
                 'country': 'France',
@@ -439,12 +454,12 @@ module.exports = {
             {
               'name': 'Ola Katie Nunez ',
               'status': 'Active',
-              'customer-since': '2017-03-20T14:29:54+00:00',
+              'customer-since': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'company': 'NofsafDor',
               'country': 'US',
               'state': 'IL',
               'city': 'Urbana',
-              'lead_created_at': '2017-03-13T14:29:54.000Z',
+              'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'free_trial_started_at': '2014-09-03T14:29:54.000Z',
               'address': {
                 'country': 'United States',
@@ -456,12 +471,12 @@ module.exports = {
             {
               'name': 'Dollie Daisy',
               'status': 'Cancelled',
-              'customer-since': '2017-03-12T16:02:54+00:00',
+              'customer-since': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'company': 'TuwU',
               'country': 'US',
               'state': 'FL',
               'city': 'MIAMI',
-              'lead_created_at': '2017-02-15T16:02:54.000Z',
+              'lead_created_at': dateLastMonth.toISOString(),
               'free_trial_started_at': '2014-09-15T16:02:54.000Z',
               'address': {
                 'country': 'United States',
@@ -472,12 +487,12 @@ module.exports = {
             {
               'name': 'Christian Craig Fitzgerald',
               'status': 'Lead',
-              'customer-since': '2017-03-01T09:19:35+00:00',
+              'customer-since': firstInPrevMonth.toISOString(),
               'company': 'Ogauhma',
               'country': 'HK',
               'state': null,
               'city': 'Mong Kok',
-              'lead_created_at': '2017-02-10T09:19:35.000Z',
+              'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'free_trial_started_at': '2014-09-17T09:19:35.000Z',
               'address': {
                 'country': 'Hong Kong',
@@ -489,12 +504,12 @@ module.exports = {
             {
               'name': 'Francis Eliza',
               'status': 'Lead',
-              'customer-since': '2017-03-15T13:39:47+00:00',
+              'customer-since': today.toISOString(),
               'company': 'Dudevuf',
               'country': 'CA',
               'state': null,
               'city': 'Moncton',
-              'lead_created_at': '2017-03-10T13:39:47.000Z',
+              'lead_created_at': new Date(dateLastMonth.setDate(10)).toISOString(),
               'free_trial_started_at': '2014-09-26T13:39:47.000Z',
               'address': {
                 'country': 'Canada',
@@ -506,7 +521,7 @@ module.exports = {
             {
               'name': 'Ida Lizzie Garrett',
               'status': 'Lead',
-              'customer-since': '2014-10-12T14:42:19+00:00',
+              'customer-since': '2014-01-12T14:42:19+00:00',
               'company': 'Suchaube',
               'country': 'IN',
               'state': null,
@@ -532,13 +547,13 @@ module.exports = {
             {
               'name': 'Ray Coleman',
               'status': 'Lead',
-              'customer-since': null,
+              'customer-since': today.toISOString(),
               'company': 'Ikeo',
               'country': 'SE',
               'state': null,
               'city': 'Stockholm',
               'zip': '11633',
-              'lead_created_at': '2017-03-20T10:22:34.000Z',
+              'lead_created_at': lastInPrevMonth.toISOString(),
               'free_trial_started_at': '2017-03-16T10:22:34.000Z',
               'address': {
                 'country': 'Sweden',
@@ -555,7 +570,7 @@ module.exports = {
               'country': 'US',
               'state': 'CA',
               'zip': '92173',
-              'lead_created_at': '2017-03-16T20:26:23.000Z',
+              'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 30))).toISOString(),
               'free_trial_started_at': '2017-03-16T20:26:23.000Z',
               'address': {
                 'country': 'United States',
@@ -572,7 +587,7 @@ module.exports = {
               'state': null,
               'city': null,
               'zip': null,
-              'lead_created_at': '2017-03-27T21:57:34.000Z',
+              'lead_created_at': today.toISOString(),
               'free_trial_started_at': '2017-03-16T21:57:34.000Z',
               'address': {
                 'country': 'United Arab Emirates',
@@ -590,7 +605,7 @@ module.exports = {
               'state': 'IL',
               'city': 'Chicago',
               'zip': '60614',
-              'lead_created_at': '2017-03-17T04:09:02.000Z',
+              'lead_created_at': '2017-01-17T04:09:02.000Z',
               'free_trial_started_at': '2017-03-17T04:09:02.000Z',
               'address': {
                 'country': 'United States',
@@ -608,7 +623,7 @@ module.exports = {
               'state': null,
               'city': 'Mae Hong Son',
               'zip': '58000',
-              'lead_created_at': '2017-03-28T07:25:36.000Z',
+              'lead_created_at': today.toISOString(),
               'free_trial_started_at': '2017-03-17T07:25:36.000Z',
               'address': {
                 'country': 'Thailand',

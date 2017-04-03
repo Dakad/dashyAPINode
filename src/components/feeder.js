@@ -43,6 +43,7 @@ class Feeder {
 
   /**
    * Creates an instance of Feeder.
+   * @param {string} [apiUrl=''] The APIURl from whom to feed.
    *
    * @memberOf Feeder
    */
@@ -65,7 +66,7 @@ class Feeder {
    * @memberOf Feeder
    */
   getCached(query) {
-    return this.cache_.hgetallAsync(Util.hashCode(query));
+    return this.cache_.getAsync(Util.hashCode(query));
   }
 
 
@@ -80,7 +81,26 @@ class Feeder {
    */
   setInCache(query, objToCache) {
     const key = Util.hashCode(query);
-    return !!this.cache_.hmsetAsync(key, objToCache);
+    const tomorowMidnight = new Date();
+    tomorowMidnight.setDate(tomorowMidnight.getDate()+1);
+    tomorowMidnight.setHours(0, 0, 0, 0);
+    this.cache_.expireat(key, tomorowMidnight.getTime());
+    return !!this.cache_.set(key, JSON.stringify(objToCache));
+  }
+
+
+  /**
+   * @protected
+   * @abstract
+   * Cache the request response' body.
+   *
+   * @param {Object} key - The key to use for the cache
+   * @param {any} resp - The response Body.
+   *
+   * @memberOf Feeder
+   */
+  cacheResponse(key, resp) {
+    throw new TypeError('You have to implement the method !');
   }
 
 
@@ -88,37 +108,38 @@ class Feeder {
    * Send a request to ChartMogul API.
    *
    * @protected
-   * @param {string} destination - The pipedrive endpoint
-   * @param {Object} query - The query params to send to ChartMogul
-   * @param {boolean} intoCache - The query params to send to ChartMogul
+   * @param {string} destination - The endpoint in this API
+   * @param {Object} query The query params to send to ChartMogul
+   * @param {string|Array|Object} keyForCache The key to use to cache the body
    * @return {Promise}
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf Feeder
    */
-  requestAPI(destination, query, intoCache) {
-    return new Promise((resolve, reject) => {
-      if (!destination) {
-        return reject(
-          new Error('Missing the destination for '+ this.apiEndPoint_)
-        );
-      }
-
-      if (!destination.startsWith('/')) {
-        destination = '/' + destination;
-      }
-      // TODO Add Redis Caching System
-
-      request.get(this.apiEndPoint_+ destination)
-        .auth(Config.chartMogul.apiToken, Config.chartMogul.apiSecret)
-        .query(query)
-        .end((err, res) => {
-          if (err) {
-            return reject(err);
-          } else {
-            return resolve(res.body);
+  requestAPI(destination, query, keyForCache) {
+    return super.getCached(key) // Get The cached response for this request
+      .catch((err) => { // No cached response for this request
+        return new Promise((resolve, reject) => {
+          if (!destination) {
+            return reject(
+              new Error('Missing the destination for ' + this.apiEndPoint_)
+            );
           }
+
+          if (!destination.startsWith('/')) {
+            destination = '/' + destination;
+          }
+          request.get(this.apiEndPoint_ + destination)
+            .query(query)
+            .end((err, res) => {
+              if (err) {
+                return reject(err);
+              } else {
+                this.cacheResponse(keyForCache, res.body);
+                return resolve(res.body);
+              }
+            });
         });
-    });
+      });
   }
 
 

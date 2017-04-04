@@ -459,6 +459,32 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
+  describe.only('Fetcher : fetchLatestCustomers', () => {
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');
+    });
+
+    afterEach(() => spyFeedReqChartMogul.restore());
+
+    it('should call fetchAndFilterCustomers', () => {
+      return feed.fetchLatestCustomers({}).then(() => {
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
+      });
+    });
+
+    // it('should fill data with items', () => {
+    //   return feed.fetchLatestCustomers({})
+    //     .then((latestCust) => {
+    //       const [last, one] = latestCust;
+    //       expect(latestCust).to.be.a('array').and.to.not.be.empty;
+    //       // expect(latestCust).to.have.lengthOf(5);
+    //       expect(last).to.contains.all.keys('type', 'text');
+    //       expect(one).to.contains.all.keys('type', 'text');
+    //     });
+    // });
+  });
+
 
   after(() => superagentMock.unset());
 });

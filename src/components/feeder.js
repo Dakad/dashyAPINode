@@ -66,7 +66,9 @@ class Feeder {
    * @memberOf Feeder
    */
   getCached(query) {
-    return this.cache_.getAsync(Util.hashCode(query));
+    return this.cache_
+      .getAsync(Util.hashCode(query))
+      .then(JSON.parse);
   }
 
 

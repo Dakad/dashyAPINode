@@ -215,7 +215,7 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-  describe('MiddleWare - basicFetchers', (done) => {
+  describe('Fetcher - basicFetchers', (done) => {
     const middlewares = [
       {'fetch': feed.fetchMrr, 'url': '/metrics/mrr', 'config': {}},
       {
@@ -259,7 +259,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe('MiddleWare : fetchMRRMovements', (done) => {
+  describe('Fetcher : fetchMRRMovements', (done) => {
     beforeEach(() => {
       spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
     });
@@ -267,8 +267,7 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFeedReqChartMogul.restore());
 
     it('should call requestChartMogulFor()', () => {
-      return feed.fetchMRRMovements({}, (err) => {
-        if (err) return done(err);
+      return feed.fetchMRRMovements({}).then((data) => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
       });
@@ -287,7 +286,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe('MiddleWare : fetchNetMRRMovements', (done) => {
+  describe('Fetcher : fetchNetMRRMovements', (done) => {
     let spyCalcNetMRRMovement;
     let mogulFeed;
 
@@ -331,7 +330,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe('MiddleWare : fetchNbLeads', () => {
+  describe('Fetcher : fetchNbLeads', () => {
     let spyFetchAndFilter;
     beforeEach(() => {
       spyFetchAndFilter = sinon.spy(feed, 'fetchAndFilterCustomers');
@@ -365,7 +364,7 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-  describe('MiddleWare : fetchNbLeadsToday', () => {
+  describe('Fetcher : fetchNbLeadsToday', () => {
     let spyFetchAndFilter;
     beforeEach(() => {
       spyFetchAndFilter = sinon.spy(feed, 'fetchAndFilterCustomers');
@@ -400,7 +399,7 @@ describe('ChartMogul : Feeder', () => {
   });
 
 
-  describe.only('MiddleWare : fetchBiggestPlansPurchased', () => {
+  describe('Fetcher : fetchBiggestPlansPurchased', () => {
     beforeEach(() => {
       spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
     });
@@ -414,7 +413,7 @@ describe('ChartMogul : Feeder', () => {
       });
     });
 
-    it.only('should fill data with items', () => {
+    it('should fill data with items', () => {
       const today = new Date();
       const lastMonth = new Date();
       lastMonth.setDate(0);
@@ -424,14 +423,13 @@ describe('ChartMogul : Feeder', () => {
         'interval': 'month',
       };
       return feed.fetchBiggestPlansPurchased(conf).then((biggestPlans) => {
-/*        const [best,,,, last] = biggestPlans;
+        const [best,,,, last] = biggestPlans;
         expect(biggestPlans).to.be.a('array').and.to.not.be.empty;
         expect(biggestPlans).to.have.lengthOf(5);
         expect(best).to.contains.all.keys('title', 'label', 'description');
         expect(best.label).to.contains.all.keys('name', 'color');
         expect(last).to.contains.all.keys('title', 'label', 'description');
         expect(last.label).to.contains.all.keys('name', 'color');
-      */
       });
     });
   });

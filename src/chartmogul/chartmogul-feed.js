@@ -137,7 +137,7 @@ class ChartMogulFeed extends Feeder {
     return super.getCached(key) // Get The cached response for this request
       .then((resCached) => {
         if (resCached != null) {
-          return JSON.parse(resCached);
+          return resCached;
         }
         // No cached response for this request
         // return this.requestAPI(destination, query, key);
@@ -587,25 +587,27 @@ class ChartMogulFeed extends Feeder {
             'plans': plan.name,
           });
         });
-        return Promise.all([listPlans, customersCount]);
-      }).then(([listPlans, plansCustomerCounts]) => {
+        return Promise.all([listPlans, ...customersCount]);
+      }).then(([listPlans, ...customersCountByPlan]) => {
         // Count plansCustomerCount
-        const biggestPlans = plansCustomerCounts
+        const biggestCustByPlans = customersCountByPlan
           .map(({entries}, i) => {
-            console.log(entries);
             return {
               'plan': listPlans[i],
-              'total': entries.reduce((tot, {customers}) => tot += customers, 0),
+              'total': entries.reduce((tot, {customers: c}) => tot += c, 0),
             };
           }).filter(({total}) => total > 1) // Keep out the customised plans
           .sort((p1, p2) => p2.total - p1.total)
           .slice(0, 5);
-        return Promise.all([this.getCached(KEY_BIGGEST_PLANS), biggestPlans]);
-      }).then(([lastBiggest, biggestPlans]) => {
+        return Promise.all([
+          this.getCached(KEY_BIGGEST_PLANS),
+          ...biggestCustByPlans,
+        ]);
+      }).then(([lastBiggest, ...biggestCustByPlans]) => {
         if (lastBiggest === null) { // First fresh fetch
           lastBiggest = [];
         }
-        const items = biggestPlans.map(({total, plan}, i) => {
+        const items = biggestCustByPlans.map(({total, plan}, i) => {
           const item = {
             'title': {
               'text': plan.name,
@@ -620,20 +622,22 @@ class ChartMogulFeed extends Feeder {
             };
           }
           // Last one
-          if (i === biggestPlans.length - 1) {
+          if (i === biggestCustByPlans.length - 1) {
             item.label = {
               'name': 'At least !',
               'color': '#155460',
             };
           }
           // Check the previous rank
-          const prevRank = lastBiggest.findIndex(({plan: old}) => old === plan);
+          const prevRank = lastBiggest.findIndex(
+            ({plan: old}) => old.uuid === plan.uuid
+          );
           if (prevRank !== -1) {
             item['previous_rank'] = prevRank + 1;
           }
           return item;
         });
-        this.setInCache(KEY_BIGGEST_PLANS, biggestPlans);
+        this.setInCache(KEY_BIGGEST_PLANS, biggestCustByPlans);
         return items;
       }).catch((err) => console.err);
   }

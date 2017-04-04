@@ -398,7 +398,6 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-
   describe('Fetcher : fetchBiggestPlansPurchased', () => {
     beforeEach(() => {
       spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
@@ -414,16 +413,16 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', () => {
-      const today = new Date();
-      const lastMonth = new Date();
-      lastMonth.setDate(0);
-      const conf = {
-        'start-date': Util.convertDate(lastMonth),
-        'end-date': Util.convertDate(today),
-        'interval': 'month',
-      };
-      return feed.fetchBiggestPlansPurchased(conf).then((biggestPlans) => {
-        const [best,,,, last] = biggestPlans;
+      // const today = new Date();
+      // const lastMonth = new Date();
+      // lastMonth.setDate(0);
+      // const conf = {
+      //   'start-date': Util.convertDate(lastMonth),
+      //   'end-date': Util.convertDate(today),
+      //   'interval': 'month',
+      // };
+      return feed.fetchBiggestPlansPurchased({}).then((biggestPlans) => {
+        const [best, , , , last] = biggestPlans;
         expect(biggestPlans).to.be.a('array').and.to.not.be.empty;
         expect(biggestPlans).to.have.lengthOf(5);
         expect(best).to.contains.all.keys('title', 'label', 'description');
@@ -431,6 +430,32 @@ describe('ChartMogul : Feeder', () => {
         expect(last).to.contains.all.keys('title', 'label', 'description');
         expect(last.label).to.contains.all.keys('name', 'color');
       });
+    });
+  });
+
+  describe('Fetcher : fetchLatestLeads', () => {
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');
+    });
+
+    afterEach(() => spyFeedReqChartMogul.restore());
+
+    it('should call fetchAndFilterCustomers', () => {
+      return feed.fetchLatestLeads({}).then(() => {
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
+      });
+    });
+
+    it('should fill data with items', () => {
+      return feed.fetchLatestLeads({})
+        .then((latestCust) => {
+          const [last, one] = latestCust;
+          expect(latestCust).to.be.a('array').and.to.not.be.empty;
+          // expect(latestCust).to.have.lengthOf(5);
+          expect(last).to.contains.all.keys('type', 'text');
+          expect(one).to.contains.all.keys('type', 'text');
+        });
     });
   });
 

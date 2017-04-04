@@ -30,14 +30,14 @@ const Countries = require('../../config/countriesByISO-3166-alpha-2');
 // -------------------------------------------------------------------
 // Properties
 
-/** @constant {Number} The HashKey to get from the cache, the nbLeads */
-const KEY_NB_LEADS_LAST_MONTH = Util.hashCode('nbLeadsLastMonth');
+/** @constant {Number} The key for the nbLeads in the cache */
+const KEY_NB_LEADS_LAST_MONTH = 'nbLeadsLastMonth';
 
-/** @constant {Number} The HashKey to get from the cache, the last Month AVG */
-const KEY_AVG_LEADS_LAST_MONTH = Util.hashCode('avgLeadsLastMonth');
+/** @constant {Number} The key for the last Month AVG in the cache */
+const KEY_AVG_LEADS_LAST_MONTH = 'avgLeadsLastMonth';
 
-/** @constant {Number} The HashKey to get from the cache, the biggest plans */
-const KEY_BIGGEST_PLANS = Util.hashCode('5BiggestPlansPerCustomers');
+/** @constant {Number} The key for the biggest plans in the cache */
+const KEY_BIGGEST_PLANS = '5BiggestPlansPerCustomers';
 
 
 const mrrsEntries = [
@@ -264,7 +264,7 @@ class ChartMogulFeed extends Feeder {
       this.fetchAndFilterCustomers(this.leads_.startPage, true),
       this.getCached(KEY_NB_LEADS_LAST_MONTH),
     ]).then(([leads, nbLastMonth]) => {
-      console.log('Nb Filtered : ' + leads.length, nbLastMonth);
+      // console.log('Nb Filtered : ' + leads.length, nbLastMonth);
       const item = leads.reduce((item, lead) => {
         // const leadDate = Util.convertDate(lead['lead_created_at']);
         // console.log('Lead : '+leadDate);
@@ -282,8 +282,8 @@ class ChartMogulFeed extends Feeder {
         return item;
       }, [
           {'value': 0},
-          {'value': (nbLastMonth) ? Number.parseInt(nbLastMonth) : 0}]
-      );
+          {'value': (nbLastMonth) ? Number.parseInt(nbLastMonth) : 0},
+        ]);
 
       if (nbLastMonth === null) {
         super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
@@ -309,10 +309,6 @@ class ChartMogulFeed extends Feeder {
     last30Days.setDate(today.getDate() - 30);
     last30Days.setHours(0, 0, 0, 0);
 
-    console.log(
-      '\nToday : ' + today,
-      '\nPrev30 : ' + last30Days);
-
     const item = [
       {'value': 0},
       {'value': 0},
@@ -322,7 +318,7 @@ class ChartMogulFeed extends Feeder {
       this.fetchAndFilterCustomers(this.leads_.startPage, true),
       this.getCached(KEY_AVG_LEADS_LAST_MONTH)
     ).then(([leads, avgLastMonth]) => {
-      console.log('Nb Filtered : ' + leads.length, avgLastMonth);
+      // console.log('Nb Filtered : ' + leads.length, avgLastMonth);
       leads.forEach((lead) => {
         // const leadDate = Util.convertDate(lead['lead_created_at']);
         // console.log('Lead : '+leadDate);
@@ -606,6 +602,7 @@ class ChartMogulFeed extends Feeder {
           ...biggestCustByPlans,
         ]);
       }).then(([lastBiggest, ...biggestCustByPlans]) => {
+          console.log(typeof lastBiggest);
         if (lastBiggest === null) { // First fresh fetch
           lastBiggest = [];
         }
@@ -632,8 +629,11 @@ class ChartMogulFeed extends Feeder {
           }
           // Check the previous rank
           const prevRank = lastBiggest.findIndex(
-            ({plan: old}) => old.uuid === plan.uuid
+            ({plan: old}, i) => {
+              return old.uuid === plan.uuid;
+            }
           );
+
           if (prevRank !== -1) {
             item['previous_rank'] = prevRank + 1;
           }
@@ -641,7 +641,7 @@ class ChartMogulFeed extends Feeder {
         });
         this.setInCache(KEY_BIGGEST_PLANS, biggestCustByPlans);
         return items;
-      }).catch((err) => console.err);
+      });
   }
 
   /**

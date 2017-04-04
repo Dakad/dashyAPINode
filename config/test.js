@@ -29,6 +29,9 @@ module.exports = {
     'port': 9999,
     'token': 'TOKEN_FOR_API',
   },
+  'redis' : {
+    'db' : 7
+  },
   'zen': [
     'Joke shit',
   ],
@@ -230,7 +233,7 @@ module.exports = {
             },
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(12, 900),
+              'customers': getRandomInt(12, 100),
             },
           ],
           'summary': {
@@ -243,11 +246,11 @@ module.exports = {
           'entries': [
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(1, 900),
+              'customers': getRandomInt(1, 300),
             },
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(1, 900),
+              'customers': getRandomInt(1, 100),
             },
           ],
           'summary': {
@@ -260,7 +263,7 @@ module.exports = {
           'entries': [
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(1, 50),
+              'customers': getRandomInt(1, 150),
             },
             {
               'date': '2015-07-31',
@@ -277,15 +280,15 @@ module.exports = {
           'entries': [
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(1, 100),
+              'customers': getRandomInt(1, 150),
             },
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(1, 100),
+              'customers': getRandomInt(1, 30),
             },
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(10, 900),
+              'customers': getRandomInt(10, 300),
             },
           ],
           'summary': {
@@ -349,7 +352,7 @@ module.exports = {
           'entries': [
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(1, 50),
+              'customers': getRandomInt(1, 250),
             },
             {
               'date': '2015-07-31',
@@ -383,7 +386,7 @@ module.exports = {
           'entries': [
             {
               'date': '2015-07-31',
-              'customers': getRandomInt(900, 1900),
+              'customers': getRandomInt(100, 900),
             },
             {
               'date': '2015-07-31',

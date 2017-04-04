@@ -182,7 +182,6 @@ describe('ChartMogul : Router', () => {
         .get('/chartmogul/mrr/move')
         .expect(200)
         .expect(({body}) => {
-          console.log(body);
           expect(body).to.be.a('object')
             .and.to.contains.all.keys('format', 'unit', 'items');
           expect(body.items).to.be.a('array');

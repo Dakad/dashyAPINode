@@ -427,6 +427,8 @@ module.exports = {
               'city': 'Brush Prairie',
               'lead_created_at': lastInPrevMonth.toISOString(),
               'free_trial_started_at': '2014-08-28T14:34:20.000Z',
+              'mrr' : getRandom(100,990000),
+
               'address': {
                 'country': 'United States',
                 'state': 'Washington',
@@ -444,6 +446,7 @@ module.exports = {
               'city': 'Paris',
               'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'free_trial_started_at': '2014-09-03T09:00:47.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'France',
                 'state': null,
@@ -461,6 +464,7 @@ module.exports = {
               'city': 'Urbana',
               'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'free_trial_started_at': '2014-09-03T14:29:54.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'United States',
                 'state': 'Illinois',
@@ -478,6 +482,7 @@ module.exports = {
               'city': 'MIAMI',
               'lead_created_at': dateLastMonth.toISOString(),
               'free_trial_started_at': '2014-09-15T16:02:54.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'United States',
                 'city': 'MIAMI',
@@ -494,6 +499,7 @@ module.exports = {
               'city': 'Mong Kok',
               'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
               'free_trial_started_at': '2014-09-17T09:19:35.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'Hong Kong',
                 'state': null,
@@ -511,6 +517,7 @@ module.exports = {
               'city': 'Moncton',
               'lead_created_at': new Date(dateLastMonth.setDate(10)).toISOString(),
               'free_trial_started_at': '2014-09-26T13:39:47.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'Canada',
                 'state': null,
@@ -528,6 +535,7 @@ module.exports = {
               'city': 'g11, hyderabad',
               'lead_created_at': '2017-02-28T14:42:19.000Z',
               'free_trial_started_at': '2014-09-28T14:42:19.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'India',
                 'state': null,
@@ -555,6 +563,7 @@ module.exports = {
               'zip': '11633',
               'lead_created_at': lastInPrevMonth.toISOString(),
               'free_trial_started_at': '2017-03-16T10:22:34.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'Sweden',
                 'state': null,
@@ -572,6 +581,7 @@ module.exports = {
               'zip': '92173',
               'lead_created_at': new Date(dateLastMonth.setDate(getRandomInt(1, 30))).toISOString(),
               'free_trial_started_at': '2017-03-16T20:26:23.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'United States',
                 'state': 'California',
@@ -589,6 +599,7 @@ module.exports = {
               'zip': null,
               'lead_created_at': today.toISOString(),
               'free_trial_started_at': '2017-03-16T21:57:34.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'United Arab Emirates',
                 'state': null,
@@ -607,6 +618,7 @@ module.exports = {
               'zip': '60614',
               'lead_created_at': '2017-01-17T04:09:02.000Z',
               'free_trial_started_at': '2017-03-17T04:09:02.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'United States',
                 'state': 'Illinois',
@@ -625,6 +637,7 @@ module.exports = {
               'zip': '58000',
               'lead_created_at': today.toISOString(),
               'free_trial_started_at': '2017-03-17T07:25:36.000Z',
+              'mrr' : getRandom(100,990000),
               'address': {
                 'country': 'Thailand',
                 'state': null,

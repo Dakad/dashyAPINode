@@ -25,6 +25,7 @@ const request = require('superagent');
 // Mine
 const Feeder = require('../components/feeder');
 const Util = require('../components/util');
+const Countries = require('../../config/countriesByISO-3166-alpha-2');
 
 // -------------------------------------------------------------------
 // Properties
@@ -85,6 +86,7 @@ class ChartMogulFeed extends Feeder {
         'lead_created_at',
         'free_trial_started_at',
         'address',
+        'mrr',
       ],
     };
   }
@@ -210,11 +212,11 @@ class ChartMogulFeed extends Feeder {
   }
 
   /**
-   * Recursive fetcher for the customers.
+   * Recursive fetcher for the customers or leads.
    * @private
    * @param {number} startingPage - The page to go fetch.
    * @param {boolean} [onlyLead=false] - Which kind of customer must be kept.
-   * @return {Array<Object>} All customers filtered.
+   * @return {Array<Object>} All customers||leads filtered.
    * @memberOf ChartMogulFeed
    */
   fetchAndFilterCustomers(startingPage, onlyLead = false) {
@@ -642,6 +644,53 @@ class ChartMogulFeed extends Feeder {
       }).catch((err) => console.err);
   }
 
+  /**
+     * The middleware in charge of fetching the Lattest Leads.
+     *
+     * @param {Object} config The context of the request and response.
+     * @return {Promise} the next middleware()
+     *
+     * @memberOf ChartMogulFeed
+     */
+  fetchLatestLeads(config) {
+    const today = new Date().setHours(0, 0, 0, 0);
+    return this.fetchAndFilterCustomers(this.leads_.startPage, true)
+      .then((leads) => {
+        return leads
+          .filter(({lead_created_at: dte}) => new Date(dte).getTime() >= today)
+          .slice(0, 5)
+          .sort((ld1, ld2) => {
+            const ld1DateTime = new Date(ld1['lead_created_at']).getTime();
+            const ld2DateTime = new Date(ld2['lead_created_at']).getTime();
+            let cmp = ld2DateTime - ld1DateTime;
+            return (cmp !== 0) ? cmp : ld2.mrr - ld1.mrr;
+          })
+          .map(({company, name, country, mrr, lead_created_at}, i) => ({
+            'type': ((i === 0) ? 1 : 0),
+            // 'text': (company || name)+' at '+
+            //   new Date(lead_created_at).toLocaleString('fr-FR')
+            //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
+            'text': `<h1><strong><ins>${company || name}</ins></strong></h1>
+              <h2>
+                When ? : <strong><ins> ${new Date(lead_created_at)
+                .toLocaleString('fr-BE', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'short',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  hour12: false,
+                })}</ins></strong>
+                </h2>
+            <h2>
+              Where ? : <strong><ins>${Countries[country]}</ins></strong>
+            <h2><hr>
+            <h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
+            </ins></strong></h3>`.replace(/[\r\n]/g, ''),
+          }
+          ));
+      });
+  }
 
 } // End of Class
 

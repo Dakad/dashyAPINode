@@ -219,7 +219,7 @@ class ChartMogulFeed extends Feeder {
    * @return {Array<Object>} All customers||leads filtered.
    * @memberOf ChartMogulFeed
    */
-  fetchAndFilterCustomers(startingPage, onlyLead = false) {
+  fetchAndFilterCustomers(startingPage=1, onlyLead = false) {
     return this.requestChartMogulFor('/customers', {
       page: startingPage,
       // status: (onlyLead) ? 'Lead' : 'Active',
@@ -602,7 +602,7 @@ class ChartMogulFeed extends Feeder {
           ...biggestCustByPlans,
         ]);
       }).then(([lastBiggest, ...biggestCustByPlans]) => {
-          console.log(typeof lastBiggest);
+        console.log(typeof lastBiggest);
         if (lastBiggest === null) { // First fresh fetch
           lastBiggest = [];
         }
@@ -645,13 +645,13 @@ class ChartMogulFeed extends Feeder {
   }
 
   /**
-     * The middleware in charge of fetching the Lattest Leads.
-     *
-     * @param {Object} config The context of the request and response.
-     * @return {Promise} the next middleware()
-     *
-     * @memberOf ChartMogulFeed
-     */
+   * The middleware in charge of fetching the Lattest Leads.
+   *
+   * @param {Object} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
   fetchLatestLeads(config) {
     const today = new Date().setHours(0, 0, 0, 0);
     return this.fetchAndFilterCustomers(this.leads_.startPage, true)
@@ -689,6 +689,52 @@ class ChartMogulFeed extends Feeder {
             </ins></strong></h3>`.replace(/[\r\n]/g, ''),
           }
           ));
+      });
+  }
+
+  /**
+   * The middleware in charge of fetching the Lattest Customers.
+   *
+   * @param {Object} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+  fetchLatestCustomers(config) {
+    return this.fetchAndFilterCustomers()
+      .then((customers) => {
+        return customers;
+          // .sort((cust1, cust2) => {
+          //   const cust1DateTime = new Date(cust1['customer-since']).getTime();
+          //   const cust2DateTime = new Date(cust2['customer-since']).getTime();
+          //   let cmp = cust2DateTime - cust1DateTime;
+          //   return (cmp !== 0) ? cmp : cust2.mrr - cust1.mrr;
+          // })
+          // .slice(0, 5)
+          // .map(({company, name, country, mrr, 'customer-since': cust}, i) => ({
+          //   'type': ((i === 0) ? 1 : 0),
+          //   // 'text': (company || name)+' at '+
+          //   //   new Date(cust).toLocaleString('fr-FR')
+          //   //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
+          //   'text': `<h1><strong><ins>${company || name}</ins></strong></h1>
+          //     <h2>
+          //       When ? : <strong><ins> ${new Date(cust)
+          //       .toLocaleString('fr-BE', {
+          //         weekday: 'long',
+          //         day: 'numeric',
+          //         month: 'short',
+          //         hour: 'numeric',
+          //         minute: 'numeric',
+          //         hour12: false,
+          //       })}</ins></strong>
+          //       </h2>
+          //   <h2>
+          //     Where ? : <strong><ins>${Countries[country]}</ins></strong>
+          //   <h2><hr>
+          //   <h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
+          //   </ins></strong></h3>`.replace(/[\r\n]/g, ''),
+          // }
+          // ));
       });
   }
 

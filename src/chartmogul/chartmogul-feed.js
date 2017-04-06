@@ -214,12 +214,12 @@ class ChartMogulFeed extends Feeder {
   /**
    * Recursive fetcher for the customers or leads.
    * @private
-   * @param {number} startingPage - The page to go fetch.
+   * @param {number} [startingPage=1] - The page to go fetch.
    * @param {boolean} [onlyLead=false] - Which kind of customer must be kept.
    * @return {Array<Object>} All customers||leads filtered.
    * @memberOf ChartMogulFeed
    */
-  fetchAndFilterCustomers(startingPage=1, onlyLead = false) {
+  fetchAndFilterCustomers(startingPage = 1, onlyLead = false) {
     return this.requestChartMogulFor('/customers', {
       page: startingPage,
       // status: (onlyLead) ? 'Lead' : 'Active',
@@ -653,28 +653,28 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchLatestCustomers({onlyLead}) {
+  fetchLatestCustomers({onlyLead = false}) {
     const today = new Date().setHours(0, 0, 0, 0);
     return this.fetchAndFilterCustomers(this.leads_.startPage, onlyLead)
       .then((leads) => {
         return leads
           .filter((lead) => {
-            const dte = (!onlyLead)
-                  ? lead['lead_created_at']
-                  : lead['customer-since'];
+            const dte = (onlyLead)
+              ? lead['lead_created_at']
+              : lead['customer-since'];
             return new Date(dte).getTime() >= today;
           })
           .slice(0, 5)
           .sort((ld1, ld2) => {
             const ld1DateTime = (onlyLead)
-                ? ld1['lead_created_at']
-                : ld1['customer-since'];
+              ? ld1['lead_created_at']
+              : ld1['customer-since'];
             const ld2DateTime = (onlyLead)
-                ? ld2['lead_created_at']
-                : ld2['customer-since'];
+              ? ld2['lead_created_at']
+              : ld2['customer-since'];
 
             const cmp = new Date(ld2DateTime).getTime() -
-                        new Date(ld1DateTime).getTime();
+              new Date(ld1DateTime).getTime();
             return (cmp !== 0) ? cmp : ld2.mrr - ld1.mrr;
           })
           .map(({company, name, country, mrr, lead_created_at}, i) => ({
@@ -697,8 +697,8 @@ class ChartMogulFeed extends Feeder {
             <h2>
               Where ? : <strong><ins>${Countries[country]}</ins></strong>
             <h2><hr>${ (onlyLead) ?
-            `<h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
-            </ins></strong></h3>`:''}`.replace(/[\r\n]/g, ''),
+                `<h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
+            </ins></strong></h3>`: ''}`.replace(/[\r\n]/g, ''),
           }
           ));
       });

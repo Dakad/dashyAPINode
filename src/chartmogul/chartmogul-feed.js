@@ -572,7 +572,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchBiggestPlansPurchased(config) {
+  fetchMostPlansPurchased(config) {
     // Recup all plans
     return this.requestChartMogulFor('/plans')
       .then((listPlans) => {
@@ -643,6 +643,7 @@ class ChartMogulFeed extends Feeder {
         return items;
       });
   }
+
 
   /**
    * The middleware in charge of fetching the Lattest Leads.

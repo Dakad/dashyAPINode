@@ -406,7 +406,7 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFeedReqChartMogul.restore());
 
     it('should call requestChartMogulFor', () => {
-      return feed.fetchBiggestPlansPurchased({}).then(() => {
+      return feed.fetchMostPlansPurchased({}).then(() => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.callCount).to.be.above(2);
       });
@@ -421,7 +421,7 @@ describe('ChartMogul : Feeder', () => {
       //   'end-date': Util.convertDate(today),
       //   'interval': 'month',
       // };
-      return feed.fetchBiggestPlansPurchased({}).then((biggestPlans) => {
+      return feed.fetchMostPlansPurchased({}).then((biggestPlans) => {
         const [best, , , , last] = biggestPlans;
         expect(biggestPlans).to.be.a('array').and.to.not.be.empty;
         expect(biggestPlans).to.have.lengthOf(5);

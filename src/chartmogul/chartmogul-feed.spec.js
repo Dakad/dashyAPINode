@@ -433,32 +433,6 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-  describe('Fetcher : fetchLatestLeads', () => {
-    beforeEach(() => {
-      spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');
-    });
-
-    afterEach(() => spyFeedReqChartMogul.restore());
-
-    it('should call fetchAndFilterCustomers', () => {
-      return feed.fetchLatestLeads({}).then(() => {
-        expect(spyFeedReqChartMogul.called).to.be.true;
-        // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
-      });
-    });
-
-    it('should fill data with items', () => {
-      return feed.fetchLatestLeads({})
-        .then((latestCust) => {
-          const [last, one] = latestCust;
-          expect(latestCust).to.be.a('array').and.to.not.be.empty;
-          // expect(latestCust).to.have.lengthOf(5);
-          expect(last).to.contains.all.keys('type', 'text');
-          expect(one).to.contains.all.keys('type', 'text');
-        });
-    });
-  });
-
 
   describe.only('Fetcher : fetchLatestCustomers', () => {
     beforeEach(() => {
@@ -468,18 +442,49 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFeedReqChartMogul.restore());
 
     it('should call fetchAndFilterCustomers', () => {
-      return feed.fetchLatestCustomers({}).then(() => {
+      return feed.fetchLatestCustomers({onlyLead: false}).then(() => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
       });
     });
 
     it('should fill data with items', () => {
-      return feed.fetchLatestCustomers({})
+      return feed.fetchLatestCustomers({onlyLead: false})
+        .then((latestCust) => {
+          const [last, one] = latestCust;
+          console.log(latestCust);
+          console.log(require('os').hostname());
+          expect(latestCust).to.be.a('array').and.to.not.be.empty;
+          // expect(latestCust).to.have.lengthOf(5);
+          expect(last).to.contains.all.keys('type', 'text');
+          expect(last.type).eq(1);
+          expect(one).to.contains.all.keys('type', 'text');
+          expect(one.type).eq(0);
+        });
+    });
+  });
+
+
+  describe('Fetcher : fetchLatestLeads', () => {
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');
+    });
+
+    afterEach(() => spyFeedReqChartMogul.restore());
+
+    it('should call fetchAndFilterCustomers', () => {
+      return feed.fetchLatestCustomers({onlyLead: true}).then(() => {
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
+      });
+    });
+
+    it('should fill data with items', () => {
+      return feed.fetchLatestCustomers({onlyLead: true})
         .then((latestCust) => {
           const [last, one] = latestCust;
           expect(latestCust).to.be.a('array').and.to.not.be.empty;
-          expect(latestCust).to.have.lengthOf(5);
+          // expect(latestCust).to.have.lengthOf(5);
           expect(last).to.contains.all.keys('type', 'text');
           expect(one).to.contains.all.keys('type', 'text');
         });

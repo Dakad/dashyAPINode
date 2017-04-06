@@ -8,7 +8,6 @@
  * @module  components/feeder
  *
  * @requires config
- * @requires redis
  *
  *
  */
@@ -17,21 +16,18 @@
 // Dependencies
 
 // Import
-const Config = require('config');
+// const Config = require('config');
 const Promise = require('bluebird');
-const Redis = require('redis');
 
 // Built-in
 
 // Mine
-const Logger = require('./logger');
+const Cache = require('./cache');
 const Util = require('./util');
 
 
 // -------------------------------------------------------------------
 // Properties
-Promise.promisifyAll(Redis.RedisClient.prototype);
-Promise.promisifyAll(Redis.Multi.prototype);
 
 
 /**
@@ -49,15 +45,14 @@ class Feeder {
    */
   constructor(apiUrl = '') {
     this.apiEndPoint_ = apiUrl;
-    this.cache_ = Redis.createClient(Config.redis);
-    this.cache_.on('error', Logger.error);
+    this.cache_ = new Cache();
 
     this.getApiUrl = () => this.apiEndPoint_;
   }
 
 
   /**
-   *@protected
+   * @protected
    *
    * @param {Object} query - The query used as hash.
    * @return {Promise|null} A Promise resolved containing the object in cache
@@ -67,8 +62,7 @@ class Feeder {
    */
   getCached(query) {
     return this.cache_
-      .getAsync(Util.hashCode(query))
-      .then(JSON.parse);
+      .get(Util.hashCode(query));
   }
 
 
@@ -82,12 +76,12 @@ class Feeder {
    * @memberOf Feeder
    */
   setInCache(query, objToCache) {
-    const key = Util.hashCode(query);
     const tomorowMidnight = new Date();
-    tomorowMidnight.setDate(tomorowMidnight.getDate()+1);
+    tomorowMidnight.setDate(tomorowMidnight.getDate() + 1);
     tomorowMidnight.setHours(0, 0, 0, 0);
-    this.cache_.expireat(key, tomorowMidnight.getTime());
-    return !!this.cache_.set(key, JSON.stringify(objToCache));
+    return this.cache_.store(Util.hashCode(query), objToCache, {
+      'at': tomorowMidnight.getTime(),
+    });
   }
 
 

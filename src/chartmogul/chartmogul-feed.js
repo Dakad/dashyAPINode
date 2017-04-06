@@ -646,24 +646,35 @@ class ChartMogulFeed extends Feeder {
 
 
   /**
-   * The middleware in charge of fetching the Lattest Leads.
+   * The middleware in charge of fetching the Lattest Leads or Customers.
    *
    * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
    * @memberOf ChartMogulFeed
    */
-  fetchLatestLeads(config) {
+  fetchLatestCustomers({onlyLead}) {
     const today = new Date().setHours(0, 0, 0, 0);
-    return this.fetchAndFilterCustomers(this.leads_.startPage, true)
+    return this.fetchAndFilterCustomers(this.leads_.startPage, onlyLead)
       .then((leads) => {
         return leads
-          .filter(({lead_created_at: dte}) => new Date(dte).getTime() >= today)
+          .filter((lead) => {
+            const dte = (!onlyLead)
+                  ? lead['lead_created_at']
+                  : lead['customer-since'];
+            return new Date(dte).getTime() >= today;
+          })
           .slice(0, 5)
           .sort((ld1, ld2) => {
-            const ld1DateTime = new Date(ld1['lead_created_at']).getTime();
-            const ld2DateTime = new Date(ld2['lead_created_at']).getTime();
-            let cmp = ld2DateTime - ld1DateTime;
+            const ld1DateTime = (onlyLead)
+                ? ld1['lead_created_at']
+                : ld1['customer-since'];
+            const ld2DateTime = (onlyLead)
+                ? ld2['lead_created_at']
+                : ld2['customer-since'];
+
+            const cmp = new Date(ld2DateTime).getTime() -
+                        new Date(ld1DateTime).getTime();
             return (cmp !== 0) ? cmp : ld2.mrr - ld1.mrr;
           })
           .map(({company, name, country, mrr, lead_created_at}, i) => ({
@@ -685,57 +696,11 @@ class ChartMogulFeed extends Feeder {
                 </h2>
             <h2>
               Where ? : <strong><ins>${Countries[country]}</ins></strong>
-            <h2><hr>
-            <h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
-            </ins></strong></h3>`.replace(/[\r\n]/g, ''),
+            <h2><hr>${ (onlyLead) ?
+            `<h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
+            </ins></strong></h3>`:''}`.replace(/[\r\n]/g, ''),
           }
           ));
-      });
-  }
-
-  /**
-   * The middleware in charge of fetching the Lattest Customers.
-   *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
-   *
-   * @memberOf ChartMogulFeed
-   */
-  fetchLatestCustomers(config) {
-    return this.fetchAndFilterCustomers()
-      .then((customers) => {
-        return customers;
-          // .sort((cust1, cust2) => {
-          //   const cust1DateTime = new Date(cust1['customer-since']).getTime();
-          //   const cust2DateTime = new Date(cust2['customer-since']).getTime();
-          //   let cmp = cust2DateTime - cust1DateTime;
-          //   return (cmp !== 0) ? cmp : cust2.mrr - cust1.mrr;
-          // })
-          // .slice(0, 5)
-          // .map(({company, name, country, mrr, 'customer-since': cust}, i) => ({
-          //   'type': ((i === 0) ? 1 : 0),
-          //   // 'text': (company || name)+' at '+
-          //   //   new Date(cust).toLocaleString('fr-FR')
-          //   //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
-          //   'text': `<h1><strong><ins>${company || name}</ins></strong></h1>
-          //     <h2>
-          //       When ? : <strong><ins> ${new Date(cust)
-          //       .toLocaleString('fr-BE', {
-          //         weekday: 'long',
-          //         day: 'numeric',
-          //         month: 'short',
-          //         hour: 'numeric',
-          //         minute: 'numeric',
-          //         hour12: false,
-          //       })}</ins></strong>
-          //       </h2>
-          //   <h2>
-          //     Where ? : <strong><ins>${Countries[country]}</ins></strong>
-          //   <h2><hr>
-          //   <h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
-          //   </ins></strong></h3>`.replace(/[\r\n]/g, ''),
-          // }
-          // ));
       });
   }
 

@@ -21,14 +21,18 @@
 // Dependencies
 
 // npm
+
 const Promise = require('bluebird');
 const Koa = require('koa');
+const kMount = require('koa-mount');
 const handleError = require('koa-handle-error');
 const kMorgan = require('koa-morgan');
 const kCORS = require('kcors');
 const kJSON = require('koa-json');
+const kStaticServe = require('koa-static');
 
 // Built-in
+const path = require('path');
 
 
 // Mine
@@ -55,6 +59,8 @@ module.exports = class Server {
   /**
    * Init the server by setting/using all his middlewares :
    *  - Morgan to log the request
+   *  - CORS to only GET, POST.
+   *  - Static serve to /assets
    *
    *  - Finally, actives the routers for the server.
    * @param {Array<Router>} routers All routes handled by the server.
@@ -74,7 +80,13 @@ module.exports = class Server {
         allowMethods: ['GET', 'POST'],
       }));
 
+      // Serve static files
+      const staticFolder = path.join(__dirname, '..', '..', 'assets');
+      this.app_.use(kMount('/assets', kStaticServe(staticFolder)));
+
+      // JSON all in the ctx.body
       this.app_.use(kJSON());
+
 
       // Default handler for error
       // if not set in the router.

@@ -25,7 +25,6 @@ const request = require('superagent');
 // Mine
 const Feeder = require('../components/feeder');
 const Util = require('../components/util');
-const Countries = require('../../config/countriesByISO-3166-alpha-2');
 
 // -------------------------------------------------------------------
 // Properties

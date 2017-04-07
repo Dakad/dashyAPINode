@@ -44,7 +44,7 @@ class CharMogulHTMLFormatter {
    *
    * @memberOf CharMogulHTMLFormatter
    */
-  generateFlagImg(isoCountry) {
+  static generateFlagImg(isoCountry) {
     const srcLink = ':' + Config.api.port + '/assets/img/flags';
     return `
         <img src="${srcLink}/${isoCountry.toLowerCase()}.png" 
@@ -71,32 +71,25 @@ class CharMogulHTMLFormatter {
    * @return {String} A HTML Output.
    * @memberOf CharMogulHTMLFormatter
    */
-  toListCustomer({who, when, where, mrr}) {
+  static toListCustomer({who, when, where='', mrr}) {
     const isISO3166 = (when) => where.length === 2;
 
     if (when instanceof Date) {
-      when = toLocaleString.call(when, 'fr-BE', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'short',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: false,
-      });
+      when = toLocaleString.call(when, 'fr-BE');
     }
-    return `<h1><strong><ins>${who}</ins></strong></h1>
+    return `<h1><strong>${who}</strong></h1>
               <h2>
                 When ? : <strong><ins> ${when}</ins></strong>
                 </h2>
             <h2> 
               ${!isISO3166(where) ? generateFlagImg(where) : 'Where ?'}
               <strong>
-                <ins>${isISO3166(when) ? Countries[where] : where}</ins>
+                <ins>${isISO3166(where) ? Countries[where] : where}</ins>
               </strong>
             <h2>
-            <hr>
-              ${ (onlyLead) ?
-        `<h3>
+              ${ (mrr) ?
+        `<hr>
+        <h3>
                   MRR : <strong>
                           <ins>${Util.toMoneyFormat(mrr / 100)}</ins>
                         </strong>

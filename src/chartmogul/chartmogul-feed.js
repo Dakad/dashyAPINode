@@ -216,19 +216,23 @@ class ChartMogulFeed extends Feeder {
    * Recursive fetcher for the customers or leads.
    * @private
    * @param {number} [startingPage=1] - The page to go fetch.
-   * @param {boolean} [onlyLead=false] - Which kind of customer must be kept.
+   * @param {boolean} [opts] - query Options for the fetch and filter.
+   * - {boolean} [onlyLead=false] - Which kind of customer must be kept.
    * @return {Array<Object>} All customers||leads filtered.
    * @memberOf ChartMogulFeed
    */
-  fetchAndFilterCustomers(startingPage = 1, onlyLead = false) {
+  fetchAndFilterCustomers(startingPage = 1, opts = {}) {
+    const {onlyLead = false, status} = opts;
     return this.requestChartMogulFor('/customers', {
       page: startingPage,
-      // status: (onlyLead) ? 'Lead' : 'Active',
+      status: status,
     }).then(({entries, has_more: hasMore}) => {
-      const filtered = this.filterCustomers(entries, onlyLead);
+      const filtered = this.filterCustomers(
+        entries, (onlyLead || (status && status === 'Lead'))
+      );
       if (hasMore) {
-        return this.fetchAndFilterCustomers(startingPage + 1, onlyLead)
-          .then((data) => data.concat(filtered));
+        return this.fetchAndFilterCustomers(startingPage + 1, opts)
+          .then((values) => values.concat(filtered));
       }
       // TODO Change the code for fetchNbLeads* to support the cache sys.
       // Save the last page for /customers
@@ -262,7 +266,7 @@ class ChartMogulFeed extends Feeder {
     previousMonth.setHours(0, 0, 0, 0);
 
     return Promise.all([
-      this.fetchAndFilterCustomers(this.leads_.startPage, true),
+      this.fetchAndFilterCustomers(this.leads_.startPage, {onlyLead: true}),
       this.getCached(KEY_NB_LEADS_LAST_MONTH),
     ]).then(([leads, nbLastMonth]) => {
       // console.log('Nb Filtered : ' + leads.length, nbLastMonth);
@@ -316,11 +320,11 @@ class ChartMogulFeed extends Feeder {
       {'value': 0},
     ];
 
-    return Promise.all(
-      this.fetchAndFilterCustomers(this.leads_.startPage, true),
-      this.getCached(KEY_AVG_LEADS_LAST_MONTH)
-    ).then(([leads, avgLastMonth]) => {
-      // console.log('Nb Filtered : ' + leads.length, avgLastMonth);
+    return Promise.all([
+      this.fetchAndFilterCustomers(1, {onlyLead: true}),
+      this.getCached(KEY_AVG_LEADS_LAST_MONTH),
+    ]).then(([leads, avgLeadsLastMonth]) => {
+      // console.log('Nb Filtered : ' + leads.length, avgLeadsLastMonth);
       leads.forEach((lead) => {
         // const leadDate = Util.convertDate(lead['lead_created_at']);
         // console.log('Lead : '+leadDate);
@@ -329,17 +333,17 @@ class ChartMogulFeed extends Feeder {
         if (leadDateInMs >= today) {
           item[0].value += 1;
         }
-        if (avgLastMonth === null
+        if (avgLeadsLastMonth === null
           // Only the Leads made within the previous month
           && leadDateInMs >= last30Days.getTime()
           && leadDateInMs < today.getTime()) {
           item[1].value += 1;
         }
       });
-      // Calc the avg on 30 days
-      item[1].value = Math.round(item[1].value / 30);
 
       if (avgLeadsLastMonth === null) {
+        // Calc the avg on 30 days
+        item[1].value = Math.round(item[1].value / 30);
         super.setInCache(KEY_AVG_LEADS_LAST_MONTH, item[1].value);
       }
       return item;
@@ -605,7 +609,6 @@ class ChartMogulFeed extends Feeder {
           ...biggestCustByPlans,
         ]);
       }).then(([lastBiggest, ...biggestCustByPlans]) => {
-        console.log(typeof lastBiggest);
         if (lastBiggest === null) { // First fresh fetch
           lastBiggest = [];
         }
@@ -656,44 +659,55 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchLatestCustomers({onlyLead = false}) {
-    const today = new Date().setHours(0, 0, 0, 0);
-    return this.fetchAndFilterCustomers(this.leads_.startPage, onlyLead)
-      .then((leads) => {
-        return leads
-          .filter((lead) => {
-            const dte = (onlyLead)
-              ? lead['lead_created_at']
-              : lead['customer-since'];
-            return new Date(dte).getTime() >= today;
-          })
-          .slice(0, 5)
-          .sort((ld1, ld2) => {
-            const ld1DateTime = (onlyLead)
-              ? ld1['lead_created_at']
-              : ld1['customer-since'];
-            const ld2DateTime = (onlyLead)
-              ? ld2['lead_created_at']
-              : ld2['customer-since'];
+  fetchLatestCustomers(config) {
+    // Convert to bool if other type then Bool
+    const onlyLead = Boolean(config.onlyLead);
+    // const today = new Date().setHours(0, 0, 0, 0);
+    return this.fetchAndFilterCustomers(1, {
+      onlyLead: onlyLead,
+      status: (onlyLead) ? 'Lead' : 'Active',
+    }).then((leads) => {
+      return leads
+        // .filter((lead) => {
+        //   const dte = (onlyLead)
+        //     ? lead['lead_created_at']
+        //     : lead['customer-since'];
+        //   return new Date(dte).getTime() >= today;
+        // })
+        .sort((cust1, cust2) => {
+          const cust1DateTime = (onlyLead)
+            ? cust1['lead_created_at']
+            : cust1['customer-since'];
+          const cust2DateTime = (onlyLead)
+            ? cust2['lead_created_at']
+            : cust2['customer-since'];
 
-            const cmp = new Date(ld2DateTime).getTime() -
-              new Date(ld1DateTime).getTime();
-            return (cmp !== 0) ? cmp : ld2.mrr - ld1.mrr;
-          })
-          .map((cust, i) => ({
-            'type': ((i === 0) ? 1 : 0),
-            // 'text': (company || name)+' at '+
-            //   new Date(lead_created_at).toLocaleString('fr-FR')
-            //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
-            'text': HTMLFormatter.toListCustomer({
-              who: cust.company|| cust.name,
-              when: (onlyLead) ? cust.lead_created_at : cust['customer-since'],
-              where: country,
-              mrr: (onlyLead) ? mrr : undefined,
-            }),
-          })
+          const cmp = new Date(cust2DateTime).getTime() -
+            new Date(cust1DateTime).getTime();
+          return (cmp !== 0) ? cmp : cust2.mrr - cust1.mrr;
+        })
+        .slice(0, 5)
+        .map((cust, i) => {
+          const when = new Date(
+              (onlyLead)
+                ? cust['lead_created_at']
+                : cust['customer-since']
+          );
+          return {
+          'type': ((i === 0) ? 1 : 0),
+          // 'text': (company || name)+' at '+
+          //   new Date(cust.lead_created_at).toLocaleString('fr-FR')
+          //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
+          'text': HTMLFormatter.toListCustomer({
+            'who': cust.company || cust.name,
+            'when': when,
+            'where': cust.country,
+            'mrr': (onlyLead) ? cust.mrr : undefined,
+          }),
+        };
+        }
         );
-      });
+    });
   }
 
 } // End of Class

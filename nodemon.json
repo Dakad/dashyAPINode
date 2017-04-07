@@ -1,7 +1,8 @@
 {
   "restartable": "rs",
   "ignore": [
-    "./**/*.spec"
+    "./**/*.spec",
+    "assets/*"
   ],
   "execMap": {
     "js": "node --harmony"

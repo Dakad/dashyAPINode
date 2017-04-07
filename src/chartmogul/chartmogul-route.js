@@ -143,7 +143,6 @@ class ChartMogulRouter extends BaseRouter {
 
     // Pages HTML for the 5 last Customers
     this.router_.get('/customers/latest', async ({state}, next) => {
-      state.config.onlyLead = false;
       state.data = await this.feed_.fetchLatestCustomers(state.config);
       return next();
     });
@@ -175,6 +174,16 @@ class ChartMogulRouter extends BaseRouter {
           'absolute': true,
           'item': await this.feed_.fetchNbLeadsToday(),
         }),
+      ],
+      ['144091-4946dac0-fdc8-0134-566c-22000b498417', // Customers Month
+        async () => ({'item': await this.feed_.fetchLatestCustomers({
+          onlyLead: false,
+        })}),
+      ],
+      ['144091-117deab0-fdbe-0134-6def-22000abade87', // Leads Month
+        async () => ({'item': await this.feed_.fetchLatestCustomers({
+          onlyLead: true,
+        })}),
       ],
     ].forEach((p) => this.listPushers_.push(new Pusher(p[0], p[1], p[2])));
   };

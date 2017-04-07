@@ -75,6 +75,7 @@ class Feeder {
    * @memberOf Feeder
    */
   setInCache(query, objToCache) {
+    // Only Keep the data in cache until Tomorrow Midnight 00:00
     const tomorowMidnight = new Date();
     tomorowMidnight.setDate(tomorowMidnight.getDate() + 1);
     tomorowMidnight.setHours(0, 0, 0, 0);

@@ -80,6 +80,7 @@ class ChartMogulRouter extends BaseRouter {
         'mrr': 'GET /mrr',
         'Nb Clients': 'GET /customers',
         'Net MRR Churn': 'GET /mrr/churn',
+        'Top 5 plans/customers': 'GET /plans/top',
       };
       return next();
     });
@@ -126,6 +127,35 @@ class ChartMogulRouter extends BaseRouter {
     this.router_.get('/arpa', async ({state}, next) => {
       state.data.item = await this.feed_.fetchArpa(state.config, next);
       return next();
+    });
+
+    this.router_.get('/leads/today', async ({state}, next) => {
+      state.data = await this.feed_.fetchNbLeadsToday(state.config);
+      return next();
+    });
+
+    // LeaderBoard of 5 Most Plans Subscribed
+    this.router_.get('/plans/top', async({state}, next)=>{
+      const top = await this.feed_.fetchMostPlansPurchased(state.config);
+      state.data.items = top;
+      return next();
+    });
+
+    // Pages HTML for the 5 last Customers
+    this.router_.get('/customers/latest', async({state}, next)=>{
+      state.data = await this.feed_.fetchLatestCustomers();
+      return next();
+    });
+
+    // Pages HTML for the 5 last Leads
+    this.router_.get('/leads/latest', async({state}, next)=>{
+      state.data = await this.feed_.fetchLatestCustomers(true);
+      return next();
+    });
+
+    this.router_.get('/mrr/map', async(ctx, next) =>{
+      ctx.throw('Not Yet implemented');
+      // return next();
     });
   }
 

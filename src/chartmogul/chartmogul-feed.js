@@ -302,6 +302,7 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   fetchNbLeadsToday(config) {
+    // TODO Insert today & last30Days vars into config
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -487,6 +488,7 @@ class ChartMogulFeed extends Feeder {
         const current = Util.toMoneyFormat(netMrr, '', ',');
         const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');
         return [{
+          // TODO Export this HTML Render into ChartMogulHTMLFormatter
           'text': `
             <p style="font-size:1.5em">${current.trim()}</p>
             <h1 style="font-size:1.5em;color:#1c99e3">${best.trim()}</h1>

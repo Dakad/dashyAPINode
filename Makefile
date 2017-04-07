@@ -30,7 +30,7 @@ dev:
 	@echo "#####  Launch in PROD ENV";
 	@echo "###  Resetting Redis cache ..." ;
 	$(REDIS_CLI) FLUSHALL;
-	@DEBUG=koa* \
+	@DEBUG=* \
 	NODE_ENV=production \
 	$(NODEMON) $(DIR_SRC)/app.js;
 	@echo "##### Launch over" ;

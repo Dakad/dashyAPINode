@@ -25,7 +25,8 @@ const request = require('superagent');
 // Mine
 const Feeder = require('../components/feeder');
 const Util = require('../components/util');
-const Countries = require('../../config/countriesByISO-3166-alpha-2');
+const HTMLFormatter = require('./chartmogul-format-html');
+
 
 // -------------------------------------------------------------------
 // Properties
@@ -679,30 +680,19 @@ class ChartMogulFeed extends Feeder {
               new Date(ld1DateTime).getTime();
             return (cmp !== 0) ? cmp : ld2.mrr - ld1.mrr;
           })
-          .map(({company, name, country, mrr, lead_created_at}, i) => ({
+          .map((cust, i) => ({
             'type': ((i === 0) ? 1 : 0),
             // 'text': (company || name)+' at '+
             //   new Date(lead_created_at).toLocaleString('fr-FR')
             //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
-            'text': `<h1><strong><ins>${company || name}</ins></strong></h1>
-              <h2>
-                When ? : <strong><ins> ${new Date(lead_created_at)
-                .toLocaleString('fr-BE', {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'short',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  hour12: false,
-                })}</ins></strong>
-                </h2>
-            <h2>
-              Where ? : <strong><ins>${Countries[country]}</ins></strong>
-            <h2><hr>${ (onlyLead) ?
-                `<h3>MRR : <strong><ins>${Util.toMoneyFormat(mrr / 100)}
-            </ins></strong></h3>`: ''}`.replace(/[\r\n]/g, ''),
-          }
-          ));
+            'text': HTMLFormatter.toListCustomer({
+              who: cust.company|| cust.name,
+              when: (onlyLead) ? cust.lead_created_at : cust['customer-since'],
+              where: country,
+              mrr: (onlyLead) ? mrr : undefined,
+            }),
+          })
+        );
       });
   }
 

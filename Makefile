@@ -11,6 +11,9 @@ ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -no
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
 TIMEOUT		= 10000
+REDIS_PWD	= pwd
+REDIS_DB_TEST = 7
+REDIS_DB_PROD = 5
 
 ESLINT		= $(DIR_BIN)/eslint --cache
 JSDOC		= $(DIR_BIN)/jsdoc
@@ -18,7 +21,8 @@ MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) -R $(REPORTER)
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
 NYC			= $(DIR_BIN)/nyc --cache
-REDIS_CLI	= redis-cli -a pwd -n 5
+REDIS_DB	= $(REDIS_DB_TEST)
+REDIS_CLI	= redis-cli -a $(REDIS_PWD) -n $(REDIS_DB)
 ISTANBUL	= $(DIR_BIN)/istanbul
 
 
@@ -26,8 +30,9 @@ dev:
 	@echo "#####  Launch in PROD ENV";
 	@echo "###  Resetting Redis cache ..." ;
 	$(REDIS_CLI) FLUSHALL;
-	@NODE_ENV=production \
-	$(NODEMON) $(DIR_SRC)/app.js
+	@DEBUG=koa* \
+	NODE_ENV=production \
+	$(NODEMON) $(DIR_SRC)/app.js;
 	@echo "##### Launch over" ;
 
 lint:
@@ -37,7 +42,12 @@ lint:
 
 
 test: lint
+	$(eval REDIS_DB = $(REDIS_DB_TEST))
 	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
+	@echo "###  Resetting Redis cache ..." ;
+	$(eval REDIS_DB = $(REDIS_DB_TEST))
+	$(REDIS_CLI) FLUSHALL;
+
 	@NODE_ENV=test $(MOCHA) $(ALL_TESTS);
 	@echo "#####  Mocha Testing : DONE";
 
@@ -92,6 +102,12 @@ clean:
 	@rm -rf $(DIR_LOG)/* \
 	@echo "##### Clear doc folder";
 	@rm -rf $(DIR_DOC)/* ;
+	@echo "#####  Resetting Redis PROD cache ..." ;
+	@$(REDIS_CLI) FLUSHALL;
+	@echo "#####  Resetting Redis TEST cache ..." ;
+	@$(eval REDIS_DB = $(REDIS_DB_TEST))
+	@$(REDIS_CLI) FLUSHALL;
+
 	@echo "##### Cleanig DONE";
 
 

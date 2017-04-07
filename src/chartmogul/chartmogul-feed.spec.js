@@ -168,11 +168,12 @@ describe('ChartMogul : Feeder', () => {
 
     it('should call spyFeedReqChartMogul()', () => {
       // const nbCalls = Config.request.chartMogul.customers[0].total_pages;
-      return feed.fetchAndFilterCustomers(1)
+      feed.fetchAndFilterCustomers(1)
         .then((data) => {
           expect(spyFeedReqChartMogul.called).to.be.true;
           // expect(spyFetchAndFilter.callCount)
           //   .to.be.eq(nbCalls);
+          console.log(spyFeedReqChartMogul.firstCall.args);
           expect(spyFeedReqChartMogul.firstCall.calledWith('/customers', {
             'page': 1,
           })).to.be.true;
@@ -186,6 +187,28 @@ describe('ChartMogul : Feeder', () => {
         });
     });
 
+    it('should call spyFeedReqChartMogul() ?status=Lead', () => {
+      return feed.fetchAndFilterCustomers(1, {status: 'Lead'})
+        .then((data) => {
+          expect(spyFeedReqChartMogul.called).to.be.true;
+          // expect(spyFetchAndFilter.callCount)
+          //   .to.be.eq(nbCalls);
+          expect(spyFeedReqChartMogul.firstCall.calledWith('/customers', {
+            'page': 1,
+            'status': 'Lead',
+          })).to.be.true;
+          expect(spyFeedReqChartMogul.secondCall.calledWith('/customers', {
+            'page': 2,
+            'status': 'Lead',
+          })).to.be.true;
+          // expect(spyFetchAndFilter.firstCall.args[0])
+          //   .to.be.equal(1);
+          // expect(spyFetchAndFilter.secondCall.args[0])
+          //   .to.be.equal(2);
+        });
+    });
+
+
     it('should return customers : [4]', () => {
       const customers = feed.fetchAndFilterCustomers(1);
       return customers.done((data) => {
@@ -195,7 +218,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should return leads : [11]', () => {
-      const leads = feed.fetchAndFilterCustomers(1, true);
+      const leads = feed.fetchAndFilterCustomers(1, {onlyLead: true});
       return leads.done((data) => {
         expect(data).to.be.a('array').and.to.not.be.empty;
         expect(data).to.have.lengthOf(10);
@@ -203,12 +226,17 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should return customers && leads : []', () => {
-      let leads = feed.fetchAndFilterCustomers(3);
+      let leads = feed.fetchAndFilterCustomers(3, {});
       leads.done((data) => {
         expect(data).to.be.a('array').and.to.be.empty;
       });
 
-      leads = feed.fetchAndFilterCustomers(3, true);
+      leads = feed.fetchAndFilterCustomers(3, {onlyLead: true});
+      leads.done((data) => {
+        expect(data).to.be.a('array').and.to.be.empty;
+      });
+
+      leads = feed.fetchAndFilterCustomers(3, {status: 'Lead'});
       return leads.done((data) => {
         expect(data).to.be.a('array').and.to.be.empty;
       });
@@ -374,7 +402,7 @@ describe('ChartMogul : Feeder', () => {
 
 
     it('should call fetchAndFilterCustomers', () => {
-      return feed.fetchNbLeads({}).then((item) => {
+      return feed.fetchNbLeadsToday({}).then((item) => {
         expect(spyFetchAndFilter.called).to.be.true;
         expect(spyFetchAndFilter.calledWith(Config.chartMogul.leads.startPage))
           .to.be.true;
@@ -390,7 +418,7 @@ describe('ChartMogul : Feeder', () => {
         'end-date': Util.convertDate(today),
         'interval': 'month',
       };
-      return feed.fetchNbLeads(conf).then((item) => {
+      return feed.fetchNbLeadsToday(conf).then((item) => {
         console.log(item);
         expect(item).to.be.a('array').and.to.not.be.empty;
         expect(item).to.have.lengthOf(2);
@@ -434,7 +462,7 @@ describe('ChartMogul : Feeder', () => {
   });
 
 
-  describe.only('Fetcher : fetchLatestCustomers', () => {
+  describe('Fetcher : fetchLatestCustomers', () => {
     beforeEach(() => {
       spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');
     });

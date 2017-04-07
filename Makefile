@@ -18,13 +18,17 @@ MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) -R $(REPORTER)
 _MOCHA		= $(DIR_BIN)/_mocha 
 NODEMON		= $(DIR_BIN)/nodemon
 NYC			= $(DIR_BIN)/nyc --cache
+REDIS_CLI	= redis-cli -a pwd -n 5
 ISTANBUL	= $(DIR_BIN)/istanbul
 
 
 dev:
+	@echo "#####  Launch in PROD ENV";
+	@echo "###  Resetting Redis cache ..." ;
+	$(REDIS_CLI) FLUSHALL;
 	@NODE_ENV=production \
 	$(NODEMON) $(DIR_SRC)/app.js
-
+	@echo "##### Launch over" ;
 
 lint:
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;

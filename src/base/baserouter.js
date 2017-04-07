@@ -82,6 +82,7 @@ class BaseRouter extends Router {
    * @override
    */
   async sendResponse(ctx, next) {
+    Config.api.host = ctx.origin;
     ctx.state.data = {};
     // Call the next middleware and wait for it;
     await next();

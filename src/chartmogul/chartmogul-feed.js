@@ -106,11 +106,16 @@ class ChartMogulFeed extends Feeder {
         }
         break;
       case '/plans':
-        super.setInCache(key, resp.plans.map((plan) => ({
-          'external_id': plan.external_id,
-          'name': plan.name,
-          'uuid': plan.uuid,
-        })));
+        const plans = resp.plans
+          .filter((plan, i, plans) => { // Remove duplicate Plan
+            return plans.findIndex((p) => (p.name === plan.name)) === i;
+          })
+          .map((plan) => ({
+            'external_id': plan.external_id,
+            'name': plan.name.trim(),
+            'uuid': plan.uuid,
+          }));
+        super.setInCache(key, plans);
       default:
         break;
     }
@@ -612,7 +617,8 @@ class ChartMogulFeed extends Feeder {
         if (lastBiggest === null) { // First fresh fetch
           lastBiggest = [];
         }
-        const items = biggestCustByPlans.map(({total, plan}, i) => {
+        // List
+        /* const items = biggestCustByPlans.map(({total, plan}, i) => {
           const item = {
             'title': {
               'text': plan.name,
@@ -645,11 +651,28 @@ class ChartMogulFeed extends Feeder {
           }
           return item;
         });
+        */
+        // LeaderBoard
+        const items = biggestCustByPlans.map(({total, plan}, i) => {
+          const item = {
+            'label': plan.name,
+            'value': total,
+          };
+          // Check the previous rank
+          const prevRank = lastBiggest.findIndex(
+            ({plan: old}, i) => old.uuid === plan.uuid
+          );
+
+          if (prevRank !== -1 && prevRank !== i) {
+            item['previous_rank'] = prevRank + 1;
+          }
+          return item;
+        });
+
         this.setInCache(KEY_BIGGEST_PLANS, biggestCustByPlans);
         return items;
       });
   }
-
 
   /**
    * The middleware in charge of fetching the Lattest Leads or Customers.
@@ -689,22 +712,22 @@ class ChartMogulFeed extends Feeder {
         .slice(0, 5)
         .map((cust, i) => {
           const when = new Date(
-              (onlyLead)
-                ? cust['lead_created_at']
-                : cust['customer-since']
+            (onlyLead)
+              ? cust['lead_created_at']
+              : cust['customer-since']
           );
           return {
-          'type': ((i === 0) ? 1 : 0),
-          // 'text': (company || name)+' at '+
-          //   new Date(cust.lead_created_at).toLocaleString('fr-FR')
-          //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
-          'text': HTMLFormatter.toListCustomer({
-            'who': cust.company || cust.name,
-            'when': when,
-            'where': cust.country,
-            'mrr': (onlyLead) ? cust.mrr : undefined,
-          }),
-        };
+            'type': ((i === 0) ? 1 : 0),
+            // 'text': (company || name)+' at '+
+            //   new Date(cust.lead_created_at).toLocaleString('fr-FR')
+            //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
+            'text': HTMLFormatter.toListCustomer({
+              'who': cust.company || cust.name,
+              'when': when,
+              'where': cust.country,
+              'mrr': (onlyLead) ? cust.mrr : undefined,
+            }),
+          };
         }
         );
     });

@@ -725,7 +725,7 @@ class ChartMogulFeed extends Feeder {
               'who': cust.company || cust.name,
               'when': when,
               'where': cust.country,
-              'mrr': (onlyLead) ? cust.mrr : undefined,
+              'mrr': (!onlyLead) ? cust.mrr : undefined,
             }),
           };
         }

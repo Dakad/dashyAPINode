@@ -173,7 +173,6 @@ describe('ChartMogul : Feeder', () => {
           expect(spyFeedReqChartMogul.called).to.be.true;
           // expect(spyFetchAndFilter.callCount)
           //   .to.be.eq(nbCalls);
-          console.log(spyFeedReqChartMogul.firstCall.args);
           expect(spyFeedReqChartMogul.firstCall.calledWith('/customers', {
             'page': 1,
           })).to.be.true;
@@ -316,6 +315,7 @@ describe('ChartMogul : Feeder', () => {
 
   describe('Fetcher : fetchNetMRRMovements', (done) => {
     let spyCalcNetMRRMovement;
+    let spyFindMaxNetMRR;
     let mogulFeed;
 
     beforeEach(() => {
@@ -385,7 +385,6 @@ describe('ChartMogul : Feeder', () => {
         'interval': 'month',
       };
       return feed.fetchNbLeads(conf).then((item) => {
-        console.log(item);
         expect(item).to.be.a('array').and.to.not.be.empty;
         expect(item).to.have.lengthOf(2);
       });
@@ -419,7 +418,6 @@ describe('ChartMogul : Feeder', () => {
         'interval': 'month',
       };
       return feed.fetchNbLeadsToday(conf).then((item) => {
-        console.log(item);
         expect(item).to.be.a('array').and.to.not.be.empty;
         expect(item).to.have.lengthOf(2);
       });
@@ -453,10 +451,8 @@ describe('ChartMogul : Feeder', () => {
         const [best, , , , last] = biggestPlans;
         expect(biggestPlans).to.be.a('array').and.to.not.be.empty;
         expect(biggestPlans).to.have.lengthOf(5);
-        expect(best).to.contains.all.keys('title', 'label', 'description');
-        expect(best.label).to.contains.all.keys('name', 'color');
-        expect(last).to.contains.all.keys('title', 'label', 'description');
-        expect(last.label).to.contains.all.keys('name', 'color');
+        expect(best).to.contains.all.keys('label', 'value');
+        expect(last).to.contains.all.keys('label', 'value');
       });
     });
   });
@@ -480,8 +476,6 @@ describe('ChartMogul : Feeder', () => {
       return feed.fetchLatestCustomers({onlyLead: false})
         .then((latestCust) => {
           const [last, one] = latestCust;
-          console.log(latestCust);
-          console.log(require('os').hostname());
           expect(latestCust).to.be.a('array').and.to.not.be.empty;
           // expect(latestCust).to.have.lengthOf(5);
           expect(last).to.contains.all.keys('type', 'text');
@@ -515,6 +509,34 @@ describe('ChartMogul : Feeder', () => {
           // expect(latestCust).to.have.lengthOf(5);
           expect(last).to.contains.all.keys('type', 'text');
           expect(one).to.contains.all.keys('type', 'text');
+        });
+    });
+  });
+
+
+  describe('Fetcher : fetchCountriesByCustomers', () => {
+    beforeEach(() => {
+      spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');
+    });
+
+    afterEach(() => spyFeedReqChartMogul.restore());
+
+    it('should call fetchAndFilterCustomers', () => {
+      return feed.fetchCountriesByCustomers().then(() => {
+        expect(spyFeedReqChartMogul.called).to.be.true;
+        // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
+      });
+    });
+
+    it('should fill data with items', () => {
+      return feed.fetchCountriesByCustomers()
+        .then(({points}) => {
+          expect(points).to.contains.all.keys('point');
+          expect(points.point).to.be.an('Array').and.to.not.be.empty;
+
+          expect(points.point[0]).to.contains.all.keys('city', 'size');
+          expect(points.point[0].city)
+            .to.contains.all.keys('city_name', 'country_code');
         });
     });
   });

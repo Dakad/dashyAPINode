@@ -19,7 +19,7 @@ const Config = require('config');
 
 // Mine
 const Countries = require('../../config/countriesByISO-3166-alpha-2');
-const Util = require('../components/util');
+// const Util = require('../components/util');
 
 
 // -------------------------------------------------------------------
@@ -74,28 +74,36 @@ class CharMogulHTMLFormatter {
 
     if (when instanceof Date) {
       when = new Intl.DateTimeFormat('fr-BE', {
-        month: 'short', day: 'numeric', weekday : 'short',
-	      hour:'numeric', minute:'2-digit',second:'numeric',
-	      hour12:false
+        month: 'short', day: 'numeric', weekday: 'short',
+        hour: 'numeric', minute: '2-digit', second: 'numeric',
+        hour12: false,
 
       }).format(when);
     }
     return `<div>
-                ${CharMogulHTMLFormatter.generateFlagImg(where)}
+                ${isISO3166(where)
+                  ? CharMogulHTMLFormatter.generateFlagImg(where)
+                  :''
+                }
                 <h1 style="margin:0 10px 15px 0;"><u>${who}</u></h1>
                 <h2 style="margin-bottom:5px;">
-                  <img src="${Config.api.host}/assets/img/icons/datetime.png" alt="DateTime" style="float:left;width: 25px;height: 25px;margin: 0 5px;"/>
+                  <img src="${Config.api.host}/assets/img/icons/datetime.png"
+                        alt="DateTime"
+                        style="float:left;width:25px;height:25px;margin:0 5px;"
+                  />
                   ${when}
                 </h2>
 
               ${ (mrr)
               ? `<h2 style="margin-bottom:5px;">
-                  <img src="${Config.api.host}/assets/img/icons/euro.png" alt="MRR" style="float:left;width: 25px;height: 25px;margin: 0 5px;"/>
-                  ${(mrr / 100)}
+                  <img src="${Config.api.host}/assets/img/icons/euro.png"
+                        alt="MRR"
+                        style="float:left;width:25px;height:25px;margin:0 5px;"
+                  />
+                  ${(mrr / 100)}/Month
                 </h2>`
               : ''}
-              </div>`.replace(/[\r\n]/g, '')
-
+              </div>`.replace(/[\r\n]/g, '');
   }
 
 }

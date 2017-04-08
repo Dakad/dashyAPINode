@@ -154,9 +154,9 @@ class ChartMogulRouter extends BaseRouter {
       return next();
     });
 
-    this.router_.get('/mrr/map', async (ctx, next) => {
-      ctx.throw('Not Yet implemented');
-      // return next();
+    this.router_.get('/(mrr|customers)/map', async ({state}, next) => {
+      state.data = await this.feed_.fetchCountriesByCustomers(state.config);
+      return next();
     });
   }
 

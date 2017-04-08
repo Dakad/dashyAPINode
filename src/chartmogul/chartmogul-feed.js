@@ -50,6 +50,13 @@ const mrrsEntries = [
 ];
 
 
+const leadsNecessaryKeys = [
+  'name', 'status', 'company',
+  'country', 'state', 'city', 'address',
+  'customer-since', 'lead_created_at', 'free_trial_started_at',
+  'mrr',
+];
+
 /**
  * Feeder for ChartMogul route
  *
@@ -76,19 +83,6 @@ class ChartMogulFeed extends Feeder {
     this.leads_ = {
       'lastFetch': null,
       'startPage': Config.chartMogul.leads.startPage,
-      'necessaryKeys': [
-        'name',
-        'status',
-        'customer-since',
-        'company',
-        'country',
-        'state',
-        'city',
-        'lead_created_at',
-        'free_trial_started_at',
-        'address',
-        'mrr',
-      ],
     };
   }
 
@@ -210,7 +204,7 @@ class ChartMogulFeed extends Feeder {
         return (customerDate >= lastMonthDate);
       })
       .map((entry) => {
-        return this.leads_.necessaryKeys.reduce((nEntry, key) => {
+        return leadsNecessaryKeys.reduce((nEntry, key) => {
           nEntry[key] = entry[key];
           return nEntry;
         }, {});
@@ -652,6 +646,7 @@ class ChartMogulFeed extends Feeder {
           return item;
         });
         */
+
         // LeaderBoard
         const items = biggestCustByPlans.map(({total, plan}, i) => {
           const item = {
@@ -663,8 +658,18 @@ class ChartMogulFeed extends Feeder {
             ({plan: old}, i) => old.uuid === plan.uuid
           );
 
-          if (prevRank !== -1 && prevRank !== i) {
-            item['previous_rank'] = prevRank + 1;
+          if (prevRank !== -1) {
+            // ? More Subscribers to this plan
+            const diff = plan.total - lastBiggest[prevRank].total;
+            if(diff > 0) {
+              // 10 : Only 5 plans sol the last one is Rank 10
+              item['previous_rank'] = 10; // UP
+            }else{
+              if(diff < 0) {
+                item['previous_rank'] = 1;// Drop Down
+              }
+            }
+            // item['previous_rank'] = prevRank + 1;
           }
           return item;
         });
@@ -675,7 +680,7 @@ class ChartMogulFeed extends Feeder {
   }
 
   /**
-   * The middleware in charge of fetching the Lattest Leads or Customers.
+   * The middleware in charge of fetching the Latest Leads or Customers.
    *
    * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
@@ -732,6 +737,46 @@ class ChartMogulFeed extends Feeder {
         );
     });
   }
+
+
+  /**
+   * The middleware in charge of fetching the customers' countries.
+   *
+   * @param {Object} config The context of the request and response.
+   * @return {Promise} the next middleware()
+   *
+   * @memberOf ChartMogulFeed
+   */
+   fetchCountriesByCustomers(config) {
+     return this.fetchAndFilterCustomers(1, {
+       status: 'Active',
+     }).then((customers)=>{
+       return customers
+       .sort((cust1, cust2) => {
+          return new Date(cust2['customer-since']).getTime() -
+            new Date(cust1['customer-since']).getTime();
+        })
+        .slice(0, 10)
+        .map((customer)=>({
+            'city': {
+              'city_name': customer.city,
+              'country_code': customer.country,
+            },
+            'size': 5,
+          })
+        )
+        // .filter((cust)=>{ // Duplicate Country & City
+          // return true;
+        // })
+        ;
+     }).then((points)=>{
+       return {
+         'points': {
+           'point': points,
+         },
+       };
+     });
+   }
 
 } // End of Class
 

@@ -46,9 +46,9 @@ class CharMogulHTMLFormatter {
   static generateFlagImg(isoCountry) {
     const srcLink = Config.api.host + '/assets/img/flags';
     return `
-        <img src="${srcLink}/${isoCountry}.png" 
-             alt="${Countries[isoCountry]}" 
-             style="width:50;height:50;"
+        <img src="${srcLink}/${isoCountry}.png"
+             alt="Flag of ${Countries[isoCountry]}"
+             style="float:left;margin: 0 5px;width:150px;height:150px;"
         >`.trim();
   }
 
@@ -73,43 +73,28 @@ class CharMogulHTMLFormatter {
     const isISO3166 = (when) => where.length === 2;
 
     if (when instanceof Date) {
-      when = toLocaleString.call(when, 'fr-BE')
-              .replace(' GMT+0200 (CEST)', '');
+      when = new Intl.DateTimeFormat('fr-BE', {
+        month: 'short', day: 'numeric', weekday : 'short',
+	      hour:'numeric', minute:'2-digit',second:'numeric',
+	      hour12:false
+
+      }).format(when);
     }
-    return `<h1><strong>${who}</strong></h1>
-              <h2>
-                When ? : <b><u>${when}</u></b>
+    return `<div>
+                ${CharMogulHTMLFormatter.generateFlagImg(where)}
+                <h1 style="margin:0 10px 15px 0;"><u>${who}</u></h1>
+                <h2 style="margin-bottom:5px;">
+                  <img src="${Config.api.host}/assets/img/icons/datetime.png" alt="DateTime" style="float:left;width: 25px;height: 25px;margin: 0 5px;"/>
+                  ${when}
                 </h2>
-              ${!isISO3166(where) ? 'Where ?'
-              : CharMogulHTMLFormatter.generateFlagImg(where) }
-            <h2> 
-              <strong>
-                <ins>${isISO3166(where) ? Countries[where] : where}</ins>
-              </strong>
-            <h2>
-              ${ (mrr) ?
-        `<hr>
-        <h3>
-        MRR : <strong>
-                <ins>${Util.toMoneyFormat(mrr / 100)}</ins>
-              </strong>
-        </h3>`
-        : ''}
-            `.replace(/[\r\n]/g, '');
 
-            /*<h1  style="margin: 5px 10px 10px;"><b><u>My website name</u></b></h1>
-
-<div>
-  <img src="https://avatars0.githubusercontent.com/u/5960567?v=3&s=60g" alt="Flag of " 
-        style="float:left;width: 130px;height: 110px;margin: 0 10px;"
-  />
-  <h2><img src="https://cdn2.iconfinder.com/data/icons/snipicons/500/time-32.png" alt="DateTime" style="float:left;width: 25px;height: 25px;margin: 0 5px;"/><b>Fri Apr 07 2017 15:00:00</b></h2>
-<br>
-<h2><img src="https://cdn0.iconfinder.com/data/icons/shift-free/32/Currency_Euro-32.png" alt="MRR" style="float:left;width: 25px;height: 25px;margin: 0 5px;"/><b>2199,65</b></h2>
-<br>
-<h2><img src="https://cdn0.iconfinder.com/data/icons/gcons-2/21/world7-48.png" alt="Where" style="float:left;width: 25px;height: 25px;margin: 0 5px;"/><b>Country</b></h2>
-
-</div>*/
+              ${ (mrr)
+              ? `<h2 style="margin-bottom:5px;">
+                  <img src="${Config.api.host}/assets/img/icons/euro.png" alt="MRR" style="float:left;width: 25px;height: 25px;margin: 0 5px;"/>
+                  ${(mrr / 100)}
+                </h2>`
+              : ''}
+              </div>`.replace(/[\r\n]/g, '')
 
   }
 

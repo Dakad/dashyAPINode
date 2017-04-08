@@ -142,13 +142,13 @@ class ChartMogulRouter extends BaseRouter {
     });
 
     // Pages HTML for the 5 last Customers
-    this.router_.get('/customers/latest', async ({state}, next) => {
+    this.router_.get('/customers/(last|latest)', async ({state}, next) => {
       state.data = await this.feed_.fetchLatestCustomers(state.config);
       return next();
     });
 
     // Pages HTML for the 5 last Leads
-    this.router_.get('/leads/latest', async ({state}, next) => {
+    this.router_.get('/leads/(last|latest)', async ({state}, next) => {
       state.config.onlyLead = true;
       state.data = await this.feed_.fetchLatestCustomers(state.config);
       return next();

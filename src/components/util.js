@@ -79,23 +79,35 @@ module.exports = class Util {
    * @return {number} Hascode
    */
   static hashCode(str) {
-    if (!str
-        || (Array.isArray(str) && str.length === 0)
-        || Object.keys(str).length === 0
+    if (!str ||
+      (Array.isArray(str) && str.length === 0) ||
+      Object.keys(str).length === 0
     ) {
       return 0;
     }
 
-    if(typeof str !== 'string') {
+    if (typeof str !== 'string') {
       str = JSON.stringify(str);
     }
 
     // 5 is also a prime as 31 in JAVA
     return str
-        .split('') // Array<Character>
-        .reduce((hash, c) => ((hash << 5) - hash) + c.charCodeAt(0), 0);
+      .split('') // Array<Character>
+      .reduce((hash, c) => ((hash << 5) - hash) + c.charCodeAt(0), 0);
   };
 
+
+  /**
+   * @param {string} hash - The src to hash
+   * @return {string} hex color
+   */
+  static hashColor(str) {
+    const hash = Util.hashCode(str);
+    const hex = (hash & 0x00FFFFFF)
+      .toString(16)
+      .toUpperCase();
+    return "#" + "00000".substring(0, 6 - hex.length) + hex;
+  }
 
   /**
    * Convert an array into an object.

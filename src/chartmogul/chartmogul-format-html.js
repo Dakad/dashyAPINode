@@ -69,7 +69,7 @@ class CharMogulHTMLFormatter {
    * @return {String} A HTML Output.
    * @memberOf CharMogulHTMLFormatter
    */
-  static toListCustomer({who, when, where='', mrr}) {
+  static toListCustomer({who, when, where='', mrr, city}) {
     const isISO3166 = (when) => where.length === 2;
 
     if (when instanceof Date) {
@@ -85,13 +85,23 @@ class CharMogulHTMLFormatter {
                   ? CharMogulHTMLFormatter.generateFlagImg(where)
                   :''
                 }
-                <h1 style="margin:0 10px 15px 0;"><u>${who}</u></h1>
+                <h1 style="margin:0 10px 15px 0;">
+                  <u>${(who.length>25) ? who.substr(0,21)+' ...' : who}</u>
+                </h1>
                 <h2 style="margin-bottom:5px;">
                   <img src="${Config.api.host}/assets/img/icons/datetime.png"
                         alt="DateTime"
                         style="float:left;width:25px;height:25px;margin:0 5px;"
                   />
                   ${when}
+                </h2>
+
+                <h2 style="margin-bottom:5px;">
+                  <img src="${Config.api.host}/assets/img/icons/world.png"
+                        alt="City"
+                        style="float:left;width:30px;height:30px;margin:0 5px;"
+                  />
+                  ${(city) ? city : Countries[where]}
                 </h2>
 
               ${ (mrr)

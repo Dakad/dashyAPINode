@@ -98,15 +98,14 @@ module.exports = class Util {
 
 
   /**
-   * @param {string} hash - The src to hash
+   * @param {string} str - The src to hash
    * @return {string} hex color
    */
   static hashColor(str) {
-    const hash = Util.hashCode(str);
-    const hex = (hash & 0x00FFFFFF)
+    const hex = (Util.hashCode(str) & 0x00FFFFFF)
       .toString(16)
       .toUpperCase();
-    return "#" + "00000".substring(0, 6 - hex.length) + hex;
+    return '#' + '00000'.substring(0, 6 - hex.length) + hex;
   }
 
   /**

@@ -765,7 +765,7 @@ class ChartMogulFeed extends Feeder {
               'country_code': customer.country,
             },
             'size': 5,
-            'color':Util.hashColor(customer.city)
+            'color': Util.hashColor(customer.city),
           })
         )
         // .filter((cust)=>{ // Duplicate Country & City
@@ -780,8 +780,6 @@ class ChartMogulFeed extends Feeder {
        };
      });
    }
-
-
 
 
 } // End of Class

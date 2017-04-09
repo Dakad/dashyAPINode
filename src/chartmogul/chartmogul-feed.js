@@ -329,7 +329,7 @@ class ChartMogulFeed extends Feeder {
         // console.log('Lead : '+leadDate);
         const leadDateInMs = new Date(lead['lead_created_at']).getTime();
 
-        if (leadDateInMs >= today) {
+        if (leadDateInMs >= today.getTime()) {
           item[0].value += 1;
         }
         if (avgLeadsLastMonth === null
@@ -344,6 +344,8 @@ class ChartMogulFeed extends Feeder {
         // Calc the avg on 30 days
         item[1].value = Math.round(item[1].value / 30);
         super.setInCache(KEY_AVG_LEADS_LAST_MONTH, item[1].value);
+      }else{
+        item[1].value = avgLeadsLastMonth;
       }
       return item;
     });

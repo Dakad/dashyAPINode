@@ -82,6 +82,6 @@
   },
   "scripts": {
     "test": "make test",
-    "start": "make setup && make dev"
+    "start": "make setup && NODE_ENV=production node_modules/.bin/nodemon src/app.js"
   }
 }

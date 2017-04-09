@@ -1,1 +1,1 @@
-web: NODE_ENV=production node_modules/.bin/nodemon src/app.js
+web: NODE_ENV=production node src/app.js

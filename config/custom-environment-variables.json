@@ -15,6 +15,6 @@
   },
   "chartMogul": {
     "apiToken": "CHARTMOGUL_API_TOKEN",
-    "apiSecret": "CHARTMOGUL_API_SECRET",
-  },
+    "apiSecret": "CHARTMOGUL_API_SECRET"
+  }
 }

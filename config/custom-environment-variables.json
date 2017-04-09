@@ -2,7 +2,7 @@
   "api": {
     "port": "API_PORT",
     "token": "API_TOKEN",
-    "dirLogs": "./logs"
+    "dirLogs": "API_DIR_LOGS"
   },
   "redis" : {
     "host" : "REDIS_HOST",

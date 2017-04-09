@@ -1,0 +1,20 @@
+{
+  "api": {
+    "port": "API_PORT",
+    "token": "API_TOKEN",
+    "dirLogs": "./logs"
+  },
+  "redis" : {
+    "host" : "REDIS_HOST",
+    "port" : "REDIS_PORT",
+    "password":"REDIS_PWD",
+    "db" : "REDIS_DB"
+  },
+  "geckoBoard": {
+    "apiKey": "GECKO_API_KEY"
+  },
+  "chartMogul": {
+    "apiToken": "CHARTMOGUL_API_TOKEN",
+    "apiSecret": "CHARTMOGUL_API_SECRET",
+  },
+}

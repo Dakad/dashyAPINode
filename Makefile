@@ -63,7 +63,10 @@ test-docs:
 	export NODE_ENV=test;
 	#@test -d $(DIR_DOC) || mkdir $(DIR_DOC);
 	#@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
-	@NODE_ENV=test $(MOCHA) --reporter mochawesome $(ALL_TEST);
+	@NODE_ENV=test $(_MOCHA) $(ALL_TEST)\
+			--reporter mochawesome \
+			--reporter-options 	\
+				reportDir=$(DIR_DOC)/test;
 	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
 			> $(DIR_DOC)/test/index.md
 

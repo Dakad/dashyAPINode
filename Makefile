@@ -63,12 +63,12 @@ test-docs:
 	export NODE_ENV=test;
 	#@test -d $(DIR_DOC) || mkdir $(DIR_DOC);
 	#@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
-	@NODE_ENV=test $(_MOCHA) $(ALL_TEST)\
+	@NODE_ENV=test $(_MOCHA) $(ALL_TESTS)\
 			--reporter mochawesome \
 			--reporter-options 	\
-				reportDir=$(DIR_DOC)/test;
-	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TEST)  \
-			> $(DIR_DOC)/test/index.md
+				reportDir=$(DIR_DOC)/test,reportFilename=reports,autoOpen=true;
+	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TESTS)  \
+			> $(DIR_DOC)/test/reports.md
 
 docs: clean test-cover
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";

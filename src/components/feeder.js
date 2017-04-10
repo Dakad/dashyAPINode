@@ -86,9 +86,10 @@ class Feeder {
 
 
   /**
+   * Cache the request response' body.
+   *
    * @protected
    * @abstract
-   * Cache the request response' body.
    *
    * @param {Object} key - The key to use for the cache
    * @param {any} resp - The response Body.

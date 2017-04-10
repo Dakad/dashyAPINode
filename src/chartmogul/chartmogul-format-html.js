@@ -34,8 +34,10 @@ const Countries = require('../../config/countriesByISO-3166-alpha-2');
 class CharMogulHTMLFormatter {
 
   /**
-   * @private @static
    * Generate <img> with the corresponding country.
+   *
+   * @private
+   * @static
    *
    * @param {string} isoCountry The country in ISO-3166 format.
    *

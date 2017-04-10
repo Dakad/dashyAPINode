@@ -6,7 +6,7 @@ DIR_SRC		= ./src
 DIR_TEST 	= ./test
 DIR_DOC		= ./docs
 DIR_LOG		= ./logs
-ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -not -path "*node_modules*")
+ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -not -path "*/node_modules*")
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
 REPORTER	= spec
@@ -27,6 +27,7 @@ ISTANBUL	= $(DIR_BIN)/istanbul
 
 
 dev:
+
 	@echo "#####  Launch in PROD ENV";
 	@echo "###  Resetting Redis cache ..." ;
 	$(REDIS_CLI) FLUSHALL;
@@ -36,12 +37,14 @@ dev:
 	@echo "##### Launch over" ;
 
 lint:
+
 	@echo "#####  ESLint-ing $(DIR_SRC)" ;
 	@$(ESLINT) --color --fix $(DIR_SRC); 
 	@echo "#####  ESLint : DONE";
 
 
 test: lint
+
 	$(eval REDIS_DB = $(REDIS_DB_TEST))
 	@echo "#####  Mocha Testing : $(DIR_SRC) $(DIR_TEST)";
 	@echo "###  Resetting Redis cache ..." ;
@@ -52,15 +55,27 @@ test: lint
 	@echo "#####  Mocha Testing : DONE";
 
 test-watch:
+
 	@NODE_ENV=test $(MOCHA) --watch $(ALL_TESTS);
 
 
 test-cover: lint
-	@NODE_ENV=test $(NYC) report --reporter=lcov $(_MOCHA) $(ALL_TESTS)
 
+	$(eval REDIS_DB = $(REDIS_DB_TEST))
+	@echo "#####  NYC Test Covering : $(DIR_SRC) $(DIR_TEST)";
+	@echo "###  Resetting Redis cache ..." ;
+	@$(REDIS_CLI) FLUSHALL > /dev/null;
+
+	@NODE_ENV=test $(NYC) report \
+		--reporter=lcov \
+		--reporter-dir=$(DIR_DOC)/coverage \
+		$(_MOCHA) $(ALL_TESTS);
+
+	@open ./docs/coverage/lcov-report/*.html
+	@echo "#####  NYC Test Covering ... : DONE" ;
 
 test-docs:
-	export NODE_ENV=test;
+
 	#@test -d $(DIR_DOC) || mkdir $(DIR_DOC);
 	#@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
 	@NODE_ENV=test $(_MOCHA) $(ALL_TESTS)\
@@ -70,7 +85,8 @@ test-docs:
 	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TESTS)  \
 			> $(DIR_DOC)/test/reports.md
 
-docs: clean test-cover
+docs: clean test-cover test-docs
+
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
 	@$(JSDOC) \
 		-c .jsdocrc.json \
@@ -80,31 +96,30 @@ docs: clean test-cover
 		-t $(DOC_TEMPL) \
 		--verbose \
 		$(DIR_SRC) ;
+
 	@open $(DIR_DOC)/doc/index.html
 
-commit: test clean
-	@echo "New commit !";\
-	git add .;\
-	git commit -m "$m" ; \
-
-commit-push:
-	git push origin master
 
 setup:
+
 	@$(find ./logs -name "*.log")
 	@node --harmony setup.js
 
 
-build: test test-docs
+build: test docs
+
 	@echo "##### Clear the logs folder .... ";
 	@rm -rf $(DIR_LOG)/*;
 	@NODE_ENV=production node --harmony $(DIR_SRC)/app.js;
 
 clean:
+
+	@echo "##### Clear NYC folder";
+	@rm -rf .nyc_output/*;
 	@echo "##### Clear logs folder";
-	@rm -rf $(DIR_LOG)/* \
+	@rm -rf $(DIR_LOG)/*;
 	@echo "##### Clear doc folder";
-	@rm -rf $(DIR_DOC)/* ;
+	@rm -rf $(DIR_DOC)/*;
 	@echo "#####  Resetting Redis PROD cache ..." ;
 	@$(REDIS_CLI) FLUSHALL;
 	@echo "#####  Resetting Redis TEST cache ..." ;

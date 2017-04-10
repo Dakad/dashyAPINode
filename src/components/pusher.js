@@ -49,7 +49,6 @@ class Pusher {
   /**
    * Push the data to the Gecko Widget.
    *
-   *
    * @memberOf Pusher
    */
   async push() {
@@ -57,7 +56,11 @@ class Pusher {
     request.post('https://push.geckoboard.com/v1/send/' + this.widgetId_)
       .send({'api_key': Config.geckoBoard.apiKey})
       .send({'data': data})
-      .end((err, {body}) => (err) ? Logger.error(body) : Logger.info(body));
+      .end((err, {body}) => {
+        return (err)
+          ? Logger.error(this.widgetId_ + '-' + body)
+          : Logger.info(this.widgetId_ + '-' + body);
+      });
   }
 
 

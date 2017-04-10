@@ -32,7 +32,6 @@ Promise.promisifyAll(Redis.Multi.prototype);
 /**
  * The Cache
  *
- * @class Pusher
  */
 class Cache {
   /**

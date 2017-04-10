@@ -60,8 +60,9 @@ class Router {
     this.router_ = new KoaRouter();
 
     /**
-     * @private List of Pusher. Will be filled with pusher on child Router.
-     * @typedef {Array<Pusher>} pusher
+     * List of Pusher. Will be filled with pusher on child Router.
+     * @private
+     * @typedef {Pusher[]} pusher
      */
     this.listPushers_ = [];
   }

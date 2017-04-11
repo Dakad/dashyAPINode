@@ -47,11 +47,9 @@ class CharMogulHTMLFormatter {
    */
   static generateFlagImg(isoCountry) {
     const srcLink = Config.api.host + '/assets/img/flags';
-    return `
-        <img src="${srcLink}/${isoCountry}.png"
-             alt="Flag of ${Countries[isoCountry]}"
-             style="float:left;margin: 0 5px;width:150px;height:150px;"
-        >`.trim();
+    return `<img src='${srcLink}/${isoCountry}.png' `+
+             `alt='Flag of ${Countries[isoCountry]['name']}' `+
+             `style='float:left;margin: 0 5px;width:150px;height:150px;' >`;
   }
 
   /**
@@ -87,35 +85,51 @@ class CharMogulHTMLFormatter {
                   ? CharMogulHTMLFormatter.generateFlagImg(where)
                   :''
                 }
-                <h1 style="margin:0 10px 15px 0;">
+                <h1 style='margin:0 10px 15px 0;'>
                   <u>${(who.length>25) ? who.substr(0, 21)+' ...' : who}</u>
                 </h1>
-                <h2 style="margin-bottom:5px;">
-                  <img src="${Config.api.host}/assets/img/icons/datetime.png"
-                        alt="DateTime"
-                        style="float:left;width:25px;height:25px;margin:0 5px;"
+                <h2 style='margin-bottom:5px;'>
+                  <img src='${Config.api.host}/assets/img/icons/datetime.png'
+                        alt='DateTime'
+                        style='float:left;width:25px;height:25px;margin:0 5px;'
                   />
                   ${when}
                 </h2>
 
-                <h2 style="margin-bottom:5px;">
-                  <img src="${Config.api.host}/assets/img/icons/world.png"
-                        alt="City"
-                        style="float:left;width:30px;height:30px;margin:0 5px;"
+                <h2 style='margin-bottom:5px;'>
+                  <img src='${Config.api.host}/assets/img/icons/world.png'
+                        alt='City'
+                        style='float:left;width:30px;height:30px;margin:0 5px;'
                   />
-                  ${(city) ? city : Countries[where]}
+                ${city || Countries[where]['name'].toUpperCase()}
                 </h2>
 
               ${ (mrr)
-              ? `<h2 style="margin-bottom:5px;">
-                  <img src="${Config.api.host}/assets/img/icons/euro.png"
-                        alt="MRR"
-                        style="float:left;width:25px;height:25px;margin:0 5px;"
+              ? `<h2 style='margin-bottom:5px;'>
+                  <img src='${Config.api.host}/assets/img/icons/euro.png'
+                        alt='MRR'
+                        style='float:left;width:25px;height:25px;margin:0 5px;'
                   />
                   ${(mrr / 100)}/Month
                 </h2>`
               : ''}
-              </div>`.replace(/[\r\n]/g, '');
+              </div>`.replace(/[\r\n]/g, ' ');
+  }
+
+  /**
+   * Generate a HTML text with the current & best mrr for a text Widget.
+   *
+   * @static
+   * @param {number|string} current The current Mrr
+   * @param {number|string} best The best mrr.
+   *
+   * @return {string} A HTML Output.
+   *
+   * @memberOf CharMogulHTMLFormatter
+   */
+  static toTextNetMrr(current, best) {
+    return `<p style='font-size:1.5em'>${(''+current).trim()}</p>`+
+          `<h1 style='font-size:1.5em;color:#1c99e3'>${(''+best).trim()}</h1>`;
   }
 
 }

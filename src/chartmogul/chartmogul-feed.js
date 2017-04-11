@@ -491,14 +491,13 @@ class ChartMogulFeed extends Feeder {
         // {3 days, 1 week , only Monday}
 
         const netMrr = this.calcNetMRRMovement(entries.pop());
-        const current = Util.toMoneyFormat(netMrr, '', ',');
-        const best = Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',');
+
         return [{
           // TODO Export this HTML Render into ChartMogulHTMLFormatter
-          'text': `
-            <p style="font-size:1.5em">${current.trim()}</p>
-            <h1 style="font-size:1.5em;color:#1c99e3">${best.trim()}</h1>
-            `,
+          'text': HTMLFormatter.toTextNetMrr(
+              Util.toMoneyFormat(netMrr, '', ',')
+            , Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',')
+          ),
         }];
       })
       ;
@@ -760,13 +759,15 @@ class ChartMogulFeed extends Feeder {
             new Date(cust1['customer-since']).getTime();
         })
         .slice(0, 10)
-        .map((customer)=>({
+        .map(({city, country: iso})=>({
             'city': {
-              'city_name': customer.city,
-              'country_code': customer.country,
+              'city_name': (city || Util.getCountryFromISOCode(iso).capital),
+              'country_code': iso,
             },
             'size': 5,
-            'color': Util.hashColor(customer.city),
+            'color': Util.hashColor(
+              city || Util.getCountryFromISOCode(iso).capital
+            ),
           })
         )
         // .filter((cust)=>{ // Duplicate Country & City

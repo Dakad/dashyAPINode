@@ -1,251 +1,2244 @@
 {
-  "AF": "Afghanistan",
-  "AX": "Åland Islands",
-  "AL": "Albania",
-  "DZ": "Algeria",
-  "AS": "American Samoa",
-  "AD": "Andorra",
-  "AO": "Angola",
-  "AI": "Anguilla",
-  "AQ": "Antarctica",
-  "AG": "Antigua and Barbuda",
-  "AR": "Argentina",
-  "AM": "Armenia",
-  "AW": "Aruba",
-  "AU": "Australia",
-  "AT": "Austria",
-  "AZ": "Azerbaijan",
-  "BS": "Bahamas",
-  "BH": "Bahrain",
-  "BD": "Bangladesh",
-  "BB": "Barbados",
-  "BY": "Belarus",
-  "BE": "Belgium",
-  "BZ": "Belize",
-  "BJ": "Benin",
-  "BM": "Bermuda",
-  "BT": "Bhutan",
-  "BO": "Bolivia, Plurinational State of",
-  "BQ": "Bonaire, Sint Eustatius and Saba",
-  "BA": "Bosnia and Herzegovina",
-  "BW": "Botswana",
-  "BV": "Bouvet Island",
-  "BR": "Brazil",
-  "IO": "British Indian Ocean Territory",
-  "BN": "Brunei Darussalam",
-  "BG": "Bulgaria",
-  "BF": "Burkina Faso",
-  "BI": "Burundi",
-  "KH": "Cambodia",
-  "CM": "Cameroon",
-  "CA": "Canada",
-  "CV": "Cape Verde",
-  "KY": "Cayman Islands",
-  "CF": "Central African Republic",
-  "TD": "Chad",
-  "CL": "Chile",
-  "CN": "China",
-  "CX": "Christmas Island",
-  "CC": "Cocos (Keeling) Islands",
-  "CO": "Colombia",
-  "KM": "Comoros",
-  "CG": "Congo",
-  "CD": "Congo, the Democratic Republic of the",
-  "CK": "Cook Islands",
-  "CR": "Costa Rica",
-  "CI": "Côte d'Ivoire",
-  "HR": "Croatia",
-  "CU": "Cuba",
-  "CW": "Curaçao",
-  "CY": "Cyprus",
-  "CZ": "Czech Republic",
-  "DK": "Denmark",
-  "DJ": "Djibouti",
-  "DM": "Dominica",
-  "DO": "Dominican Republic",
-  "EC": "Ecuador",
-  "EG": "Egypt",
-  "SV": "El Salvador",
-  "GQ": "Equatorial Guinea",
-  "ER": "Eritrea",
-  "EE": "Estonia",
-  "ET": "Ethiopia",
-  "FK": "Falkland Islands (Malvinas)",
-  "FO": "Faroe Islands",
-  "FJ": "Fiji",
-  "FI": "Finland",
-  "FR": "France",
-  "GF": "French Guiana",
-  "PF": "French Polynesia",
-  "TF": "French Southern Territories",
-  "GA": "Gabon",
-  "GM": "Gambia",
-  "GE": "Georgia",
-  "DE": "Germany",
-  "GH": "Ghana",
-  "GI": "Gibraltar",
-  "GR": "Greece",
-  "GL": "Greenland",
-  "GD": "Grenada",
-  "GP": "Guadeloupe",
-  "GU": "Guam",
-  "GT": "Guatemala",
-  "GG": "Guernsey",
-  "GN": "Guinea",
-  "GW": "Guinea-Bissau",
-  "GY": "Guyana",
-  "HT": "Haiti",
-  "HM": "Heard Island and McDonald Islands",
-  "VA": "Holy See (Vatican City State)",
-  "HN": "Honduras",
-  "HK": "Hong Kong",
-  "HU": "Hungary",
-  "IS": "Iceland",
-  "IN": "India",
-  "ID": "Indonesia",
-  "IR": "Iran, Islamic Republic of",
-  "IQ": "Iraq",
-  "IE": "Ireland",
-  "IM": "Isle of Man",
-  "IL": "Israel",
-  "IT": "Italy",
-  "JM": "Jamaica",
-  "JP": "Japan",
-  "JE": "Jersey",
-  "JO": "Jordan",
-  "KZ": "Kazakhstan",
-  "KE": "Kenya",
-  "KI": "Kiribati",
-  "KP": "Korea, Democratic People's Republic of",
-  "KR": "Korea, Republic of",
-  "KW": "Kuwait",
-  "KG": "Kyrgyzstan",
-  "LA": "Lao People's Democratic Republic",
-  "LV": "Latvia",
-  "LB": "Lebanon",
-  "LS": "Lesotho",
-  "LR": "Liberia",
-  "LY": "Libya",
-  "LI": "Liechtenstein",
-  "LT": "Lithuania",
-  "LU": "Luxembourg",
-  "MO": "Macao",
-  "MK": "Macedonia, the Former Yugoslav Republic of",
-  "MG": "Madagascar",
-  "MW": "Malawi",
-  "MY": "Malaysia",
-  "MV": "Maldives",
-  "ML": "Mali",
-  "MT": "Malta",
-  "MH": "Marshall Islands",
-  "MQ": "Martinique",
-  "MR": "Mauritania",
-  "MU": "Mauritius",
-  "YT": "Mayotte",
-  "MX": "Mexico",
-  "FM": "Micronesia, Federated States of",
-  "MD": "Moldova, Republic of",
-  "MC": "Monaco",
-  "MN": "Mongolia",
-  "ME": "Montenegro",
-  "MS": "Montserrat",
-  "MA": "Morocco",
-  "MZ": "Mozambique",
-  "MM": "Myanmar",
-  "NA": "Namibia",
-  "NR": "Nauru",
-  "NP": "Nepal",
-  "NL": "Netherlands",
-  "NC": "New Caledonia",
-  "NZ": "New Zealand",
-  "NI": "Nicaragua",
-  "NE": "Niger",
-  "NG": "Nigeria",
-  "NU": "Niue",
-  "NF": "Norfolk Island",
-  "MP": "Northern Mariana Islands",
-  "NO": "Norway",
-  "OM": "Oman",
-  "PK": "Pakistan",
-  "PW": "Palau",
-  "PS": "Palestine, State of",
-  "PA": "Panama",
-  "PG": "Papua New Guinea",
-  "PY": "Paraguay",
-  "PE": "Peru",
-  "PH": "Philippines",
-  "PN": "Pitcairn",
-  "PL": "Poland",
-  "PT": "Portugal",
-  "PR": "Puerto Rico",
-  "QA": "Qatar",
-  "RE": "Réunion",
-  "RO": "Romania",
-  "RU": "Russian Federation",
-  "RW": "Rwanda",
-  "BL": "Saint Barthélemy",
-  "SH": "Saint Helena, Ascension and Tristan da Cunha",
-  "KN": "Saint Kitts and Nevis",
-  "LC": "Saint Lucia",
-  "MF": "Saint Martin (French part)",
-  "PM": "Saint Pierre and Miquelon",
-  "VC": "Saint Vincent and the Grenadines",
-  "WS": "Samoa",
-  "SM": "San Marino",
-  "ST": "Sao Tome and Principe",
-  "SA": "Saudi Arabia",
-  "SN": "Senegal",
-  "RS": "Serbia",
-  "SC": "Seychelles",
-  "SL": "Sierra Leone",
-  "SG": "Singapore",
-  "SX": "Sint Maarten (Dutch part)",
-  "SK": "Slovakia",
-  "SI": "Slovenia",
-  "SB": "Solomon Islands",
-  "SO": "Somalia",
-  "ZA": "South Africa",
-  "GS": "South Georgia and the South Sandwich Islands",
-  "SS": "South Sudan",
-  "ES": "Spain",
-  "LK": "Sri Lanka",
-  "SD": "Sudan",
-  "SR": "Suriname",
-  "SJ": "Svalbard and Jan Mayen",
-  "SZ": "Swaziland",
-  "SE": "Sweden",
-  "CH": "Switzerland",
-  "SY": "Syrian Arab Republic",
-  "TW": "Taiwan, Province of China",
-  "TJ": "Tajikistan",
-  "TZ": "Tanzania, United Republic of",
-  "TH": "Thailand",
-  "TL": "Timor-Leste",
-  "TG": "Togo",
-  "TK": "Tokelau",
-  "TO": "Tonga",
-  "TT": "Trinidad and Tobago",
-  "TN": "Tunisia",
-  "TR": "Turkey",
-  "TM": "Turkmenistan",
-  "TC": "Turks and Caicos Islands",
-  "TV": "Tuvalu",
-  "UG": "Uganda",
-  "UA": "Ukraine",
-  "AE": "United Arab Emirates",
-  "GB": "United Kingdom",
-  "US": "United States",
-  "UM": "United States Minor Outlying Islands",
-  "UY": "Uruguay",
-  "UZ": "Uzbekistan",
-  "VU": "Vanuatu",
-  "VE": "Venezuela, Bolivarian Republic of",
-  "VN": "Viet Nam",
-  "VG": "Virgin Islands, British",
-  "VI": "Virgin Islands, U.S.",
-  "WF": "Wallis and Futuna",
-  "EH": "Western Sahara",
-  "YE": "Yemen",
-  "ZM": "Zambia",
-  "ZW": "Zimbabwe"
+
+  "AF": {
+    "name": "Afghanistan",
+    "ISO4217-currency_alphabetic_code": "AFN",
+    "ISO4217-currency_name": "Afghani",
+    "capital": "Kabul",
+    "continent": "AS",
+    "TLD": ".af",
+    "languages": "fa-AF,ps,uz-AF,tk"
+  },
+  "AX": {
+    "name": "Åland Islands",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Mariehamn",
+    "continent": "EU",
+    "TLD": ".ax",
+    "languages": "sv-AX"
+  },
+  "AL": {
+    "name": "Albania",
+    "ISO4217-currency_alphabetic_code": "ALL",
+    "ISO4217-currency_name": "Lek",
+    "capital": "Tirana",
+    "continent": "EU",
+    "TLD": ".al",
+    "languages": "sq,el"
+  },
+  "DZ": {
+    "name": "Algeria",
+    "ISO4217-currency_alphabetic_code": "DZD",
+    "ISO4217-currency_name": "Algerian Dinar",
+    "capital": "Algiers",
+    "continent": "AF",
+    "TLD": ".dz",
+    "languages": "ar-DZ"
+  },
+  "AS": {
+    "name": "American Samoa",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Pago Pago",
+    "continent": "OC",
+    "TLD": ".as",
+    "languages": "en-AS,sm,to"
+  },
+  "AD": {
+    "name": "Andorra",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Andorra la Vella",
+    "continent": "EU",
+    "TLD": ".ad",
+    "languages": "ca"
+  },
+  "AO": {
+    "name": "Angola",
+    "ISO4217-currency_alphabetic_code": "AOA",
+    "ISO4217-currency_name": "Kwanza",
+    "capital": "Luanda",
+    "continent": "AF",
+    "TLD": ".ao",
+    "languages": "pt-AO"
+  },
+  "AI": {
+    "name": "Anguilla",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "The Valley",
+    "continent": "NA",
+    "TLD": ".ai",
+    "languages": "en-AI"
+  },
+  "AQ": {
+    "name": "Antarctica",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "",
+    "continent": "AN",
+    "TLD": ".aq",
+    "languages": ""
+  },
+  "AG": {
+    "name": "Antigua & Barbuda",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "St. John's",
+    "continent": "NA",
+    "TLD": ".ag",
+    "languages": "en-AG"
+  },
+  "AR": {
+    "name": "Argentina",
+    "ISO4217-currency_alphabetic_code": "ARS",
+    "ISO4217-currency_name": "Argentine Peso",
+    "capital": "Buenos Aires",
+    "continent": "SA",
+    "TLD": ".ar",
+    "languages": "es-AR,en,it,de,fr,gn"
+  },
+  "AM": {
+    "name": "Armenia",
+    "ISO4217-currency_alphabetic_code": "AMD",
+    "ISO4217-currency_name": "Armenian Dram",
+    "capital": "Yerevan",
+    "continent": "AS",
+    "TLD": ".am",
+    "languages": "hy"
+  },
+  "AW": {
+    "name": "Aruba",
+    "ISO4217-currency_alphabetic_code": "AWG",
+    "ISO4217-currency_name": "Aruban Florin",
+    "capital": "Oranjestad",
+    "continent": "NA",
+    "TLD": ".aw",
+    "languages": "nl-AW,es,en"
+  },
+  "AU": {
+    "name": "Australia",
+    "ISO4217-currency_alphabetic_code": "AUD",
+    "ISO4217-currency_name": "Australian Dollar",
+    "capital": "Canberra",
+    "continent": "OC",
+    "TLD": ".au",
+    "languages": "en-AU"
+  },
+  "AT": {
+    "name": "Austria",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Vienna",
+    "continent": "EU",
+    "TLD": ".at",
+    "languages": "de-AT,hr,hu,sl"
+  },
+  "AZ": {
+    "name": "Azerbaijan",
+    "ISO4217-currency_alphabetic_code": "AZN",
+    "ISO4217-currency_name": "Azerbaijanian Manat",
+    "capital": "Baku",
+    "continent": "AS",
+    "TLD": ".az",
+    "languages": "az,ru,hy"
+  },
+  "BS": {
+    "name": "Bahamas",
+    "ISO4217-currency_alphabetic_code": "BSD",
+    "ISO4217-currency_name": "Bahamian Dollar",
+    "capital": "Nassau",
+    "continent": "NA",
+    "TLD": ".bs",
+    "languages": "en-BS"
+  },
+  "BH": {
+    "name": "Bahrain",
+    "ISO4217-currency_alphabetic_code": "BHD",
+    "ISO4217-currency_name": "Bahraini Dinar",
+    "capital": "Manama",
+    "continent": "AS",
+    "TLD": ".bh",
+    "languages": "ar-BH,en,fa,ur"
+  },
+  "BD": {
+    "name": "Bangladesh",
+    "ISO4217-currency_alphabetic_code": "BDT",
+    "ISO4217-currency_name": "Taka",
+    "capital": "Dhaka",
+    "continent": "AS",
+    "TLD": ".bd",
+    "languages": "bn-BD,en"
+  },
+  "BB": {
+    "name": "Barbados",
+    "ISO4217-currency_alphabetic_code": "BBD",
+    "ISO4217-currency_name": "Barbados Dollar",
+    "capital": "Bridgetown",
+    "continent": "NA",
+    "TLD": ".bb",
+    "languages": "en-BB"
+  },
+  "BY": {
+    "name": "Belarus",
+    "ISO4217-currency_alphabetic_code": "BYR",
+    "ISO4217-currency_name": "Belarussian Ruble",
+    "capital": "Minsk",
+    "continent": "EU",
+    "TLD": ".by",
+    "languages": "be,ru"
+  },
+  "BE": {
+    "name": "Belgium",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Brussels",
+    "continent": "EU",
+    "TLD": ".be",
+    "languages": "nl-BE,fr-BE,de-BE"
+  },
+  "BZ": {
+    "name": "Belize",
+    "ISO4217-currency_alphabetic_code": "BZD",
+    "ISO4217-currency_name": "Belize Dollar",
+    "capital": "Belmopan",
+    "continent": "NA",
+    "TLD": ".bz",
+    "languages": "en-BZ,es"
+  },
+  "BJ": {
+    "name": "Benin",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Porto-Novo",
+    "continent": "AF",
+    "TLD": ".bj",
+    "languages": "fr-BJ"
+  },
+  "BM": {
+    "name": "Bermuda",
+    "ISO4217-currency_alphabetic_code": "BMD",
+    "ISO4217-currency_name": "Bermudian Dollar",
+    "capital": "Hamilton",
+    "continent": "NA",
+    "TLD": ".bm",
+    "languages": "en-BM,pt"
+  },
+  "BT": {
+    "name": "Bhutan",
+    "ISO4217-currency_alphabetic_code": "INR",
+    "ISO4217-currency_name": "Indian Rupee",
+    "capital": "Thimphu",
+    "continent": "AS",
+    "TLD": ".bt",
+    "languages": "dz"
+  },
+  "BO": {
+    "name": "Bolivia",
+    "ISO4217-currency_alphabetic_code": "BOB",
+    "ISO4217-currency_name": "Boliviano",
+    "capital": "Sucre",
+    "continent": "SA",
+    "TLD": ".bo",
+    "languages": "es-BO,qu,ay"
+  },
+  "BA": {
+    "name": "Bosnia",
+    "ISO4217-currency_alphabetic_code": "BAM",
+    "ISO4217-currency_name": "Convertible Mark",
+    "capital": "Sarajevo",
+    "continent": "EU",
+    "TLD": ".ba",
+    "languages": "bs,hr-BA,sr-BA"
+  },
+  "BW": {
+    "name": "Botswana",
+    "ISO4217-currency_alphabetic_code": "BWP",
+    "ISO4217-currency_name": "Pula",
+    "capital": "Gaborone",
+    "continent": "AF",
+    "TLD": ".bw",
+    "languages": "en-BW,tn-BW"
+  },
+  "BV": {
+    "name": "Bouvet Island",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "",
+    "continent": "AN",
+    "TLD": ".bv",
+    "languages": ""
+  },
+  "BR": {
+    "name": "Brazil",
+    "ISO4217-currency_alphabetic_code": "BRL",
+    "ISO4217-currency_name": "Brazilian Real",
+    "capital": "Brasilia",
+    "continent": "SA",
+    "TLD": ".br",
+    "languages": "pt-BR,es,en,fr"
+  },
+  "IO": {
+    "name": "British Indian Ocean Territory",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Diego Garcia",
+    "continent": "AS",
+    "TLD": ".io",
+    "languages": "en-IO"
+  },
+  "VG": {
+    "name": "British Virgin Islands",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Road Town",
+    "continent": "NA",
+    "TLD": ".vg",
+    "languages": "en-VG"
+  },
+  "BN": {
+    "name": "Brunei",
+    "ISO4217-currency_alphabetic_code": "BND",
+    "ISO4217-currency_name": "Brunei Dollar",
+    "capital": "Bandar Seri Begawan",
+    "continent": "AS",
+    "TLD": ".bn",
+    "languages": "ms-BN,en-BN"
+  },
+  "BG": {
+    "name": "Bulgaria",
+    "ISO4217-currency_alphabetic_code": "BGN",
+    "ISO4217-currency_name": "Bulgarian Lev",
+    "capital": "Sofia",
+    "continent": "EU",
+    "TLD": ".bg",
+    "languages": "bg,tr-BG,rom"
+  },
+  "BF": {
+    "name": "Burkina Faso",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Ouagadougou",
+    "continent": "AF",
+    "TLD": ".bf",
+    "languages": "fr-BF"
+  },
+  "BI": {
+    "name": "Burundi",
+    "ISO4217-currency_alphabetic_code": "BIF",
+    "ISO4217-currency_name": "Burundi Franc",
+    "capital": "Bujumbura",
+    "continent": "AF",
+    "TLD": ".bi",
+    "languages": "fr-BI,rn"
+  },
+  "KH": {
+    "name": "Cambodia",
+    "ISO4217-currency_alphabetic_code": "KHR",
+    "ISO4217-currency_name": "Riel",
+    "capital": "Phnom Penh",
+    "continent": "AS",
+    "TLD": ".kh",
+    "languages": "km,fr,en"
+  },
+  "CM": {
+    "name": "Cameroon",
+    "ISO4217-currency_alphabetic_code": "XAF",
+    "ISO4217-currency_name": "CFA Franc BEAC",
+    "capital": "Yaounde",
+    "continent": "AF",
+    "TLD": ".cm",
+    "languages": "en-CM,fr-CM"
+  },
+  "CA": {
+    "name": "Canada",
+    "ISO4217-currency_alphabetic_code": "CAD",
+    "ISO4217-currency_name": "Canadian Dollar",
+    "capital": "Ottawa",
+    "continent": "NA",
+    "TLD": ".ca",
+    "languages": "en-CA,fr-CA,iu"
+  },
+  "CV": {
+    "name": "Cape Verde",
+    "ISO4217-currency_alphabetic_code": "CVE",
+    "ISO4217-currency_name": "Cabo Verde Escudo",
+    "capital": "Praia",
+    "continent": "AF",
+    "TLD": ".cv",
+    "languages": "pt-CV"
+  },
+  "BQ": {
+    "name": "Caribbean Netherlands",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "",
+    "continent": "NA",
+    "TLD": ".bq",
+    "languages": "nl,pap,en"
+  },
+  "KY": {
+    "name": "Cayman Islands",
+    "ISO4217-currency_alphabetic_code": "KYD",
+    "ISO4217-currency_name": "Cayman Islands Dollar",
+    "capital": "George Town",
+    "continent": "NA",
+    "TLD": ".ky",
+    "languages": "en-KY"
+  },
+  "CF": {
+    "name": "Central African Republic",
+    "ISO4217-currency_alphabetic_code": "XAF",
+    "ISO4217-currency_name": "CFA Franc BEAC",
+    "capital": "Bangui",
+    "continent": "AF",
+    "TLD": ".cf",
+    "languages": "fr-CF,sg,ln,kg"
+  },
+  "TD": {
+    "name": "Chad",
+    "ISO4217-currency_alphabetic_code": "XAF",
+    "ISO4217-currency_name": "CFA Franc BEAC",
+    "capital": "N'Djamena",
+    "continent": "AF",
+    "TLD": ".td",
+    "languages": "fr-TD,ar-TD,sre"
+  },
+  "CL": {
+    "name": "Chile",
+    "ISO4217-currency_alphabetic_code": "CLP",
+    "ISO4217-currency_name": "Chilean Peso",
+    "capital": "Santiago",
+    "continent": "SA",
+    "TLD": ".cl",
+    "languages": "es-CL"
+  },
+  "CN": {
+    "name": "China",
+    "ISO4217-currency_alphabetic_code": "CNY",
+    "ISO4217-currency_name": "Yuan Renminbi",
+    "capital": "Beijing",
+    "continent": "AS",
+    "TLD": ".cn",
+    "languages": "zh-CN,yue,wuu,dta,ug,za"
+  },
+  "CX": {
+    "name": "Christmas Island",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Flying Fish Cove",
+    "continent": "AS",
+    "TLD": ".cx",
+    "languages": "en,zh,ms-CC"
+  },
+  "CC": {
+    "name": "Cocos (Keeling) Islands",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "West Island",
+    "continent": "AS",
+    "TLD": ".cc",
+    "languages": "ms-CC,en"
+  },
+  "CO": {
+    "name": "Colombia",
+    "ISO4217-currency_alphabetic_code": "COP",
+    "ISO4217-currency_name": "Colombian Peso",
+    "capital": "Bogota",
+    "continent": "SA",
+    "TLD": ".co",
+    "languages": "es-CO"
+  },
+  "KM": {
+    "name": "Comoros",
+    "ISO4217-currency_alphabetic_code": "KMF",
+    "ISO4217-currency_name": "Comoro Franc",
+    "capital": "Moroni",
+    "continent": "AF",
+    "TLD": ".km",
+    "languages": "ar,fr-KM"
+  },
+  "CG": {
+    "name": "Congo - Brazzaville",
+    "ISO4217-currency_alphabetic_code": "XAF",
+    "ISO4217-currency_name": "CFA Franc BEAC",
+    "capital": "Brazzaville",
+    "continent": "AF",
+    "TLD": ".cg",
+    "languages": "fr-CG,kg,ln-CG"
+  },
+  "CD": {
+    "name": "Congo - Kinshasa",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Kinshasa",
+    "continent": "AF",
+    "TLD": ".cd",
+    "languages": "fr-CD,ln,kg"
+  },
+  "CK": {
+    "name": "Cook Islands",
+    "ISO4217-currency_alphabetic_code": "NZD",
+    "ISO4217-currency_name": "New Zealand Dollar",
+    "capital": "Avarua",
+    "continent": "OC",
+    "TLD": ".ck",
+    "languages": "en-CK,mi"
+  },
+  "CR": {
+    "name": "Costa Rica",
+    "ISO4217-currency_alphabetic_code": "CRC",
+    "ISO4217-currency_name": "Costa Rican Colon",
+    "capital": "San Jose",
+    "continent": "NA",
+    "TLD": ".cr",
+    "languages": "es-CR,en"
+  },
+  "HR": {
+    "name": "Croatia",
+    "ISO4217-currency_alphabetic_code": "HRK",
+    "ISO4217-currency_name": "Croatian Kuna",
+    "capital": "Zagreb",
+    "continent": "EU",
+    "TLD": ".hr",
+    "languages": "hr-HR,sr"
+  },
+  "CU": {
+    "name": "Cuba",
+    "ISO4217-currency_alphabetic_code": "CUP",
+    "ISO4217-currency_name": "Cuban Peso",
+    "capital": "Havana",
+    "continent": "NA",
+    "TLD": ".cu",
+    "languages": "es-CU"
+  },
+  "CW": {
+    "name": "Curaçao",
+    "ISO4217-currency_alphabetic_code": "ANG",
+    "ISO4217-currency_name": "Netherlands Antillean Guilder",
+    "capital": "Willemstad",
+    "continent": "NA",
+    "TLD": ".cw",
+    "languages": "nl,pap"
+  },
+  "CY": {
+    "name": "Cyprus",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Nicosia",
+    "continent": "EU",
+    "TLD": ".cy",
+    "languages": "el-CY,tr-CY,en"
+  },
+  "CZ": {
+    "name": "Czech Republic",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Prague",
+    "continent": "EU",
+    "TLD": ".cz",
+    "languages": "cs,sk"
+  },
+  "CI": {
+    "name": "Côte d’Ivoire",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Yamoussoukro",
+    "continent": "AF",
+    "TLD": ".ci",
+    "languages": "fr-CI"
+  },
+  "DK": {
+    "name": "Denmark",
+    "ISO4217-currency_alphabetic_code": "DKK",
+    "ISO4217-currency_name": "Danish Krone",
+    "capital": "Copenhagen",
+    "continent": "EU",
+    "TLD": ".dk",
+    "languages": "da-DK,en,fo,de-DK"
+  },
+  "DJ": {
+    "name": "Djibouti",
+    "ISO4217-currency_alphabetic_code": "DJF",
+    "ISO4217-currency_name": "Djibouti Franc",
+    "capital": "Djibouti",
+    "continent": "AF",
+    "TLD": ".dj",
+    "languages": "fr-DJ,ar,so-DJ,aa"
+  },
+  "DM": {
+    "name": "Dominica",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "Roseau",
+    "continent": "NA",
+    "TLD": ".dm",
+    "languages": "en-DM"
+  },
+  "DO": {
+    "name": "Dominican Republic",
+    "ISO4217-currency_alphabetic_code": "DOP",
+    "ISO4217-currency_name": "Dominican Peso",
+    "capital": "Santo Domingo",
+    "continent": "NA",
+    "TLD": ".do",
+    "languages": "es-DO"
+  },
+  "EC": {
+    "name": "Ecuador",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Quito",
+    "continent": "SA",
+    "TLD": ".ec",
+    "languages": "es-EC"
+  },
+  "EG": {
+    "name": "Egypt",
+    "ISO4217-currency_alphabetic_code": "EGP",
+    "ISO4217-currency_name": "Egyptian Pound",
+    "capital": "Cairo",
+    "continent": "AF",
+    "TLD": ".eg",
+    "languages": "ar-EG,en,fr"
+  },
+  "SV": {
+    "name": "El Salvador",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "San Salvador",
+    "continent": "NA",
+    "TLD": ".sv",
+    "languages": "es-SV"
+  },
+  "GQ": {
+    "name": "Equatorial Guinea",
+    "ISO4217-currency_alphabetic_code": "XAF",
+    "ISO4217-currency_name": "CFA Franc BEAC",
+    "capital": "Malabo",
+    "continent": "AF",
+    "TLD": ".gq",
+    "languages": "es-GQ,fr"
+  },
+  "ER": {
+    "name": "Eritrea",
+    "ISO4217-currency_alphabetic_code": "ERN",
+    "ISO4217-currency_name": "Nakfa",
+    "capital": "Asmara",
+    "continent": "AF",
+    "TLD": ".er",
+    "languages": "aa-ER,ar,tig,kun,ti-ER"
+  },
+  "EE": {
+    "name": "Estonia",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Tallinn",
+    "continent": "EU",
+    "TLD": ".ee",
+    "languages": "et,ru"
+  },
+  "ET": {
+    "name": "Ethiopia",
+    "ISO4217-currency_alphabetic_code": "ETB",
+    "ISO4217-currency_name": "Ethiopian Birr",
+    "capital": "Addis Ababa",
+    "continent": "AF",
+    "TLD": ".et",
+    "languages": "am,en-ET,om-ET,ti-ET,so-ET,sid"
+  },
+  "FK": {
+    "name": "Falkland Islands",
+    "ISO4217-currency_alphabetic_code": "FKP",
+    "ISO4217-currency_name": "Falkland Islands Pound",
+    "capital": "Stanley",
+    "continent": "SA",
+    "TLD": ".fk",
+    "languages": "en-FK"
+  },
+  "FO": {
+    "name": "Faroe Islands",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Torshavn",
+    "continent": "EU",
+    "TLD": ".fo",
+    "languages": "fo,da-FO"
+  },
+  "FJ": {
+    "name": "Fiji",
+    "ISO4217-currency_alphabetic_code": "FJD",
+    "ISO4217-currency_name": "Fiji Dollar",
+    "capital": "Suva",
+    "continent": "OC",
+    "TLD": ".fj",
+    "languages": "en-FJ,fj"
+  },
+  "FI": {
+    "name": "Finland",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Helsinki",
+    "continent": "EU",
+    "TLD": ".fi",
+    "languages": "fi-FI,sv-FI,smn"
+  },
+  "FR": {
+    "name": "France",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Paris",
+    "continent": "EU",
+    "TLD": ".fr",
+    "languages": "fr-FR,frp,br,co,ca,eu,oc"
+  },
+  "GF": {
+    "name": "French Guiana",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Cayenne",
+    "continent": "SA",
+    "TLD": ".gf",
+    "languages": "fr-GF"
+  },
+  "PF": {
+    "name": "French Polynesia",
+    "ISO4217-currency_alphabetic_code": "XPF",
+    "ISO4217-currency_name": "CFP Franc",
+    "capital": "Papeete",
+    "continent": "OC",
+    "TLD": ".pf",
+    "languages": "fr-PF,ty"
+  },
+  "TF": {
+    "name": "French Southern Territories",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Port-aux-Francais",
+    "continent": "AN",
+    "TLD": ".tf",
+    "languages": "fr"
+  },
+  "GA": {
+    "name": "Gabon",
+    "ISO4217-currency_alphabetic_code": "XAF",
+    "ISO4217-currency_name": "CFA Franc BEAC",
+    "capital": "Libreville",
+    "continent": "AF",
+    "TLD": ".ga",
+    "languages": "fr-GA"
+  },
+  "GM": {
+    "name": "Gambia",
+    "ISO4217-currency_alphabetic_code": "GMD",
+    "ISO4217-currency_name": "Dalasi",
+    "capital": "Banjul",
+    "continent": "AF",
+    "TLD": ".gm",
+    "languages": "en-GM,mnk,wof,wo,ff"
+  },
+  "GE": {
+    "name": "Georgia",
+    "ISO4217-currency_alphabetic_code": "GEL",
+    "ISO4217-currency_name": "Lari",
+    "capital": "Tbilisi",
+    "continent": "AS",
+    "TLD": ".ge",
+    "languages": "ka,ru,hy,az"
+  },
+  "DE": {
+    "name": "Germany",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Berlin",
+    "continent": "EU",
+    "TLD": ".de",
+    "languages": "de"
+  },
+  "GH": {
+    "name": "Ghana",
+    "ISO4217-currency_alphabetic_code": "GHS",
+    "ISO4217-currency_name": "Ghana Cedi",
+    "capital": "Accra",
+    "continent": "AF",
+    "TLD": ".gh",
+    "languages": "en-GH,ak,ee,tw"
+  },
+  "GI": {
+    "name": "Gibraltar",
+    "ISO4217-currency_alphabetic_code": "GIP",
+    "ISO4217-currency_name": "Gibraltar Pound",
+    "capital": "Gibraltar",
+    "continent": "EU",
+    "TLD": ".gi",
+    "languages": "en-GI,es,it,pt"
+  },
+  "GR": {
+    "name": "Greece",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Athens",
+    "continent": "EU",
+    "TLD": ".gr",
+    "languages": "el-GR,en,fr"
+  },
+  "GL": {
+    "name": "Greenland",
+    "ISO4217-currency_alphabetic_code": "DKK",
+    "ISO4217-currency_name": "Danish Krone",
+    "capital": "Nuuk",
+    "continent": "NA",
+    "TLD": ".gl",
+    "languages": "kl,da-GL,en"
+  },
+  "GD": {
+    "name": "Grenada",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "St. George's",
+    "continent": "NA",
+    "TLD": ".gd",
+    "languages": "en-GD"
+  },
+  "GP": {
+    "name": "Guadeloupe",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Basse-Terre",
+    "continent": "NA",
+    "TLD": ".gp",
+    "languages": "fr-GP"
+  },
+  "GU": {
+    "name": "Guam",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Hagatna",
+    "continent": "OC",
+    "TLD": ".gu",
+    "languages": "en-GU,ch-GU"
+  },
+  "GT": {
+    "name": "Guatemala",
+    "ISO4217-currency_alphabetic_code": "GTQ",
+    "ISO4217-currency_name": "Quetzal",
+    "capital": "Guatemala City",
+    "continent": "NA",
+    "TLD": ".gt",
+    "languages": "es-GT"
+  },
+  "GG": {
+    "name": "Guernsey",
+    "ISO4217-currency_alphabetic_code": "GBP",
+    "ISO4217-currency_name": "Pound Sterling",
+    "capital": "St Peter Port",
+    "continent": "EU",
+    "TLD": ".gg",
+    "languages": "en,fr"
+  },
+  "GN": {
+    "name": "Guinea",
+    "ISO4217-currency_alphabetic_code": "GNF",
+    "ISO4217-currency_name": "Guinea Franc",
+    "capital": "Conakry",
+    "continent": "AF",
+    "TLD": ".gn",
+    "languages": "fr-GN"
+  },
+  "GW": {
+    "name": "Guinea-Bissau",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Bissau",
+    "continent": "AF",
+    "TLD": ".gw",
+    "languages": "pt-GW,pov"
+  },
+  "GY": {
+    "name": "Guyana",
+    "ISO4217-currency_alphabetic_code": "GYD",
+    "ISO4217-currency_name": "Guyana Dollar",
+    "capital": "Georgetown",
+    "continent": "SA",
+    "TLD": ".gy",
+    "languages": "en-GY"
+  },
+  "HT": {
+    "name": "Haiti",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Port-au-Prince",
+    "continent": "NA",
+    "TLD": ".ht",
+    "languages": "ht,fr-HT"
+  },
+  "HM": {
+    "name": "Heard & McDonald Islands",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "",
+    "continent": "AN",
+    "TLD": ".hm",
+    "languages": ""
+  },
+  "HN": {
+    "name": "Honduras",
+    "ISO4217-currency_alphabetic_code": "HNL",
+    "ISO4217-currency_name": "Lempira",
+    "capital": "Tegucigalpa",
+    "continent": "NA",
+    "TLD": ".hn",
+    "languages": "es-HN"
+  },
+  "HK": {
+    "name": "Hong Kong",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Hong Kong",
+    "continent": "AS",
+    "TLD": ".hk",
+    "languages": "zh-HK,yue,zh,en"
+  },
+  "HU": {
+    "name": "Hungary",
+    "ISO4217-currency_alphabetic_code": "HUF",
+    "ISO4217-currency_name": "Forint",
+    "capital": "Budapest",
+    "continent": "EU",
+    "TLD": ".hu",
+    "languages": "hu-HU"
+  },
+  "IS": {
+    "name": "Iceland",
+    "ISO4217-currency_alphabetic_code": "ISK",
+    "ISO4217-currency_name": "Iceland Krona",
+    "capital": "Reykjavik",
+    "continent": "EU",
+    "TLD": ".is",
+    "languages": "is,en,de,da,sv,no"
+  },
+  "IN": {
+    "name": "India",
+    "ISO4217-currency_alphabetic_code": "INR",
+    "ISO4217-currency_name": "Indian Rupee",
+    "capital": "New Delhi",
+    "continent": "AS",
+    "TLD": ".in",
+    "languages": "en-IN,hi,bn,te,mr,ta,ur,gu,kn,ml,or,pa,as,bh,sat,ks,ne,sd,kok,doi,mni,sit,sa,fr,lus,inc"
+  },
+  "ID": {
+    "name": "Indonesia",
+    "ISO4217-currency_alphabetic_code": "IDR",
+    "ISO4217-currency_name": "Rupiah",
+    "capital": "Jakarta",
+    "continent": "AS",
+    "TLD": ".id",
+    "languages": "id,en,nl,jv"
+  },
+  "IR": {
+    "name": "Iran",
+    "ISO4217-currency_alphabetic_code": "IRR",
+    "ISO4217-currency_name": "Iranian Rial",
+    "capital": "Tehran",
+    "continent": "AS",
+    "TLD": ".ir",
+    "languages": "fa-IR,ku"
+  },
+  "IQ": {
+    "name": "Iraq",
+    "ISO4217-currency_alphabetic_code": "IQD",
+    "ISO4217-currency_name": "Iraqi Dinar",
+    "capital": "Baghdad",
+    "continent": "AS",
+    "TLD": ".iq",
+    "languages": "ar-IQ,ku,hy"
+  },
+  "IE": {
+    "name": "Ireland",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Dublin",
+    "continent": "EU",
+    "TLD": ".ie",
+    "languages": "en-IE,ga-IE"
+  },
+  "IM": {
+    "name": "Isle of Man",
+    "ISO4217-currency_alphabetic_code": "GBP",
+    "ISO4217-currency_name": "Pound Sterling",
+    "capital": "Douglas",
+    "continent": "EU",
+    "TLD": ".im",
+    "languages": "en,gv"
+  },
+  "IL": {
+    "name": "Israel",
+    "ISO4217-currency_alphabetic_code": "ILS",
+    "ISO4217-currency_name": "New Israeli Sheqel",
+    "capital": "Jerusalem",
+    "continent": "AS",
+    "TLD": ".il",
+    "languages": "he,ar-IL,en-IL,"
+  },
+  "IT": {
+    "name": "Italy",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Rome",
+    "continent": "EU",
+    "TLD": ".it",
+    "languages": "it-IT,de-IT,fr-IT,sc,ca,co,sl"
+  },
+  "JM": {
+    "name": "Jamaica",
+    "ISO4217-currency_alphabetic_code": "JMD",
+    "ISO4217-currency_name": "Jamaican Dollar",
+    "capital": "Kingston",
+    "continent": "NA",
+    "TLD": ".jm",
+    "languages": "en-JM"
+  },
+  "JP": {
+    "name": "Japan",
+    "ISO4217-currency_alphabetic_code": "JPY",
+    "ISO4217-currency_name": "Yen",
+    "capital": "Tokyo",
+    "continent": "AS",
+    "TLD": ".jp",
+    "languages": "ja"
+  },
+  "JE": {
+    "name": "Jersey",
+    "ISO4217-currency_alphabetic_code": "GBP",
+    "ISO4217-currency_name": "Pound Sterling",
+    "capital": "Saint Helier",
+    "continent": "EU",
+    "TLD": ".je",
+    "languages": "en,pt"
+  },
+  "JO": {
+    "name": "Jordan",
+    "ISO4217-currency_alphabetic_code": "JOD",
+    "ISO4217-currency_name": "Jordanian Dinar",
+    "capital": "Amman",
+    "continent": "AS",
+    "TLD": ".jo",
+    "languages": "ar-JO,en"
+  },
+  "KZ": {
+    "name": "Kazakhstan",
+    "ISO4217-currency_alphabetic_code": "KZT",
+    "ISO4217-currency_name": "Tenge",
+    "capital": "Astana",
+    "continent": "AS",
+    "TLD": ".kz",
+    "languages": "kk,ru"
+  },
+  "KE": {
+    "name": "Kenya",
+    "ISO4217-currency_alphabetic_code": "KES",
+    "ISO4217-currency_name": "Kenyan Shilling",
+    "capital": "Nairobi",
+    "continent": "AF",
+    "TLD": ".ke",
+    "languages": "en-KE,sw-KE"
+  },
+  "KI": {
+    "name": "Kiribati",
+    "ISO4217-currency_alphabetic_code": "AUD",
+    "ISO4217-currency_name": "Australian Dollar",
+    "capital": "Tarawa",
+    "continent": "OC",
+    "TLD": ".ki",
+    "languages": "en-KI,gil"
+  },
+  "KW": {
+    "name": "Kuwait",
+    "ISO4217-currency_alphabetic_code": "KWD",
+    "ISO4217-currency_name": "Kuwaiti Dinar",
+    "capital": "Kuwait City",
+    "continent": "AS",
+    "TLD": ".kw",
+    "languages": "ar-KW,en"
+  },
+  "KG": {
+    "name": "Kyrgyzstan",
+    "ISO4217-currency_alphabetic_code": "KGS",
+    "ISO4217-currency_name": "Som",
+    "capital": "Bishkek",
+    "continent": "AS",
+    "TLD": ".kg",
+    "languages": "ky,uz,ru"
+  },
+  "LA": {
+    "name": "Laos",
+    "ISO4217-currency_alphabetic_code": "LAK",
+    "ISO4217-currency_name": "Kip",
+    "capital": "Vientiane",
+    "continent": "AS",
+    "TLD": ".la",
+    "languages": "lo,fr,en"
+  },
+  "LV": {
+    "name": "Latvia",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Riga",
+    "continent": "EU",
+    "TLD": ".lv",
+    "languages": "lv,ru,lt"
+  },
+  "LB": {
+    "name": "Lebanon",
+    "ISO4217-currency_alphabetic_code": "LBP",
+    "ISO4217-currency_name": "Lebanese Pound",
+    "capital": "Beirut",
+    "continent": "AS",
+    "TLD": ".lb",
+    "languages": "ar-LB,fr-LB,en,hy"
+  },
+  "LS": {
+    "name": "Lesotho",
+    "ISO4217-currency_alphabetic_code": "ZAR",
+    "ISO4217-currency_name": "Rand",
+    "capital": "Maseru",
+    "continent": "AF",
+    "TLD": ".ls",
+    "languages": "en-LS,st,zu,xh"
+  },
+  "LR": {
+    "name": "Liberia",
+    "ISO4217-currency_alphabetic_code": "LRD",
+    "ISO4217-currency_name": "Liberian Dollar",
+    "capital": "Monrovia",
+    "continent": "AF",
+    "TLD": ".lr",
+    "languages": "en-LR"
+  },
+  "LY": {
+    "name": "Libya",
+    "ISO4217-currency_alphabetic_code": "LYD",
+    "ISO4217-currency_name": "Libyan Dinar",
+    "capital": "Tripoli",
+    "continent": "AF",
+    "TLD": ".ly",
+    "languages": "ar-LY,it,en"
+  },
+  "LI": {
+    "name": "Liechtenstein",
+    "ISO4217-currency_alphabetic_code": "CHF",
+    "ISO4217-currency_name": "Swiss Franc",
+    "capital": "Vaduz",
+    "continent": "EU",
+    "TLD": ".li",
+    "languages": "de-LI"
+  },
+  "LT": {
+    "name": "Lithuania",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Vilnius",
+    "continent": "EU",
+    "TLD": ".lt",
+    "languages": "lt,ru,pl"
+  },
+  "LU": {
+    "name": "Luxembourg",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Luxembourg",
+    "continent": "EU",
+    "TLD": ".lu",
+    "languages": "lb,de-LU,fr-LU"
+  },
+  "MO": {
+    "name": "Macau",
+    "ISO4217-currency_alphabetic_code": "MOP",
+    "ISO4217-currency_name": "Pataca",
+    "capital": "Macao",
+    "continent": "AS",
+    "TLD": ".mo",
+    "languages": "zh,zh-MO,pt"
+  },
+  "MK": {
+    "name": "Macedonia",
+    "ISO4217-currency_alphabetic_code": "MKD",
+    "ISO4217-currency_name": "Denar",
+    "capital": "Skopje",
+    "continent": "EU",
+    "TLD": ".mk",
+    "languages": "mk,sq,tr,rmm,sr"
+  },
+  "MG": {
+    "name": "Madagascar",
+    "ISO4217-currency_alphabetic_code": "MGA",
+    "ISO4217-currency_name": "Malagasy Ariary",
+    "capital": "Antananarivo",
+    "continent": "AF",
+    "TLD": ".mg",
+    "languages": "fr-MG,mg"
+  },
+  "MW": {
+    "name": "Malawi",
+    "ISO4217-currency_alphabetic_code": "MWK",
+    "ISO4217-currency_name": "Kwacha",
+    "capital": "Lilongwe",
+    "continent": "AF",
+    "TLD": ".mw",
+    "languages": "ny,yao,tum,swk"
+  },
+  "MY": {
+    "name": "Malaysia",
+    "ISO4217-currency_alphabetic_code": "MYR",
+    "ISO4217-currency_name": "Malaysian Ringgit",
+    "capital": "Kuala Lumpur",
+    "continent": "AS",
+    "TLD": ".my",
+    "languages": "ms-MY,en,zh,ta,te,ml,pa,th"
+  },
+  "MV": {
+    "name": "Maldives",
+    "ISO4217-currency_alphabetic_code": "MVR",
+    "ISO4217-currency_name": "Rufiyaa",
+    "capital": "Male",
+    "continent": "AS",
+    "TLD": ".mv",
+    "languages": "dv,en"
+  },
+  "ML": {
+    "name": "Mali",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Bamako",
+    "continent": "AF",
+    "TLD": ".ml",
+    "languages": "fr-ML,bm"
+  },
+  "MT": {
+    "name": "Malta",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Valletta",
+    "continent": "EU",
+    "TLD": ".mt",
+    "languages": "mt,en-MT"
+  },
+  "MH": {
+    "name": "Marshall Islands",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Majuro",
+    "continent": "OC",
+    "TLD": ".mh",
+    "languages": "mh,en-MH"
+  },
+  "MQ": {
+    "name": "Martinique",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Fort-de-France",
+    "continent": "NA",
+    "TLD": ".mq",
+    "languages": "fr-MQ"
+  },
+  "MR": {
+    "name": "Mauritania",
+    "ISO4217-currency_alphabetic_code": "MRO",
+    "ISO4217-currency_name": "Ouguiya",
+    "capital": "Nouakchott",
+    "continent": "AF",
+    "TLD": ".mr",
+    "languages": "ar-MR,fuc,snk,fr,mey,wo"
+  },
+  "MU": {
+    "name": "Mauritius",
+    "ISO4217-currency_alphabetic_code": "MUR",
+    "ISO4217-currency_name": "Mauritius Rupee",
+    "capital": "Port Louis",
+    "continent": "AF",
+    "TLD": ".mu",
+    "languages": "en-MU,bho,fr"
+  },
+  "YT": {
+    "name": "Mayotte",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Mamoudzou",
+    "continent": "AF",
+    "TLD": ".yt",
+    "languages": "fr-YT"
+  },
+  "MX": {
+    "name": "Mexico",
+    "ISO4217-currency_alphabetic_code": "MXN",
+    "ISO4217-currency_name": "Mexican Peso",
+    "capital": "Mexico City",
+    "continent": "NA",
+    "TLD": ".mx",
+    "languages": "es-MX"
+  },
+  "FM": {
+    "name": "Micronesia",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Palikir",
+    "continent": "OC",
+    "TLD": ".fm",
+    "languages": "en-FM,chk,pon,yap,kos,uli,woe,nkr,kpg"
+  },
+  "MD": {
+    "name": "Moldova",
+    "ISO4217-currency_alphabetic_code": "MDL",
+    "ISO4217-currency_name": "Moldovan Leu",
+    "capital": "Chisinau",
+    "continent": "EU",
+    "TLD": ".md",
+    "languages": "ro,ru,gag,tr"
+  },
+  "MC": {
+    "name": "Monaco",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Monaco",
+    "continent": "EU",
+    "TLD": ".mc",
+    "languages": "fr-MC,en,it"
+  },
+  "MN": {
+    "name": "Mongolia",
+    "ISO4217-currency_alphabetic_code": "MNT",
+    "ISO4217-currency_name": "Tugrik",
+    "capital": "Ulan Bator",
+    "continent": "AS",
+    "TLD": ".mn",
+    "languages": "mn,ru"
+  },
+  "ME": {
+    "name": "Montenegro",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Podgorica",
+    "continent": "EU",
+    "TLD": ".me",
+    "languages": "sr,hu,bs,sq,hr,rom"
+  },
+  "MS": {
+    "name": "Montserrat",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "Plymouth",
+    "continent": "NA",
+    "TLD": ".ms",
+    "languages": "en-MS"
+  },
+  "MA": {
+    "name": "Morocco",
+    "ISO4217-currency_alphabetic_code": "MAD",
+    "ISO4217-currency_name": "Moroccan Dirham",
+    "capital": "Rabat",
+    "continent": "AF",
+    "TLD": ".ma",
+    "languages": "ar-MA,ber,fr"
+  },
+  "MZ": {
+    "name": "Mozambique",
+    "ISO4217-currency_alphabetic_code": "MZN",
+    "ISO4217-currency_name": "Mozambique Metical",
+    "capital": "Maputo",
+    "continent": "AF",
+    "TLD": ".mz",
+    "languages": "pt-MZ,vmw"
+  },
+  "MM": {
+    "name": "Myanmar",
+    "ISO4217-currency_alphabetic_code": "MMK",
+    "ISO4217-currency_name": "Kyat",
+    "capital": "Nay Pyi Taw",
+    "continent": "AS",
+    "TLD": ".mm",
+    "languages": "my"
+  },
+  "NA": {
+    "name": "Namibia",
+    "ISO4217-currency_alphabetic_code": "ZAR",
+    "ISO4217-currency_name": "Rand",
+    "capital": "Windhoek",
+    "continent": "AF",
+    "TLD": ".na",
+    "languages": "en-NA,af,de,hz,naq"
+  },
+  "NR": {
+    "name": "Nauru",
+    "ISO4217-currency_alphabetic_code": "AUD",
+    "ISO4217-currency_name": "Australian Dollar",
+    "capital": "Yaren",
+    "continent": "OC",
+    "TLD": ".nr",
+    "languages": "na,en-NR"
+  },
+  "NP": {
+    "name": "Nepal",
+    "ISO4217-currency_alphabetic_code": "NPR",
+    "ISO4217-currency_name": "Nepalese Rupee",
+    "capital": "Kathmandu",
+    "continent": "AS",
+    "TLD": ".np",
+    "languages": "ne,en"
+  },
+  "NL": {
+    "name": "Netherlands",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Amsterdam",
+    "continent": "EU",
+    "TLD": ".nl",
+    "languages": "nl-NL,fy-NL"
+  },
+  "NC": {
+    "name": "New Caledonia",
+    "ISO4217-currency_alphabetic_code": "XPF",
+    "ISO4217-currency_name": "CFP Franc",
+    "capital": "Noumea",
+    "continent": "OC",
+    "TLD": ".nc",
+    "languages": "fr-NC"
+  },
+  "NZ": {
+    "name": "New Zealand",
+    "ISO4217-currency_alphabetic_code": "NZD",
+    "ISO4217-currency_name": "New Zealand Dollar",
+    "capital": "Wellington",
+    "continent": "OC",
+    "TLD": ".nz",
+    "languages": "en-NZ,mi"
+  },
+  "NI": {
+    "name": "Nicaragua",
+    "ISO4217-currency_alphabetic_code": "NIO",
+    "ISO4217-currency_name": "Cordoba Oro",
+    "capital": "Managua",
+    "continent": "NA",
+    "TLD": ".ni",
+    "languages": "es-NI,en"
+  },
+  "NE": {
+    "name": "Niger",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Niamey",
+    "continent": "AF",
+    "TLD": ".ne",
+    "languages": "fr-NE,ha,kr,dje"
+  },
+  "NG": {
+    "name": "Nigeria",
+    "ISO4217-currency_alphabetic_code": "NGN",
+    "ISO4217-currency_name": "Naira",
+    "capital": "Abuja",
+    "continent": "AF",
+    "TLD": ".ng",
+    "languages": "en-NG,ha,yo,ig,ff"
+  },
+  "NU": {
+    "name": "Niue",
+    "ISO4217-currency_alphabetic_code": "NZD",
+    "ISO4217-currency_name": "New Zealand Dollar",
+    "capital": "Alofi",
+    "continent": "OC",
+    "TLD": ".nu",
+    "languages": "niu,en-NU"
+  },
+  "NF": {
+    "name": "Norfolk Island",
+    "ISO4217-currency_alphabetic_code": "AUD",
+    "ISO4217-currency_name": "Australian Dollar",
+    "capital": "Kingston",
+    "continent": "OC",
+    "TLD": ".nf",
+    "languages": "en-NF"
+  },
+  "KP": {
+    "name": "North Korea",
+    "ISO4217-currency_alphabetic_code": "KPW",
+    "ISO4217-currency_name": "North Korean Won",
+    "capital": "Pyongyang",
+    "continent": "AS",
+    "TLD": ".kp",
+    "languages": "ko-KP"
+  },
+  "MP": {
+    "name": "Northern Mariana Islands",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Saipan",
+    "continent": "OC",
+    "TLD": ".mp",
+    "languages": "fil,tl,zh,ch-MP,en-MP"
+  },
+  "NO": {
+    "name": "Norway",
+    "ISO4217-currency_alphabetic_code": "NOK",
+    "ISO4217-currency_name": "Norwegian Krone",
+    "capital": "Oslo",
+    "continent": "EU",
+    "TLD": ".no",
+    "languages": "no,nb,nn,se,fi"
+  },
+  "OM": {
+    "name": "Oman",
+    "ISO4217-currency_alphabetic_code": "OMR",
+    "ISO4217-currency_name": "Rial Omani",
+    "capital": "Muscat",
+    "continent": "AS",
+    "TLD": ".om",
+    "languages": "ar-OM,en,bal,ur"
+  },
+  "PK": {
+    "name": "Pakistan",
+    "ISO4217-currency_alphabetic_code": "PKR",
+    "ISO4217-currency_name": "Pakistan Rupee",
+    "capital": "Islamabad",
+    "continent": "AS",
+    "TLD": ".pk",
+    "languages": "ur-PK,en-PK,pa,sd,ps,brh"
+  },
+  "PW": {
+    "name": "Palau",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Melekeok",
+    "continent": "OC",
+    "TLD": ".pw",
+    "languages": "pau,sov,en-PW,tox,ja,fil,zh"
+  },
+  "PS": {
+    "name": "Palestine",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "No universal currency",
+    "capital": "East Jerusalem",
+    "continent": "AS",
+    "TLD": ".ps",
+    "languages": "ar-PS"
+  },
+  "PA": {
+    "name": "Panama",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Panama City",
+    "continent": "NA",
+    "TLD": ".pa",
+    "languages": "es-PA,en"
+  },
+  "PG": {
+    "name": "Papua New Guinea",
+    "ISO4217-currency_alphabetic_code": "PGK",
+    "ISO4217-currency_name": "Kina",
+    "capital": "Port Moresby",
+    "continent": "OC",
+    "TLD": ".pg",
+    "languages": "en-PG,ho,meu,tpi"
+  },
+  "PY": {
+    "name": "Paraguay",
+    "ISO4217-currency_alphabetic_code": "PYG",
+    "ISO4217-currency_name": "Guarani",
+    "capital": "Asuncion",
+    "continent": "SA",
+    "TLD": ".py",
+    "languages": "es-PY,gn"
+  },
+  "PE": {
+    "name": "Peru",
+    "ISO4217-currency_alphabetic_code": "PEN",
+    "ISO4217-currency_name": "Nuevo Sol",
+    "capital": "Lima",
+    "continent": "SA",
+    "TLD": ".pe",
+    "languages": "es-PE,qu,ay"
+  },
+  "PH": {
+    "name": "Philippines",
+    "ISO4217-currency_alphabetic_code": "PHP",
+    "ISO4217-currency_name": "Philippine Peso",
+    "capital": "Manila",
+    "continent": "AS",
+    "TLD": ".ph",
+    "languages": "tl,en-PH,fil"
+  },
+  "PN": {
+    "name": "Pitcairn Islands",
+    "ISO4217-currency_alphabetic_code": "NZD",
+    "ISO4217-currency_name": "New Zealand Dollar",
+    "capital": "Adamstown",
+    "continent": "OC",
+    "TLD": ".pn",
+    "languages": "en-PN"
+  },
+  "PL": {
+    "name": "Poland",
+    "ISO4217-currency_alphabetic_code": "PLN",
+    "ISO4217-currency_name": "Zloty",
+    "capital": "Warsaw",
+    "continent": "EU",
+    "TLD": ".pl",
+    "languages": "pl"
+  },
+  "PT": {
+    "name": "Portugal",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Lisbon",
+    "continent": "EU",
+    "TLD": ".pt",
+    "languages": "pt-PT,mwl"
+  },
+  "PR": {
+    "name": "Puerto Rico",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "San Juan",
+    "continent": "NA",
+    "TLD": ".pr",
+    "languages": "en-PR,es-PR"
+  },
+  "QA": {
+    "name": "Qatar",
+    "ISO4217-currency_alphabetic_code": "QAR",
+    "ISO4217-currency_name": "Qatari Rial",
+    "capital": "Doha",
+    "continent": "AS",
+    "TLD": ".qa",
+    "languages": "ar-QA,es"
+  },
+  "RO": {
+    "name": "Romania",
+    "ISO4217-currency_alphabetic_code": "RON",
+    "ISO4217-currency_name": "New Romanian Leu",
+    "capital": "Bucharest",
+    "continent": "EU",
+    "TLD": ".ro",
+    "languages": "ro,hu,rom"
+  },
+  "RU": {
+    "name": "Russia",
+    "ISO4217-currency_alphabetic_code": "RUB",
+    "ISO4217-currency_name": "Russian Ruble",
+    "capital": "Moscow",
+    "continent": "EU",
+    "TLD": ".ru",
+    "languages": "ru,tt,xal,cau,ady,kv,ce,tyv,cv,udm,tut,mns,bua,myv,mdf,chm,ba,inh,tut,kbd,krc,ava,sah,nog"
+  },
+  "RW": {
+    "name": "Rwanda",
+    "ISO4217-currency_alphabetic_code": "RWF",
+    "ISO4217-currency_name": "Rwanda Franc",
+    "capital": "Kigali",
+    "continent": "AF",
+    "TLD": ".rw",
+    "languages": "rw,en-RW,fr-RW,sw"
+  },
+  "RE": {
+    "name": "Réunion",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Saint-Denis",
+    "continent": "AF",
+    "TLD": ".re",
+    "languages": "fr-RE"
+  },
+  "WS": {
+    "name": "Samoa",
+    "ISO4217-currency_alphabetic_code": "WST",
+    "ISO4217-currency_name": "Tala",
+    "capital": "Apia",
+    "continent": "OC",
+    "TLD": ".ws",
+    "languages": "sm,en-WS"
+  },
+  "SM": {
+    "name": "San Marino",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "San Marino",
+    "continent": "EU",
+    "TLD": ".sm",
+    "languages": "it-SM"
+  },
+  "SA": {
+    "name": "Saudi Arabia",
+    "ISO4217-currency_alphabetic_code": "SAR",
+    "ISO4217-currency_name": "Saudi Riyal",
+    "capital": "Riyadh",
+    "continent": "AS",
+    "TLD": ".sa",
+    "languages": "ar-SA"
+  },
+  "SN": {
+    "name": "Senegal",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Dakar",
+    "continent": "AF",
+    "TLD": ".sn",
+    "languages": "fr-SN,wo,fuc,mnk"
+  },
+  "RS": {
+    "name": "Serbia",
+    "ISO4217-currency_alphabetic_code": "RSD",
+    "ISO4217-currency_name": "Serbian Dinar",
+    "capital": "Belgrade",
+    "continent": "EU",
+    "TLD": ".rs",
+    "languages": "sr,hu,bs,rom"
+  },
+  "SC": {
+    "name": "Seychelles",
+    "ISO4217-currency_alphabetic_code": "SCR",
+    "ISO4217-currency_name": "Seychelles Rupee",
+    "capital": "Victoria",
+    "continent": "AF",
+    "TLD": ".sc",
+    "languages": "en-SC,fr-SC"
+  },
+  "SL": {
+    "name": "Sierra Leone",
+    "ISO4217-currency_alphabetic_code": "SLL",
+    "ISO4217-currency_name": "Leone",
+    "capital": "Freetown",
+    "continent": "AF",
+    "TLD": ".sl",
+    "languages": "en-SL,men,tem"
+  },
+  "SG": {
+    "name": "Singapore",
+    "ISO4217-currency_alphabetic_code": "SGD",
+    "ISO4217-currency_name": "Singapore Dollar",
+    "capital": "Singapore",
+    "continent": "AS",
+    "TLD": ".sg",
+    "languages": "cmn,en-SG,ms-SG,ta-SG,zh-SG"
+  },
+  "SX": {
+    "name": "Sint Maarten",
+    "ISO4217-currency_alphabetic_code": "ANG",
+    "ISO4217-currency_name": "Netherlands Antillean Guilder",
+    "capital": "Philipsburg",
+    "continent": "NA",
+    "TLD": ".sx",
+    "languages": "nl,en"
+  },
+  "SK": {
+    "name": "Slovakia",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Bratislava",
+    "continent": "EU",
+    "TLD": ".sk",
+    "languages": "sk,hu"
+  },
+  "SI": {
+    "name": "Slovenia",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Ljubljana",
+    "continent": "EU",
+    "TLD": ".si",
+    "languages": "sl,sh"
+  },
+  "SB": {
+    "name": "Solomon Islands",
+    "ISO4217-currency_alphabetic_code": "SBD",
+    "ISO4217-currency_name": "Solomon Islands Dollar",
+    "capital": "Honiara",
+    "continent": "OC",
+    "TLD": ".sb",
+    "languages": "en-SB,tpi"
+  },
+  "SO": {
+    "name": "Somalia",
+    "ISO4217-currency_alphabetic_code": "SOS",
+    "ISO4217-currency_name": "Somali Shilling",
+    "capital": "Mogadishu",
+    "continent": "AF",
+    "TLD": ".so",
+    "languages": "so-SO,ar-SO,it,en-SO"
+  },
+  "ZA": {
+    "name": "South Africa",
+    "ISO4217-currency_alphabetic_code": "ZAR",
+    "ISO4217-currency_name": "Rand",
+    "capital": "Pretoria",
+    "continent": "AF",
+    "TLD": ".za",
+    "languages": "zu,xh,af,nso,en-ZA,tn,st,ts,ss,ve,nr"
+  },
+  "GS": {
+    "name": "South Georgia & South Sandwich Islands",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Grytviken",
+    "continent": "AN",
+    "TLD": ".gs",
+    "languages": "en"
+  },
+  "KR": {
+    "name": "South Korea",
+    "ISO4217-currency_alphabetic_code": "KRW",
+    "ISO4217-currency_name": "Won",
+    "capital": "Seoul",
+    "continent": "AS",
+    "TLD": ".kr",
+    "languages": "ko-KR,en"
+  },
+  "SS": {
+    "name": "South Sudan",
+    "ISO4217-currency_alphabetic_code": "SSP",
+    "ISO4217-currency_name": "South Sudanese Pound",
+    "capital": "Juba",
+    "continent": "AF",
+    "TLD": "",
+    "languages": "en"
+  },
+  "ES": {
+    "name": "Spain",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Madrid",
+    "continent": "EU",
+    "TLD": ".es",
+    "languages": "es-ES,ca,gl,eu,oc"
+  },
+  "LK": {
+    "name": "Sri Lanka",
+    "ISO4217-currency_alphabetic_code": "LKR",
+    "ISO4217-currency_name": "Sri Lanka Rupee",
+    "capital": "Colombo",
+    "continent": "AS",
+    "TLD": ".lk",
+    "languages": "si,ta,en"
+  },
+  "BL": {
+    "name": "St. Barthélemy",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Gustavia",
+    "continent": "NA",
+    "TLD": ".gp",
+    "languages": "fr"
+  },
+  "SH": {
+    "name": "St. Helena",
+    "ISO4217-currency_alphabetic_code": "SHP",
+    "ISO4217-currency_name": "Saint Helena Pound",
+    "capital": "Jamestown",
+    "continent": "AF",
+    "TLD": ".sh",
+    "languages": "en-SH"
+  },
+  "KN": {
+    "name": "St. Kitts & Nevis",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "Basseterre",
+    "continent": "NA",
+    "TLD": ".kn",
+    "languages": "en-KN"
+  },
+  "LC": {
+    "name": "St. Lucia",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "Castries",
+    "continent": "NA",
+    "TLD": ".lc",
+    "languages": "en-LC"
+  },
+  "MF": {
+    "name": "St. Martin",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Marigot",
+    "continent": "NA",
+    "TLD": ".gp",
+    "languages": "fr"
+  },
+  "PM": {
+    "name": "St. Pierre & Miquelon",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Saint-Pierre",
+    "continent": "NA",
+    "TLD": ".pm",
+    "languages": "fr-PM"
+  },
+  "VC": {
+    "name": "St. Vincent & Grenadines",
+    "ISO4217-currency_alphabetic_code": "XCD",
+    "ISO4217-currency_name": "East Caribbean Dollar",
+    "capital": "Kingstown",
+    "continent": "NA",
+    "TLD": ".vc",
+    "languages": "en-VC,fr"
+  },
+  "SD": {
+    "name": "Sudan",
+    "ISO4217-currency_alphabetic_code": "SDG",
+    "ISO4217-currency_name": "Sudanese Pound",
+    "capital": "Khartoum",
+    "continent": "AF",
+    "TLD": ".sd",
+    "languages": "ar-SD,en,fia"
+  },
+  "SR": {
+    "name": "Suriname",
+    "ISO4217-currency_alphabetic_code": "SRD",
+    "ISO4217-currency_name": "Surinam Dollar",
+    "capital": "Paramaribo",
+    "continent": "SA",
+    "TLD": ".sr",
+    "languages": "nl-SR,en,srn,hns,jv"
+  },
+  "SJ": {
+    "name": "Svalbard & Jan Mayen",
+    "ISO4217-currency_alphabetic_code": "NOK",
+    "ISO4217-currency_name": "Norwegian Krone",
+    "capital": "Longyearbyen",
+    "continent": "EU",
+    "TLD": ".sj",
+    "languages": "no,ru"
+  },
+  "SZ": {
+    "name": "Swaziland",
+    "ISO4217-currency_alphabetic_code": "SZL",
+    "ISO4217-currency_name": "Lilangeni",
+    "capital": "Mbabane",
+    "continent": "AF",
+    "TLD": ".sz",
+    "languages": "en-SZ,ss-SZ"
+  },
+  "SE": {
+    "name": "Sweden",
+    "ISO4217-currency_alphabetic_code": "SEK",
+    "ISO4217-currency_name": "Swedish Krona",
+    "capital": "Stockholm",
+    "continent": "EU",
+    "TLD": ".se",
+    "languages": "sv-SE,se,sma,fi-SE"
+  },
+  "CH": {
+    "name": "Switzerland",
+    "ISO4217-currency_alphabetic_code": "CHF",
+    "ISO4217-currency_name": "Swiss Franc",
+    "capital": "Bern",
+    "continent": "EU",
+    "TLD": ".ch",
+    "languages": "de-CH,fr-CH,it-CH,rm"
+  },
+  "SY": {
+    "name": "Syria",
+    "ISO4217-currency_alphabetic_code": "SYP",
+    "ISO4217-currency_name": "Syrian Pound",
+    "capital": "Damascus",
+    "continent": "AS",
+    "TLD": ".sy",
+    "languages": "ar-SY,ku,hy,arc,fr,en"
+  },
+  "ST": {
+    "name": "São Tomé & Príncipe",
+    "ISO4217-currency_alphabetic_code": "STD",
+    "ISO4217-currency_name": "Dobra",
+    "capital": "Sao Tome",
+    "continent": "AF",
+    "TLD": ".st",
+    "languages": "pt-ST"
+  },
+  "TW": {
+    "name": "Taiwan",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "Taipei",
+    "continent": "AS",
+    "TLD": ".tw",
+    "languages": "zh-TW,zh,nan,hak"
+  },
+  "TJ": {
+    "name": "Tajikistan",
+    "ISO4217-currency_alphabetic_code": "TJS",
+    "ISO4217-currency_name": "Somoni",
+    "capital": "Dushanbe",
+    "continent": "AS",
+    "TLD": ".tj",
+    "languages": "tg,ru"
+  },
+  "TZ": {
+    "name": "Tanzania",
+    "ISO4217-currency_alphabetic_code": "TZS",
+    "ISO4217-currency_name": "Tanzanian Shilling",
+    "capital": "Dodoma",
+    "continent": "AF",
+    "TLD": ".tz",
+    "languages": "sw-TZ,en,ar"
+  },
+  "TH": {
+    "name": "Thailand",
+    "ISO4217-currency_alphabetic_code": "THB",
+    "ISO4217-currency_name": "Baht",
+    "capital": "Bangkok",
+    "continent": "AS",
+    "TLD": ".th",
+    "languages": "th,en"
+  },
+  "TL": {
+    "name": "Timor-Leste",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Dili",
+    "continent": "OC",
+    "TLD": ".tl",
+    "languages": "tet,pt-TL,id,en"
+  },
+  "TG": {
+    "name": "Togo",
+    "ISO4217-currency_alphabetic_code": "XOF",
+    "ISO4217-currency_name": "CFA Franc BCEAO",
+    "capital": "Lome",
+    "continent": "AF",
+    "TLD": ".tg",
+    "languages": "fr-TG,ee,hna,kbp,dag,ha"
+  },
+  "TK": {
+    "name": "Tokelau",
+    "ISO4217-currency_alphabetic_code": "NZD",
+    "ISO4217-currency_name": "New Zealand Dollar",
+    "capital": "",
+    "continent": "OC",
+    "TLD": ".tk",
+    "languages": "tkl,en-TK"
+  },
+  "TO": {
+    "name": "Tonga",
+    "ISO4217-currency_alphabetic_code": "TOP",
+    "ISO4217-currency_name": "Pa’anga",
+    "capital": "Nuku'alofa",
+    "continent": "OC",
+    "TLD": ".to",
+    "languages": "to,en-TO"
+  },
+  "TT": {
+    "name": "Trinidad & Tobago",
+    "ISO4217-currency_alphabetic_code": "TTD",
+    "ISO4217-currency_name": "Trinidad and Tobago Dollar",
+    "capital": "Port of Spain",
+    "continent": "NA",
+    "TLD": ".tt",
+    "languages": "en-TT,hns,fr,es,zh"
+  },
+  "TN": {
+    "name": "Tunisia",
+    "ISO4217-currency_alphabetic_code": "TND",
+    "ISO4217-currency_name": "Tunisian Dinar",
+    "capital": "Tunis",
+    "continent": "AF",
+    "TLD": ".tn",
+    "languages": "ar-TN,fr"
+  },
+  "TR": {
+    "name": "Turkey",
+    "ISO4217-currency_alphabetic_code": "TRY",
+    "ISO4217-currency_name": "Turkish Lira",
+    "capital": "Ankara",
+    "continent": "AS",
+    "TLD": ".tr",
+    "languages": "tr-TR,ku,diq,az,av"
+  },
+  "TM": {
+    "name": "Turkmenistan",
+    "ISO4217-currency_alphabetic_code": "TMT",
+    "ISO4217-currency_name": "Turkmenistan New Manat",
+    "capital": "Ashgabat",
+    "continent": "AS",
+    "TLD": ".tm",
+    "languages": "tk,ru,uz"
+  },
+  "TC": {
+    "name": "Turks & Caicos Islands",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Cockburn Town",
+    "continent": "NA",
+    "TLD": ".tc",
+    "languages": "en-TC"
+  },
+  "TV": {
+    "name": "Tuvalu",
+    "ISO4217-currency_alphabetic_code": "AUD",
+    "ISO4217-currency_name": "Australian Dollar",
+    "capital": "Funafuti",
+    "continent": "OC",
+    "TLD": ".tv",
+    "languages": "tvl,en,sm,gil"
+  },
+  "UM": {
+    "name": "U.S. Outlying Islands",
+    "ISO4217-currency_alphabetic_code": "",
+    "ISO4217-currency_name": "",
+    "capital": "",
+    "continent": "OC",
+    "TLD": ".um",
+    "languages": "en-UM"
+  },
+  "VI": {
+    "name": "U.S. Virgin Islands",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Charlotte Amalie",
+    "continent": "NA",
+    "TLD": ".vi",
+    "languages": "en-VI"
+  },
+  "GB": {
+    "name": "United Kingdom",
+    "ISO4217-currency_alphabetic_code": "GBP",
+    "ISO4217-currency_name": "Pound Sterling",
+    "capital": "London",
+    "continent": "EU",
+    "TLD": ".uk",
+    "languages": "en-GB,cy-GB,gd"
+  },
+  "US": {
+    "name": "United States",
+    "ISO4217-currency_alphabetic_code": "USD",
+    "ISO4217-currency_name": "US Dollar",
+    "capital": "Washington",
+    "continent": "NA",
+    "TLD": ".us",
+    "languages": "en-US,es-US,haw,fr"
+  },
+  "UG": {
+    "name": "Uganda",
+    "ISO4217-currency_alphabetic_code": "UGX",
+    "ISO4217-currency_name": "Uganda Shilling",
+    "capital": "Kampala",
+    "continent": "AF",
+    "TLD": ".ug",
+    "languages": "en-UG,lg,sw,ar"
+  },
+  "UA": {
+    "name": "Ukraine",
+    "ISO4217-currency_alphabetic_code": "UAH",
+    "ISO4217-currency_name": "Hryvnia",
+    "capital": "Kiev",
+    "continent": "EU",
+    "TLD": ".ua",
+    "languages": "uk,ru-UA,rom,pl,hu"
+  },
+  "AE": {
+    "name": "United Arab Emirates",
+    "ISO4217-currency_alphabetic_code": "AED",
+    "ISO4217-currency_name": "UAE Dirham",
+    "capital": "Abu Dhabi",
+    "continent": "AS",
+    "TLD": ".ae",
+    "languages": "ar-AE,fa,en,hi,ur"
+  },
+  "UY": {
+    "name": "Uruguay",
+    "ISO4217-currency_alphabetic_code": "UYU",
+    "ISO4217-currency_name": "Peso Uruguayo",
+    "capital": "Montevideo",
+    "continent": "SA",
+    "TLD": ".uy",
+    "languages": "es-UY"
+  },
+  "UZ": {
+    "name": "Uzbekistan",
+    "ISO4217-currency_alphabetic_code": "UZS",
+    "ISO4217-currency_name": "Uzbekistan Sum",
+    "capital": "Tashkent",
+    "continent": "AS",
+    "TLD": ".uz",
+    "languages": "uz,ru,tg"
+  },
+  "VU": {
+    "name": "Vanuatu",
+    "ISO4217-currency_alphabetic_code": "VUV",
+    "ISO4217-currency_name": "Vatu",
+    "capital": "Port Vila",
+    "continent": "OC",
+    "TLD": ".vu",
+    "languages": "bi,en-VU,fr-VU"
+  },
+  "VA": {
+    "name": "Vatican City",
+    "ISO4217-currency_alphabetic_code": "EUR",
+    "ISO4217-currency_name": "Euro",
+    "capital": "Vatican City",
+    "continent": "EU",
+    "TLD": ".va",
+    "languages": "la,it,fr"
+  },
+  "VE": {
+    "name": "Venezuela",
+    "ISO4217-currency_alphabetic_code": "VEF",
+    "ISO4217-currency_name": "Bolivar",
+    "capital": "Caracas",
+    "continent": "SA",
+    "TLD": ".ve",
+    "languages": "es-VE"
+  },
+  "VN": {
+    "name": "Vietnam",
+    "ISO4217-currency_alphabetic_code": "VND",
+    "ISO4217-currency_name": "Dong",
+    "capital": "Hanoi",
+    "continent": "AS",
+    "TLD": ".vn",
+    "languages": "vi,en,fr,zh,km"
+  },
+  "WF": {
+    "name": "Wallis & Futuna",
+    "ISO4217-currency_alphabetic_code": "XPF",
+    "ISO4217-currency_name": "CFP Franc",
+    "capital": "Mata Utu",
+    "continent": "OC",
+    "TLD": ".wf",
+    "languages": "wls,fud,fr-WF"
+  },
+  "EH": {
+    "name": "Western Sahara",
+    "ISO4217-currency_alphabetic_code": "MAD",
+    "ISO4217-currency_name": "Moroccan Dirham",
+    "capital": "El-Aaiun",
+    "continent": "AF",
+    "TLD": ".eh",
+    "languages": "ar,mey"
+  },
+  "YE": {
+    "name": "Yemen",
+    "ISO4217-currency_alphabetic_code": "YER",
+    "ISO4217-currency_name": "Yemeni Rial",
+    "capital": "Sanaa",
+    "continent": "AS",
+    "TLD": ".ye",
+    "languages": "ar-YE"
+  },
+  "ZM": {
+    "name": "Zambia",
+    "ISO4217-currency_alphabetic_code": "ZMW",
+    "ISO4217-currency_name": "Zambian Kwacha",
+    "capital": "Lusaka",
+    "continent": "AF",
+    "TLD": ".zm",
+    "languages": "en-ZM,bem,loz,lun,lue,ny,toi"
+  },
+  "ZW": {
+    "name": "Zimbabwe",
+    "ISO4217-currency_alphabetic_code": "ZWL",
+    "ISO4217-currency_name": "Zimbabwe Dollar",
+    "capital": "Harare",
+    "continent": "AF",
+    "TLD": ".zw",
+    "languages": "en-ZW,sn,nr,nd"
+  }
 }

@@ -14,10 +14,10 @@
 const Config = require('config');
 
 // Built-in
-const util = require('util');
+const util_ = require('util');
 
 // Mine
-
+const Countries = require('../../config/countriesByISO-3166-alpha-2');
 
 // -------------------------------------------------------------------
 // Module' Exports
@@ -108,19 +108,33 @@ module.exports = class Util {
     return '#' + '00000'.substring(0, 6 - hex.length) + hex;
   }
 
-  /**
-   * Convert an array into an object.
-   *
-   * @param {Array} keys - The keys for the generated object.
-   * @param {Array} arr - The array source.
-   *
-   * @return  {Object} An array mapped by his keys or passed in args.
-   */
-  // static convertArrayToObject(keys = [], arr = []) {
+  //
+  //  * Convert an array into an object.
+  //  *
+  //  * @param {Array} keys - The keys for the generated object.
+  //  * @param {Array} arr - The array source.
+  //  *
+  //  * @return  {Object} An array mapped by his keys or passed in args.
+  //  */
+  // // static convertArrayToObject(keys = [], arr = []) {
   //   return Object.keys(arr).reduce((pms, p, i) => arr[p], {});
   //   // const param = arr[p];
   // };
 
+
+  /**
+   *
+   * @static
+   * @param {any} iso - The ISO3166-1-Alpha-2 code of the country.
+   * @return {Object} The country corresponding to the ISO.
+   */
+  static getCountryFromISOCode(iso) {
+    if(!iso || typeof iso !== 'string') {
+      return null;
+    }
+    const country = Countries[iso];
+    return (!country) ? {} : country;
+  }
 
   /**
    * Check if the params, if defined, are valid.
@@ -159,7 +173,7 @@ module.exports = class Util {
             let msg = Config.api.msg.err.check[param];
             if (!msg) {
               msg = Config.api.msg.err.check._def;
-              msg = util.format(msg, param, paramValue);
+              msg = util_.format(msg, param, paramValue);
             }
             check.errMsg = msg;
           }

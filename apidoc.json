@@ -1,0 +1,8 @@
+{
+  "name": "DashyAPINode",
+  "version": "0.2.0",
+  "description": "Little API to push and pull metrics for GeckoBoard Dashboard",
+  "title": "APIDoc for DashyAPINode",
+  "url" : "https://api.dashy.com/v1",
+  "sampleUrl":"https://test-weurkspace-akad1070.c9users.io"
+}

@@ -4,8 +4,8 @@ DIR_BIN		= ./node_modules/.bin
 
 DIR_SRC		= ./src
 DIR_TEST 	= ./test
-DIR_DOC		= ./docs
-DIR_LOG		= ./logs
+DIR_DOCS	= ./docs
+DIR_LOGS	= ./logs
 ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -not -path "*/node_modules*")
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
@@ -15,6 +15,7 @@ REDIS_PWD	= pwd
 REDIS_DB_TEST = 7
 REDIS_DB_PROD = 5
 
+APIDOC		= $(DIR_BIN)/apidoc -f ".+route.*\\.js$""  -i $(DIR_SRC) -o $(DIR_DOCS)/api/;
 ESLINT		= $(DIR_BIN)/eslint --cache
 JSDOC		= $(DIR_BIN)/jsdoc
 MOCHA		= $(DIR_BIN)/mocha --bail --colors --timeout $(TIMEOUT) -R $(REPORTER) 
@@ -35,6 +36,7 @@ dev:
 	NODE_ENV=production \
 	$(NODEMON) $(DIR_SRC)/app.js;
 	@echo "##### Launch over" ;
+
 
 lint:
 
@@ -66,38 +68,53 @@ test-cover: lint
 	@echo "###  Resetting Redis cache ..." ;
 	@$(REDIS_CLI) FLUSHALL > /dev/null;
 
-	@NODE_ENV=test $(NYC) report \
+	@NODE_ENV=test $(NYC) \
 		--reporter=lcov \
-		--reporter-dir=$(DIR_DOC)/coverage \
+		--reporter-dir=$(DIR_DOCS)/coverage \
 		$(_MOCHA) $(ALL_TESTS);
 
 	@open ./docs/coverage/lcov-report/*.html
 	@echo "#####  NYC Test Covering ... : DONE" ;
 
-test-docs:
 
-	#@test -d $(DIR_DOC) || mkdir $(DIR_DOC);
-	#@test -d $(DIR_DOC)/test || mkdir $(DIR_DOC)/test;
+test-doc:
+
+	@echo "#### Generating test reports ... ";
+	#@test -d $(DIR_DOCS) || mkdir $(DIR_DOCS);
+	#@test -d $(DIR_DOCS)/test || mkdir $(DIR_DOCS)/test;
 	@NODE_ENV=test $(_MOCHA) $(ALL_TESTS)\
 			--reporter mochawesome \
 			--reporter-options 	\
-				reportDir=$(DIR_DOC)/test,reportFilename=reports,autoOpen=true;
+				reportDir=$(DIR_DOCS)/test,reportFilename=reports,autoOpen=true;
 	@NODE_ENV=test $(MOCHA) --reporter markdown  $(ALL_TESTS)  \
-			> $(DIR_DOC)/test/reports.md
+			> $(DIR_DOCS)/test/reports.md
 
-docs: clean test-cover test-docs
+	@echo "#### Generating test reports ... : DONE";
+
+api-doc:
+
+	@echo "#### ApiDoc-ing folder: $(DIR_SRC)";
+	@$(APIDOC)
+	@open $(DIR_DOCS)/api/index.html
+	@echo "#### ApiDoc-ing ... : DONE";
+
+
+docs: clean test-cover test-docs api-docs
 
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
 	@$(JSDOC) \
 		-c .jsdocrc.json \
-		-d $(DIR_DOC)/doc \
+		-d $(DIR_DOCS)/doc \
 		-r \
 		-R README.md \
 		-t $(DOC_TEMPL) \
 		--verbose \
 		$(DIR_SRC) ;
 
-	@open $(DIR_DOC)/doc/index.html
+	@open $(DIR_DOCS)/doc/index.html
+	
+
+	@echo "#####  Generating docs ... : DONE" ;
 
 
 setup:
@@ -109,7 +126,7 @@ setup:
 build: test docs
 
 	@echo "##### Clear the logs folder .... ";
-	@rm -rf $(DIR_LOG)/*;
+	@rm -rf $(DIR_LOGS)/*;
 	@NODE_ENV=production node --harmony $(DIR_SRC)/app.js;
 
 clean:
@@ -117,9 +134,9 @@ clean:
 	@echo "##### Clear NYC folder";
 	@rm -rf .nyc_output/*;
 	@echo "##### Clear logs folder";
-	@rm -rf $(DIR_LOG)/*;
+	@rm -rf $(DIR_LOGS)/*;
 	@echo "##### Clear doc folder";
-	@rm -rf $(DIR_DOC)/*;
+	@rm -rf $(DIR_DOCS)/*;
 	@echo "#####  Resetting Redis PROD cache ..." ;
 	@$(REDIS_CLI) FLUSHALL;
 	@echo "#####  Resetting Redis TEST cache ..." ;

@@ -28,6 +28,7 @@ const Router = require('../components/router');
 // Properties
 
 /**
+ * @apiGroup Base
  * Singleton Holder for the instance
  * @private
  * @const {Object} Singleton
@@ -70,6 +71,24 @@ class BaseRouter extends Router {
    */
   handler() {
     this.router_.use(this.sendResponse);
+
+    /**
+      *
+      * @api {GET} /zen  Zen - Get Joke
+      * @apiDescription Use as testing route to get randomly a good IT Joke.
+      * @apiGroup Base
+      * @apiVersion  0.0.1
+      *
+      * @apiSuccess (200) {String} joke An IT Joke.
+      *
+      * @apiSuccessExample {Object} Success-Response:
+        {
+          joke : "To understand recursion you must first understand recursion."
+        }
+      *
+      * @apiSampleRequest /zen
+      *
+      */
     this.router_.get('/zen', (ctx, next) => {
       const jokes = Config.zen;
       ctx.state.data.joke = jokes[Math.floor(Math.random() * (jokes.length))];

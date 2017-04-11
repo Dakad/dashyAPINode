@@ -1,0 +1,7 @@
+{
+  "leads": "GET /leads",
+  "mrr": "GET /mrr",
+  "Nb Clients": "GET /customers",
+  "Net MRR Churn": "GET /mrr/churn",
+  "Top plans/customers": "GET /plans/top"
+}

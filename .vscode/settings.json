@@ -13,5 +13,27 @@
   "nodeTdd.buildOnCreate": true,
   "nodeTdd.showCoverage": true,
   "nodeTdd.buildOnActivation": true,
-  "vsicons.presets.angular": false
+  "vsicons.presets.angular": false,
+  "TodoParser": {
+    "exclude": [
+      "cpp",
+      "c"
+    ],
+    "include": [
+      "js"
+    ],
+    "folderExclude": [
+      "node_modules",
+      ".vscode"
+    ],
+    "only": [
+      "./src/",
+      "./test/"
+    ],
+    "markers": [
+      "NOTE:",
+      "REMINDER:"
+    ],
+    "autoDefaultMarkers": true
+  }
 }

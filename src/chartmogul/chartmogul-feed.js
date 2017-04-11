@@ -493,7 +493,6 @@ class ChartMogulFeed extends Feeder {
         const netMrr = this.calcNetMRRMovement(entries.pop());
 
         return [{
-          // TODO Export this HTML Render into ChartMogulHTMLFormatter
           'text': HTMLFormatter.toTextNetMrr(
               Util.toMoneyFormat(netMrr, '', ',')
             , Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',')

@@ -4,6 +4,7 @@
  * @requires config
  * @requires bluebird/Promise
  * @requires superagent
+ *
  * @requires components/feeder
  * @requires components/feeder
  * @module {Feeder} feeds/chartmogul
@@ -72,9 +73,9 @@ class ChartMogulFeed extends Feeder {
    */
   constructor() {
     super(Config.chartMogul.apiUrl);
-    // TODO Put this var in cache
+
     /** @private */
-    this.bestNetMRRMove_ = {
+    this.bestNetMRR_ = {
       'lastFetch': null,
       'startDate': new Date(Config.chartMogul.bestNetMRR.startDate),
       'val': 0,
@@ -84,16 +85,23 @@ class ChartMogulFeed extends Feeder {
       'lastFetch': null,
       'startPage': Config.chartMogul.leads.startPage,
     };
+
+    this.customers_ = {
+      'lastFetch': null,
+      'startPage': 1,
+    };
   }
 
 
   /** @override */
   cacheResponse(key, resp) {
     if (Util.isEmptyOrNull(key)) {
-      return;
+      return resp;
     }
 
     switch (key.destination) {
+      default:
+        break;
       case '/customers':
         if (resp.has_more) {
           super.setInCache(key, resp);
@@ -110,9 +118,9 @@ class ChartMogulFeed extends Feeder {
             'uuid': plan.uuid,
           }));
         super.setInCache(key, plans);
-      default:
-        break;
+        return plans;
     }
+    return resp;
   }
 
   /**
@@ -157,8 +165,10 @@ class ChartMogulFeed extends Feeder {
               if (err) {
                 return reject(err);
               }
-              this.cacheResponse(key, res.body);
-              return resolve(res.body);
+              // Any-way, check if thsi resp must be stored in cache
+              // Send back the processed|transformed resp for cache
+              // Otherwise, will send back res.body
+              return resolve(this.cacheResponse(key, res.body));
             });
         });
       });
@@ -212,31 +222,37 @@ class ChartMogulFeed extends Feeder {
   }
 
   /**
+   *
    * Recursive fetcher for the customers or leads.
+   *
    * @private
+   *
    * @param {number} [startingPage=1] - The page to go fetch.
-   * @param {boolean} [opts] - query Options for the fetch and filter.
-   * - {boolean} [onlyLead=false] - Which kind of customer must be kept.
-   * @return {Array<Object>} All customers||leads filtered.
+   * @param {Object} [opts] - Options for the fetch and filter.
+   * @param {String} [opts.onlyLead=false] -  Keep only those leads.
+   * @param {string} opts.status - Get only those {Active or Lead}
+   *
+   * @return {Array<Object>} - All customers||leads filtered.
+   *
    * @memberOf ChartMogulFeed
    */
   async fetchAndFilterCustomers(startingPage = 1, opts = {}) {
     const {onlyLead = false, status} = opts;
-    const customers = await this.requestChartMogulFor('/customers', {
+    const reqCustomers = await this.requestChartMogulFor('/customers', {
       page: startingPage,
       status: status,
     });
 
     const filtered = this.filterCustomers(
-      customers.entries, (onlyLead || (status && status === 'Lead'))
+      reqCustomers.entries, (onlyLead || (status && status === 'Lead'))
     );
-    if (customers.has_more) {
+    if (reqCustomers.has_more) {
       const values = await this.fetchAndFilterCustomers(startingPage + 1, opts);
       return values.concat(filtered);
     }
     // TODO Change the code for fetchNbLeads* to support the cache sys.
     // Save the last page for /customers
-    // Henceforth, only to only call & filter this page
+    // Henceforth, only call & filter this page
     // this.leads_.startPage = startingPage;
     return filtered;
   }
@@ -245,21 +261,20 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in chargin of fetch the leads.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchNbLeads(config) {
-    // The first day of the previous month
-    // The last day of the previous month at 00:00:00:00
+    // The first day in this month at 00:00:00:00
     const firstInMonth = new Date();
     firstInMonth.setDate(1);
     firstInMonth.setHours(0, 0, 0, 0);
 
-    // Get the date for the end of the previous month
+    // The first day in the prev. month at 00:00:00:00
     let previousMonth = new Date();
-    // Set the day to the first day.
+    // Set this data to the last day of the prev. month.
     previousMonth.setDate(0);
     previousMonth.setDate(1);
     previousMonth.setHours(0, 0, 0, 0);
@@ -269,44 +284,43 @@ class ChartMogulFeed extends Feeder {
       this.getCached(KEY_NB_LEADS_LAST_MONTH),
     ]);
 
-      // console.log('Nb Filtered : ' + leads.length, nbLastMonth);
-      const item = leads.reduce((item, lead) => {
-        // const leadDate = Util.convertDate(lead['lead_created_at']);
-        // console.log('Lead : '+leadDate);
-        const leadDateInMs = new Date(lead['lead_created_at']).getTime();
-        if (leadDateInMs >= firstInMonth) {
-          item[0].value += 1;
-        }
-        // ? No cached value for the lastMonth ?
-        if (nbLastMonth === null
-          // Only the Leads made within the previous month
-          && leadDateInMs >= previousMonth.getTime()
-          && leadDateInMs < firstInMonth.getTime()) {
-          item[1].value += 1;
-        }
-        return item;
-      }, [
-          {'value': 0},
-          {'value': (nbLastMonth) ? Number.parseInt(nbLastMonth) : 0},
-        ]);
-
-      if (nbLastMonth === null) {
-        super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
+    // console.log('Nb Filtered : ' + leads.length, nbLastMonth);
+    const item = leads.reduce((item, lead) => {
+      // const leadDate = Util.convertDate(lead['lead_created_at']);
+      // console.log('Lead : '+leadDate);
+      const leadDateInMs = new Date(lead['lead_created_at']).getTime();
+      if (leadDateInMs >= firstInMonth) {
+        item[0].value += 1;
+      }
+      // ? No cached value for the lastMonth ?
+      if (nbLastMonth === null
+        // Only the Leads made within the previous month
+        && leadDateInMs >= previousMonth.getTime()
+        && leadDateInMs < firstInMonth.getTime()) {
+        item[1].value += 1;
       }
       return item;
+    }, [
+        {'value': 0},
+        {'value': (nbLastMonth) ? Number.parseInt(nbLastMonth) : 0},
+      ]);
+
+    if (nbLastMonth === null) { // ? Nothing in cache ?
+      super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
+    }
+    return item;
   }
 
 
   /**
    * The middleware in chargin of fetch the leads for today.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchNbLeadsToday(config) {
-    // TODO Insert today & last30Days vars into config
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -323,39 +337,39 @@ class ChartMogulFeed extends Feeder {
       this.fetchAndFilterCustomers(1, {onlyLead: true}),
       this.getCached(KEY_AVG_LEADS_LAST_MONTH),
     ]);
-      // console.log('Nb Filtered : ' + leads.length, avgLeadsLastMonth);
-      leads.forEach((lead) => {
-        // const leadDate = Util.convertDate(lead['lead_created_at']);
-        // console.log('Lead : '+leadDate);
-        const leadDateInMs = new Date(lead['lead_created_at']).getTime();
+    // console.log('Nb Filtered : ' + leads.length, avgLeadsLastMonth);
+    leads.forEach((lead) => {
+      // const leadDate = Util.convertDate(lead['lead_created_at']);
+      // console.log('Lead : '+leadDate);
+      const leadDateInMs = new Date(lead['lead_created_at']).getTime();
 
-        if (leadDateInMs >= today.getTime()) {
-          item[0].value += 1;
-        }
-        if (avgLeadsLastMonth === null
-          // Only the Leads made within the previous month
-          && leadDateInMs >= last30Days.getTime()
-          && leadDateInMs < today.getTime()) {
-          item[1].value += 1;
-        }
-      });
-
-      if (avgLeadsLastMonth === null) {
-        // Calc the avg on 30 days
-        item[1].value = Math.round(item[1].value / 30);
-        super.setInCache(KEY_AVG_LEADS_LAST_MONTH, item[1].value);
-      }else{
-        item[1].value = avgLeadsLastMonth;
+      if (leadDateInMs >= today.getTime()) {
+        item[0].value += 1;
       }
-      return item;
+      if (avgLeadsLastMonth === null
+        // Only the Leads made within the previous month
+        && leadDateInMs >= last30Days.getTime()
+        && leadDateInMs < today.getTime()) {
+        item[1].value += 1;
+      }
+    });
+
+    if (avgLeadsLastMonth === null) {
+      // Calc the avg on 30 days
+      item[1].value = Math.round(item[1].value / 30);
+      super.setInCache(KEY_AVG_LEADS_LAST_MONTH, item[1].value);
+    } else {
+      item[1].value = avgLeadsLastMonth;
+    }
+    return item;
   }
 
 
   /**
    * The middleware in charge of fetching the MRR.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
@@ -363,27 +377,28 @@ class ChartMogulFeed extends Feeder {
     const req = await this.requestChartMogulFor('/metrics/mrr', config);
     const {entries: [previous, current]} = req;
     return [
-        { // The mrr for today
-          'value': current.mrr / 100,
-          'prefix': '€',
-        },
-        { // Take the first one because it'll be for the end of month
-          'value': previous.mrr / 100,
-        },
+      { // The mrr for today
+        'value': current.mrr / 100,
+        'prefix': '€',
+      },
+      { // Take the first one because it'll be for the end of month
+        'value': previous.mrr / 100,
+      },
     ];
   }
 
   /**
    * The middleware in charge of fetching the customers count.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchNbCustomers(config) {
     const {entries: [previous, current]} = await this.requestChartMogulFor(
-      '/metrics/customer-count', config
+      '/metrics/customer-count',
+      config
     );
     return [
       {value: current['customers']},
@@ -395,14 +410,15 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the NET MRR Churn Rate.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchNetMRRChurnRate(config) {
     const {entries: [previous, current]} = await this.requestChartMogulFor(
-      '/metrics/mrr-churn-rate', config
+      '/metrics/mrr-churn-rate',
+      config
     );
     return [
       {prefix: '%', value: current['mrr-churn-rate']},
@@ -412,98 +428,107 @@ class ChartMogulFeed extends Feeder {
 
 
   /**
-   * Calc. the NET MRR Movement.
+   * Calc. the NET MRR.
+   *
    * @private
+   *
    * @param {Array<number>|Object} mrrs - Other MRRs
    *  {new-biz,expansion,contraction,churn}
-   * @return {number} The NET MRR Movement
+   *
+   * @return {number} - The NET MRR
+   *
    * @memberOf ChartMogulFeed
    */
-  calcNetMRRMovement(mrrs = []) {
+  calcNetMRR(mrrs = []) {
     if (!mrrs) {
       return 0;
     }
     if (!Array.isArray(mrrs) && typeof mrrs === 'object') {
-      // const allMrrEntries = mrrsEntries.map((mrr)=>mrr.entrie);
       // Keep only those required for the net mrr calc
-      // Check if contains all mrrs required for the calc.
       mrrs = Object.keys(mrrs)
         .filter((key) => key.startsWith('mrr-'))
-        // .every((key) => allMrrEntries.indexOf(key))
         .map((key) => mrrs[key]);
     }
-    return (mrrs.reduce((net, mrr) => net = net + mrr, 0) / 100);
+    return (mrrs.reduce((net, mrr) => net + mrr, 0) / 100);
   }
 
 
   /**
    * Calc the NET MRR and return only the max
+   *
    * @private
+   *
    * @param {Array<Object>} mrrs - MRR Values.
-   * @return {number} The MAX NET
+   *
+   * @return {number} - The MAX NET
+   *
    * @memberOf ChartMogulFeed
    */
   findMaxNetMRR(mrrs) {
     if (!Array.isArray(mrrs)) {
       throw new TypeError('Invalid arguements for mrrs - Must be an array');
     }
-
+    // Calc & Find the max netMRR within mrrs
     mrrs.forEach((mrr) => {
-      const netMrr = this.calcNetMRRMovement(mrr);
-      if (netMrr > this.bestNetMRRMove_.val) {
-        Object.assign(this.bestNetMRRMove_, {
+      const netMrr = this.calcNetMRR(mrr);
+      if (netMrr > this.bestNetMRR_.val) {
+        Object.assign(this.bestNetMRR_, {
           'startDate': mrr.date,
           'val': netMrr,
         });
       }
     });
-    return this.bestNetMRRMove_.val;
+    return this.bestNetMRR_.val;
   }
 
   /**
    * THe middleware inf charge of fetching and calc the NET MRR Movements
    * based on others MRR Movements.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchNetMRRMovement(config) {
-    const query = {
-      'start-date': Util.convertDate(this.bestNetMRRMove_.startDate),
-      'end-date': Util.convertDate(),
+    // 1,000 ms * 60 secs * 60 mins * 24 hrs * 7 days
+    const weekInMS = 1000 * 60 * 60 * 24 * 7;
+    const hasFetchInWeek =
+      (new Date().getTime() - new Date(this.bestNetMRR_.lastFetch).getTime())
+      < weekInMS;
+
+    const {entries} = await this.requestChartMogulFor('/metrics/mrr', {
+      'start-date': Util.convertDate(this.bestNetMRR_.startDate),
+      'end-date': config['end-date'],
       'interval': config['interval'],
-    };
-    const {entries} = await this.requestChartMogulFor('/metrics/mrr', query);
-    // console.log(entries[entries.length - 1]);
-    // Never made the fetch for the max.
-    if (!this.bestNetMRRMove_.lastFetch || this.bestNetMRRMove_.val === 0) {
-      this.bestNetMRRMove_.lastFetch = new Date().getTime();
+    });
+
+    // ? Never made the fetch for the max. ?
+    if (!this.bestNetMRR_.lastFetch || this.bestNetMRR_.val === 0
+      // ? Last fetch for the Max was more thna 1 weeek ago ?
+      || !hasFetchInWeek) {
+      this.bestNetMRR_.lastFetch = new Date().getTime();
       this.findMaxNetMRR(entries);
     }
 
-    // TODO Refactor Only after a specific amount of time
-    // {3 days, 1 week , only Monday}
-
-    const netMrr = this.calcNetMRRMovement(entries.pop());
-
+    const netMrr = this.calcNetMRR(entries.pop());
     return [{
       'text': HTMLFormatter.toTextNetMrr(
-          Util.toMoneyFormat(netMrr, '', ',')
-        , Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',')
+        Util.toMoneyFormat(netMrr, '', ',')
+        , Util.toMoneyFormat(this.bestNetMRR_.val, '', ',')
       ),
     }];
   }
 
   /**
-     * THe middleware in charge of fetching the other MRR Movements.
-     *
-     * @param {Object} config The context of the request and response.
-     * @return {Promise} the next middleware()
-     *
-     * @memberOf ChartMogulFeed
-     */
+   * THe middleware in charge of fetching the other MRR Movements.
+   *
+   * @param {Object} config - The config require for the fetch
+   *
+   * @return {Promise} The promisified geckoFormatted result of the fetch
+   *
+   * @memberOf ChartMogulFeed
+   */
   async fetchMRRMovements(config) {
     const {entries} = await this.requestChartMogulFor('/metrics/mrr', config);
 
@@ -522,14 +547,15 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the ARR.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchArr(config) {
     const {entries: [previous, current]} = await this.requestChartMogulFor(
-      '/metrics/arr', config
+      '/metrics/arr',
+      config
     );
     return [
       {value: current.arr / 100, prefix: '€'},
@@ -540,14 +566,15 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the ARPA.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchArpa(config) {
-    const {entries: [previous, current]} =await this.requestChartMogulFor(
-      '/metrics/arpa', config
+    const {entries: [previous, current]} = await this.requestChartMogulFor(
+      '/metrics/arpa',
+      config
     );
     return [
       {value: current.arpa / 100, prefix: '€'},
@@ -559,26 +586,28 @@ class ChartMogulFeed extends Feeder {
   /**
    * The middleware in charge of fetching the Biggest Plans.
    *
-   * @param {Object} config The context of the request and response.
-   * @return {Promise} the next middleware()
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} The promisified geckoFormatted result of the fetch
    *
    * @memberOf ChartMogulFeed
    */
   async fetchMostPlansPurchased(config) {
     // Recup all plans
-    let reqGetPlans = await this.requestChartMogulFor('/plans');
+    let reqPlans = await this.requestChartMogulFor('/plans');
 
-    reqGetPlans = (reqGetPlans.plans) ? reqGetPlans.plans : reqGetPlans;
-    // For each plan, GET the customers' count
-    const customersCount = reqGetPlans.map((plan) => {
+    reqPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
+
+    // For each plan, GET the customers' count with this plan
+    const customersCount = reqPlans.map((plan) => {
       return this.requestChartMogulFor('/metrics/customer-count', {
         'start-date': config['start-date'],
         'end-date': config['end-date'],
         'plans': plan.name,
       });
     });
+
     const [listPlans, ...customersCountByPlan] = await Promise.all([
-      reqGetPlans,
+      reqPlans,
       ...customersCount,
     ]);
 
@@ -586,11 +615,11 @@ class ChartMogulFeed extends Feeder {
     let [lastBiggest, ...biggestCustByPlans] = await Promise.all([
       this.getCached(KEY_BIGGEST_PLANS),
       ...customersCountByPlan.map(({entries}, i) => {
-          return {
-            'plan': listPlans[i],
-            'total': entries.reduce((tot, {customers: c}) => tot += c, 0),
-          };
-        }).filter(({total}) => total > 1) // Keep out the customised plans
+        return {
+          'plan': listPlans[i],
+          'total': entries.reduce((tot, {customers: c}) => tot += c, 0),
+        };
+      }).filter(({total}) => total > 1) // Keep out the customised plans
         .sort((p1, p2) => p2.total - p1.total)
         .slice(0, 5),
     ]);
@@ -598,7 +627,7 @@ class ChartMogulFeed extends Feeder {
     if (lastBiggest === null) { // First fresh fetch
       lastBiggest = [];
     }
-    // List
+    // Format the result for the List Widget
     /* const items = biggestCustByPlans.map(({total, plan}, i) => {
       const item = {
         'title': {
@@ -634,7 +663,7 @@ class ChartMogulFeed extends Feeder {
     });
     */
 
-    // LeaderBoard
+    // Format the result for the LeaderBoard Widget
     const items = biggestCustByPlans.map(({total, plan}) => {
       const item = {
         'label': plan.name,
@@ -648,12 +677,13 @@ class ChartMogulFeed extends Feeder {
       if (prevRank !== -1) {
         // ? More Subscribers to this plan
         const diff = plan.total - lastBiggest[prevRank].total;
-        if(diff > 0) {
-          // 10 : Only 5 plans sol the last one is Rank 10
-          item['previous_rank'] = 10; // UP
-        }else{
-          if(diff < 0) {
-            item['previous_rank'] = 1;// Drop Down
+        if (diff > 0) {
+          // 10 : Only 5 plans thus, the last one is Rank 10 (last position)
+          // Set to 10 randomly, could have been 6 : Wiser choice
+          item['previous_rank'] = 10; // Move UP
+        } else {
+          if (diff < 0) {
+            item['previous_rank'] = 1;// Drop DOWN
           }
         }
         // item['previous_rank'] = prevRank + 1;
@@ -703,7 +733,7 @@ class ChartMogulFeed extends Feeder {
             : cust['customer-since']
         );
 
-        if(config.format === 'json') {
+        if (config.format === 'json') {
           return {
             'country': cust.country,
             'country_full': Util.getCountryFromISOCode(cust.country),
@@ -739,38 +769,38 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-   async fetchCountriesByCustomers(config) {
-     const customers = await this.fetchAndFilterCustomers(1, {
-       status: 'Active',
-     });
+  async fetchCountriesByCustomers(config) {
+    const customers = await this.fetchAndFilterCustomers(1, {
+      status: 'Active',
+    });
 
-     const points = await customers.sort((cust1, cust2) => {
-          return new Date(cust2['customer-since']).getTime() -
-            new Date(cust1['customer-since']).getTime();
-        })
-        .slice(0, 10)
-        .map(({city, country: iso})=>({
-            'city': {
-              'city_name': (city || Util.getCountryFromISOCode(iso).capital),
-              'country_code': iso,
-            },
-            'size': 5,
-            'color': Util.hashColor(
-              city || Util.getCountryFromISOCode(iso).capital
-            ),
-          })
-        )
-        // .filter((cust)=>{ // Duplicate Country & City
-          // return true;
-        // })
-        ;
+    const points = await customers.sort((cust1, cust2) => {
+      return new Date(cust2['customer-since']).getTime() -
+        new Date(cust1['customer-since']).getTime();
+    })
+      .slice(0, 10)
+      .map(({city, country: iso}) => ({
+        'city': {
+          'city_name': (city || Util.getCountryFromISOCode(iso).capital),
+          'country_code': iso,
+        },
+        'size': 5,
+        'color': Util.hashColor(
+          city || Util.getCountryFromISOCode(iso).capital
+        ),
+      })
+      )
+      // .filter((cust)=>{ // Duplicate Country & City
+      // return true;
+      // })
+      ;
 
-       return {
-         'points': {
-           'point': points,
-         },
-       };
-   }
+    return {
+      'points': {
+        'point': points,
+      },
+    };
+  }
 
 
 } // End of Class

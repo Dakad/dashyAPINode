@@ -84,23 +84,23 @@ describe('ChartMogul : Feeder', () => {
 
   describe('calcNetMovement', () => {
     it('should return 0 : invalid args', () => {
-      expect(feed.calcNetMRRMovement()).to.be.equal(0);
-      expect(feed.calcNetMRRMovement(undefined)).to.be.equal(0);
-      expect(feed.calcNetMRRMovement(null)).to.be.equal(0);
-      expect(feed.calcNetMRRMovement({})).to.be.equal(0);
-      expect(feed.calcNetMRRMovement([])).to.be.equal(0);
+      expect(feed.calcNetMRR()).to.be.equal(0);
+      expect(feed.calcNetMRR(undefined)).to.be.equal(0);
+      expect(feed.calcNetMRR(null)).to.be.equal(0);
+      expect(feed.calcNetMRR({})).to.be.equal(0);
+      expect(feed.calcNetMRR([])).to.be.equal(0);
     });
 
     it('should return -26,89', () => {
       const mrrs = [98458, 1800, -2970, -109447, 9470];
-      expect(feed.calcNetMRRMovement(mrrs)).to.be.equal(-26.89);
+      expect(feed.calcNetMRR(mrrs)).to.be.equal(-26.89);
     });
     it('should return 811,64', () => {
       const mrr = Config.request.chartMogul.mrr.entries[0];
-      feed.calcNetMRRMovement(Config.request.chartMogul.mrr.entries[0]);
-      feed.calcNetMRRMovement(Config.request.chartMogul.mrr.entries[1]);
-      feed.calcNetMRRMovement(Config.request.chartMogul.mrr.entries[2]);
-      expect(feed.calcNetMRRMovement(mrr)).to.be.equal(811.64);
+      feed.calcNetMRR(Config.request.chartMogul.mrr.entries[0]);
+      feed.calcNetMRR(Config.request.chartMogul.mrr.entries[1]);
+      feed.calcNetMRR(Config.request.chartMogul.mrr.entries[2]);
+      expect(feed.calcNetMRR(mrr)).to.be.equal(811.64);
     });
   });
 
@@ -314,7 +314,7 @@ describe('ChartMogul : Feeder', () => {
   });
 
   describe('Fetcher : fetchNetMRRMovements', () => {
-    let spyCalcNetMRRMovement;
+    let spycalcNetMRR;
     let spyFindMaxNetMRR;
     let mogulFeed;
 
@@ -322,12 +322,12 @@ describe('ChartMogul : Feeder', () => {
       mogulFeed = new ChartMogulFeed();
       spyFeedReqChartMogul = sinon.spy(mogulFeed, 'requestChartMogulFor');
       spyFindMaxNetMRR = sinon.spy(mogulFeed, 'findMaxNetMRR');
-      spyCalcNetMRRMovement = sinon.spy(mogulFeed, 'calcNetMRRMovement');
+      spycalcNetMRR = sinon.spy(mogulFeed, 'calcNetMRR');
     });
 
     afterEach(() => {
       spyFeedReqChartMogul.restore();
-      spyCalcNetMRRMovement.restore();
+      spycalcNetMRR.restore();
       spyFindMaxNetMRR.restore();
     });
 
@@ -338,13 +338,13 @@ describe('ChartMogul : Feeder', () => {
       });
     });
 
-    it('should call findMaxNetMRR() and calcNetMRRMovement()', () => {
+    it('should call findMaxNetMRR() and calcNetMRR()', () => {
       const mrrEntries = Config.request.chartMogul.mrr.entries;
       return mogulFeed.fetchNetMRRMovement({}).then(() => {
         expect(spyFindMaxNetMRR.called).to.be.true;
         // expect(spyFindMaxNetMRR.calledWith(mrrEntries)).to.be.true;
-        expect(spyCalcNetMRRMovement.called).to.be.true;
-        expect(spyCalcNetMRRMovement.callCount)
+        expect(spycalcNetMRR.called).to.be.true;
+        expect(spycalcNetMRR.callCount)
           .to.be.eql(mrrEntries.length + 1);
       });
     });

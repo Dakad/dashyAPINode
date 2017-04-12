@@ -40,7 +40,21 @@
     "db" : 5
   },
   "geckoBoard": {
-    "apiKey": "0ecc2de9f3229af5d555b1b14f357ade"
+    "apiKey": "0ecc2de9f3229af5d555b1b14f357ade",
+    "widgets":{
+      "leadsMonth" : {
+        "id" : ""
+      },
+      "leadsToday": {
+        "id" : ""
+      },
+      "latestCustomers" : {
+        "id" : ""
+      },
+      "latestLeads" : {
+        "id" : ""
+      }
+    }
   },
   "chartMogul" : {
     "apiUrl": "https://api.chartmogul.com/v1",

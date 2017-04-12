@@ -11,6 +11,7 @@
 // Dependencies
 
 // npm
+const Config = require('config');
 
 // Built-in
 
@@ -18,6 +19,8 @@
 const Util = require('../components/util');
 const Pusher = require('../components/pusher');
 const BaseRouter = require('../base/baserouter');
+
+
 // -------------------------------------------------------------------
 // Properties
 
@@ -558,30 +561,39 @@ class ChartMogulRouter extends BaseRouter {
    * @override
    */
   handlerPusher() {
-    // TODO Export the Widgets' ID into the conf file
+    const widgets = Config.geckoBoard.widgets;
+
     [
-      ['144091-6b060040-f61f-0134-9c3b-22000b4a867a', // Leads Month
+      [
+        widgets.leadsMonth.id, // Leads Month
         async () => ({'item': await this.feed_.fetchNbLeads()}),
+        widgets.leadsMonth.fetchTime,
       ],
-      ['144091-122cb660-f785-0134-c10c-22000b248df5', // Leads Month
+      [
+        widgets.leadsToday.id, // Leads Today
         async () => ({
           'absolute': true,
           'item': await this.feed_.fetchNbLeadsToday(),
         }),
+        widgets.leadsToday.fetchTime,
       ],
-      ['144091-4946dac0-fdc8-0134-566c-22000b498417', // Customers Month
+      [
+        widgets.latestCustomers.id, // Customers Month
         async () => ({
           'item': await this.feed_.fetchLatestCustomers({
             onlyLead: false,
           }),
         }),
+        widgets.latestCustomers.fetchTime,
       ],
-      ['144091-117deab0-fdbe-0134-6def-22000abade87', // Leads Month
+      [
+        widgets.latestLeads.id, // Leads Month
         async () => ({
           'item': await this.feed_.fetchLatestCustomers({
             onlyLead: true,
           }),
         }),
+        widgets.latestLeads.fetchTime,
       ],
     ].forEach((p) => this.listPushers_.push(new Pusher(...p)));
   };

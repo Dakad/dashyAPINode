@@ -11,7 +11,21 @@
     "db" : "REDIS_DB"
   },
   "geckoBoard": {
-    "apiKey": "GECKO_API_KEY"
+    "apiKey": "GECKO_API_KEY",
+    "widgets":{
+      "leadsMonth" : {
+        "id" : "WIDGET_LEADS_MONTH"
+      },
+      "leadsToday": {
+        "id" : "WIDGET_LEADS_TODAY"
+      },
+      "latestCustomers" : {
+        "id" : "WIDGET_LAST_CUSTOMERS"
+      },
+      "latestLeads" : {
+        "id" : "WIDGET_LAST_LEADS"
+      }
+    }
   },
   "chartMogul": {
     "apiToken": "CHARTMOGUL_API_TOKEN",

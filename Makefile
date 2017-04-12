@@ -6,6 +6,9 @@ DIR_SRC		= ./src
 DIR_TEST 	= ./test
 DIR_DOCS	= ./docs
 DIR_LOGS	= ./logs
+DIR_GIT		= ./.git
+DIR_RELEASE = ./releases
+
 ALL_TESTS 	= $(shell find $(DIR_TEST) $(DIR_SRC)  -type f -name "*.spec.js"  -not -path "*/node_modules*")
 
 DOC_TEMPL 	= ./node_modules/ink-docstrap/template
@@ -14,6 +17,8 @@ TIMEOUT		= 10000
 REDIS_PWD	= pwd
 REDIS_DB_TEST = 7
 REDIS_DB_PROD = 5
+
+GIT_LAST_VERS = $(shell git describe --tags --abbrev=0)
 
 APIDOC		= $(DIR_BIN)/apidoc -f ".+route.*\\.js$""  -i $(DIR_SRC) -o $(DIR_DOCS)/api/;
 ESLINT		= $(DIR_BIN)/eslint --cache
@@ -99,7 +104,7 @@ api-doc:
 	@echo "#### ApiDoc-ing ... : DONE";
 
 
-docs: clean test-cover test-docs api-docs
+docs: clean test-cover test-doc api-doc
 
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
 	@$(JSDOC) \
@@ -122,6 +127,20 @@ setup:
 	@$(find ./logs -name "*.log")
 	@node --harmony setup.js
 
+archive : docs
+	@echo "Archive Release ..."
+	@echo "Create the release directory ..."
+	@test -d $(DIR_RELEASE) || mkdir -pv $(DIR_RELEASE);
+
+	@echo "Create a zip file out of the latest tag release ..."
+	@git archive $(GIT_LAST_VERS) \
+		--prefix="dashyAPI-$(GIT_LAST_VERS)/" \
+		--format=zip \
+		--output="$(DIR_RELEASE)/dashyAPI-$(GIT_LAST_VERS).zip";
+
+	@echo "Created $(DIR_RELEASE)/dashyAPI-$(GIT_LAST_VERS)/.zip";
+
+	@echo "Archive Release ... : DONE"
 
 build: test docs
 
@@ -149,4 +168,4 @@ clean:
 
 all: test 
 
-.PHONY: docs setup test build dev
+.PHONY: docs setup test build dev archive

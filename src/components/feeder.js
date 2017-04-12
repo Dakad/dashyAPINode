@@ -93,7 +93,7 @@ class Feeder {
    *
    * @param {Object} key - The key to use for the cache
    * @param {any} resp - The response Body.
-   *
+   * @return {any} - The cache resp
    * @memberOf Feeder
    */
   cacheResponse(key, resp) {
@@ -112,31 +112,33 @@ class Feeder {
    *
    * @memberOf Feeder
    */
-  requestAPI(destination, query, keyForCache) {
-    return super.getCached(query) // Get The cached response for this request
-      .catch((err) => { // No cached response for this request
-        return new Promise((resolve, reject) => {
-          if (!destination) {
-            return reject(
-              new Error('Missing the destination for ' + this.apiEndPoint_)
-            );
-          }
-
-          if (!destination.startsWith('/')) {
-            destination = '/' + destination;
-          }
-          request.get(this.apiEndPoint_ + destination)
-            .query(query)
-            .end((err, res) => {
-              if (err) {
-                return reject(err);
-              } else {
-                this.cacheResponse(keyForCache, res.body);
-                return resolve(res.body);
-              }
-            });
-        });
+  async requestAPI(destination, query, keyForCache) {
+    try {
+      return this.getCached(query); // Get The cached response for this request
+    } catch (err) {
+      return new Promise((resolve, reject) => {
+        if (!destination) {
+          return reject(
+            new Error('Missing the destination for ' + this.apiEndPoint_)
+          );
+        }
+        if (!destination.startsWith('/')) {
+          destination = '/' + destination;
+        }
+        // Sending the request to the API
+        request.get(this.apiEndPoint_ + destination)
+          .query(query)
+          .end((err, res) => {
+            if (err) {
+              return reject(err);
+            }
+            if (keyForCache) {
+              this.cacheResponse(keyForCache, res.body);
+            }
+            return resolve(res.body);
+          });
       });
+    }
   }
 
 

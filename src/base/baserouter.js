@@ -143,8 +143,7 @@ class BaseRouter extends Router {
    * @return {Function} the next middleware()
    */
   static checkMiddleware(ctx, next) {
-    // TODO First Middleware : Missing some check before continue');
-    ctx.state.config = {};
+    ctx.state.config = Object.assign({}, ctx.query);
     return next();
   };
 

@@ -36,7 +36,7 @@ class ChartMogulRouter extends BaseRouter {
    * @memberOf ChartMogulRouter
    */
   constructor(feed) {
-    super(feed, '/chartmogul', 50);
+    super(feed, '/chartmogul', 75);
   }
 
 
@@ -583,7 +583,7 @@ class ChartMogulRouter extends BaseRouter {
           }),
         }),
       ],
-    ].forEach((p) => this.listPushers_.push(new Pusher(p[0], p[1], p[2])));
+    ].forEach((p) => this.listPushers_.push(new Pusher(...p)));
   };
 
 };

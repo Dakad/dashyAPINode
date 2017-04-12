@@ -53,7 +53,7 @@ describe('ChartMogul : Router', () => {
 
   describe('configByParams', () => {
     beforeEach(() => {
-      ctx = {body: {}, state: {}, status: 404};
+      ctx = {body: {}, state: {config: {}}, status: 404};
     });
 
     it('should return a object', (done) => {
@@ -88,8 +88,7 @@ describe('ChartMogul : Router', () => {
 
   describe('Call the routes with the server', () => {
     beforeEach((done) => {
-      ctx = {body: {}, state: {}, status: 404};
-
+      ctx = {body: {}, state: {config: {}}, status: 404};
       router = new ChartMogulRouter(feed);
       server.initRouters(router.init());
       server.init().then(() => {

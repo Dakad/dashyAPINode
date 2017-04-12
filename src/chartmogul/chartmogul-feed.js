@@ -220,25 +220,25 @@ class ChartMogulFeed extends Feeder {
    * @return {Array<Object>} All customers||leads filtered.
    * @memberOf ChartMogulFeed
    */
-  fetchAndFilterCustomers(startingPage = 1, opts = {}) {
+  async fetchAndFilterCustomers(startingPage = 1, opts = {}) {
     const {onlyLead = false, status} = opts;
-    return this.requestChartMogulFor('/customers', {
+    const customers = await this.requestChartMogulFor('/customers', {
       page: startingPage,
       status: status,
-    }).then(({entries, has_more: hasMore}) => {
-      const filtered = this.filterCustomers(
-        entries, (onlyLead || (status && status === 'Lead'))
-      );
-      if (hasMore) {
-        return this.fetchAndFilterCustomers(startingPage + 1, opts)
-          .then((values) => values.concat(filtered));
-      }
-      // TODO Change the code for fetchNbLeads* to support the cache sys.
-      // Save the last page for /customers
-      // Henceforth, only to only call & filter this page
-      // this.leads_.startPage = startingPage;
-      return filtered;
     });
+
+    const filtered = this.filterCustomers(
+      customers.entries, (onlyLead || (status && status === 'Lead'))
+    );
+    if (customers.has_more) {
+      const values = await this.fetchAndFilterCustomers(startingPage + 1, opts);
+      return values.concat(filtered);
+    }
+    // TODO Change the code for fetchNbLeads* to support the cache sys.
+    // Save the last page for /customers
+    // Henceforth, only to only call & filter this page
+    // this.leads_.startPage = startingPage;
+    return filtered;
   }
 
 
@@ -250,7 +250,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNbLeads(config) {
+  async fetchNbLeads(config) {
     // The first day of the previous month
     // The last day of the previous month at 00:00:00:00
     const firstInMonth = new Date();
@@ -264,10 +264,11 @@ class ChartMogulFeed extends Feeder {
     previousMonth.setDate(1);
     previousMonth.setHours(0, 0, 0, 0);
 
-    return Promise.all([
+    const [leads, nbLastMonth] = await Promise.all([
       this.fetchAndFilterCustomers(this.leads_.startPage, {onlyLead: true}),
       this.getCached(KEY_NB_LEADS_LAST_MONTH),
-    ]).then(([leads, nbLastMonth]) => {
+    ]);
+
       // console.log('Nb Filtered : ' + leads.length, nbLastMonth);
       const item = leads.reduce((item, lead) => {
         // const leadDate = Util.convertDate(lead['lead_created_at']);
@@ -293,7 +294,6 @@ class ChartMogulFeed extends Feeder {
         super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
       }
       return item;
-    });
   }
 
 
@@ -305,7 +305,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNbLeadsToday(config) {
+  async fetchNbLeadsToday(config) {
     // TODO Insert today & last30Days vars into config
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -319,10 +319,10 @@ class ChartMogulFeed extends Feeder {
       {'value': 0},
     ];
 
-    return Promise.all([
+    const [leads, avgLeadsLastMonth] = await Promise.all([
       this.fetchAndFilterCustomers(1, {onlyLead: true}),
       this.getCached(KEY_AVG_LEADS_LAST_MONTH),
-    ]).then(([leads, avgLeadsLastMonth]) => {
+    ]);
       // console.log('Nb Filtered : ' + leads.length, avgLeadsLastMonth);
       leads.forEach((lead) => {
         // const leadDate = Util.convertDate(lead['lead_created_at']);
@@ -348,7 +348,6 @@ class ChartMogulFeed extends Feeder {
         item[1].value = avgLeadsLastMonth;
       }
       return item;
-    });
   }
 
 
@@ -360,20 +359,18 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchMrr(config) {
-    return this.requestChartMogulFor('/metrics/mrr', config)
-      .then(({entries: [previous, current]}) => [
-        // The mrr for today
-        {
+  async fetchMrr(config) {
+    const req = await this.requestChartMogulFor('/metrics/mrr', config);
+    const {entries: [previous, current]} = req;
+    return [
+        { // The mrr for today
           'value': current.mrr / 100,
           'prefix': '€',
         },
-
-        // Take the first one because it'll be for the end of month
-        {
+        { // Take the first one because it'll be for the end of month
           'value': previous.mrr / 100,
         },
-      ]);
+    ];
   }
 
   /**
@@ -384,16 +381,14 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNbCustomers(config) {
-    return this.requestChartMogulFor('/metrics/customer-count', config)
-      .then(({entries}) => {
-        const [previous, current] = entries;
-        return [
-          {value: current['customers']},
-          {value: previous['customers']},
-        ];
-      })
-      ;
+  async fetchNbCustomers(config) {
+    const {entries: [previous, current]} = await this.requestChartMogulFor(
+      '/metrics/customer-count', config
+    );
+    return [
+      {value: current['customers']},
+      {value: previous['customers']},
+    ];
   }
 
 
@@ -405,12 +400,14 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNetMRRChurnRate(config) {
-    return this.requestChartMogulFor('/metrics/mrr-churn-rate', config)
-      .then(({entries: [previous, current]}) => [
-        {prefix: '%', value: current['mrr-churn-rate']},
-        {value: previous['mrr-churn-rate']},
-      ]);
+  async fetchNetMRRChurnRate(config) {
+    const {entries: [previous, current]} = await this.requestChartMogulFor(
+      '/metrics/mrr-churn-rate', config
+    );
+    return [
+      {prefix: '%', value: current['mrr-churn-rate']},
+      {value: previous['mrr-churn-rate']},
+    ];
   }
 
 
@@ -472,34 +469,31 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchNetMRRMovement(config) {
+  async fetchNetMRRMovement(config) {
     const query = {
       'start-date': Util.convertDate(this.bestNetMRRMove_.startDate),
       'end-date': Util.convertDate(),
       'interval': config['interval'],
     };
-    return this.requestChartMogulFor('/metrics/mrr', query)
-      .then(({entries}) => {
-        // console.log(entries[entries.length - 1]);
-        // Never made the fetch for the max.
-        if (!this.bestNetMRRMove_.lastFetch || this.bestNetMRRMove_.val === 0) {
-          this.bestNetMRRMove_.lastFetch = new Date().getTime();
-          this.findMaxNetMRR(entries);
-        }
+    const {entries} = await this.requestChartMogulFor('/metrics/mrr', query);
+    // console.log(entries[entries.length - 1]);
+    // Never made the fetch for the max.
+    if (!this.bestNetMRRMove_.lastFetch || this.bestNetMRRMove_.val === 0) {
+      this.bestNetMRRMove_.lastFetch = new Date().getTime();
+      this.findMaxNetMRR(entries);
+    }
 
-        // TODO Refactor Only after a specific amount of time
-        // {3 days, 1 week , only Monday}
+    // TODO Refactor Only after a specific amount of time
+    // {3 days, 1 week , only Monday}
 
-        const netMrr = this.calcNetMRRMovement(entries.pop());
+    const netMrr = this.calcNetMRRMovement(entries.pop());
 
-        return [{
-          'text': HTMLFormatter.toTextNetMrr(
-              Util.toMoneyFormat(netMrr, '', ',')
-            , Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',')
-          ),
-        }];
-      })
-      ;
+    return [{
+      'text': HTMLFormatter.toTextNetMrr(
+          Util.toMoneyFormat(netMrr, '', ',')
+        , Util.toMoneyFormat(this.bestNetMRRMove_.val, '', ',')
+      ),
+    }];
   }
 
   /**
@@ -510,27 +504,19 @@ class ChartMogulFeed extends Feeder {
      *
      * @memberOf ChartMogulFeed
      */
-  fetchMRRMovements(config) {
-    return this.requestChartMogulFor('/metrics/mrr', config)
-      .then((data) => {
-        const otherMrr = data.entries.pop();
+  async fetchMRRMovements(config) {
+    const {entries} = await this.requestChartMogulFor('/metrics/mrr', config);
 
-        /*
-        const items = mrrsEntries.map(function createItems(item) {
-          return {
-            label: item.label, value: otherMrr[item.entrie]/100,
-          };
-        });
-      */
-        return Object.assign({}, {
-          'format': 'currency',
-          'unit': 'EUR',
-          'items': mrrsEntries.map((item) => ({
-            'label': item.label,
-            'value': otherMrr[item.entrie] / 100,
-          })),
-        });
-      });
+    const otherMrr = entries.pop();
+
+    return Object.assign({}, {
+      'format': 'currency',
+      'unit': 'EUR',
+      'items': mrrsEntries.map((item) => ({
+        'label': item.label,
+        'value': otherMrr[item.entrie] / 100,
+      })),
+    });
   }
 
   /**
@@ -541,14 +527,14 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchArr(config) {
-    return this.requestChartMogulFor('/metrics/arr', config)
-      .then(({entries: [previous, current]}) => {
-        return [
-          {value: current.arr / 100, prefix: '€'},
-          {value: previous.arr / 100},
-        ];
-      });
+  async fetchArr(config) {
+    const {entries: [previous, current]} = await this.requestChartMogulFor(
+      '/metrics/arr', config
+    );
+    return [
+      {value: current.arr / 100, prefix: '€'},
+      {value: previous.arr / 100},
+    ];
   }
 
   /**
@@ -559,14 +545,14 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchArpa(config) {
-    return this.requestChartMogulFor('/metrics/arpa', config)
-      .then(({entries: [previous, current]}) => {
-        return [
-          {value: current.arpa / 100, prefix: '€'},
-          {value: previous.arpa / 100},
-        ];
-      });
+  async fetchArpa(config) {
+    const {entries: [previous, current]} =await this.requestChartMogulFor(
+      '/metrics/arpa', config
+    );
+    return [
+      {value: current.arpa / 100, prefix: '€'},
+      {value: previous.arpa / 100},
+    ];
   }
 
 
@@ -578,105 +564,105 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchMostPlansPurchased(config) {
+  async fetchMostPlansPurchased(config) {
     // Recup all plans
-    return this.requestChartMogulFor('/plans')
-      .then((listPlans) => {
-        listPlans = (listPlans.plans) ? listPlans.plans : listPlans;
-        // For each plan, GET the customers' count
-        const customersCount = listPlans.map((plan) => {
-          return this.requestChartMogulFor('/metrics/customer-count', {
-            'start-date': config['start-date'],
-            'end-date': config['end-date'],
-            'plans': plan.name,
-          });
-        });
-        return Promise.all([listPlans, ...customersCount]);
-      }).then(([listPlans, ...customersCountByPlan]) => {
-        // Count plansCustomerCount
-        const biggestCustByPlans = customersCountByPlan
-          .map(({entries}, i) => {
-            return {
-              'plan': listPlans[i],
-              'total': entries.reduce((tot, {customers: c}) => tot += c, 0),
-            };
-          }).filter(({total}) => total > 1) // Keep out the customised plans
-          .sort((p1, p2) => p2.total - p1.total)
-          .slice(0, 5);
-        return Promise.all([
-          this.getCached(KEY_BIGGEST_PLANS),
-          ...biggestCustByPlans,
-        ]);
-      }).then(([lastBiggest, ...biggestCustByPlans]) => {
-        if (lastBiggest === null) { // First fresh fetch
-          lastBiggest = [];
-        }
-        // List
-        /* const items = biggestCustByPlans.map(({total, plan}, i) => {
-          const item = {
-            'title': {
-              'text': plan.name,
-            },
-            'description': total + ' subscribers',
-          };
-          // First Position
-          if (i === 0) {
-            item.label = {
-              'name': 'Best !',
-              'color': '#88dd42',
-            };
-          }
-          // Last one
-          if (i === biggestCustByPlans.length - 1) {
-            item.label = {
-              'name': 'At least !',
-              'color': '#155460',
-            };
-          }
-          // Check the previous rank
-          const prevRank = lastBiggest.findIndex(
-            ({plan: old}, i) => {
-              return old.uuid === plan.uuid;
-            }
-          );
+    let reqGetPlans = await this.requestChartMogulFor('/plans');
 
-          if (prevRank !== -1) {
-            item['previous_rank'] = prevRank + 1;
-          }
-          return item;
-        });
-        */
-
-        // LeaderBoard
-        const items = biggestCustByPlans.map(({total, plan}, i) => {
-          const item = {
-            'label': plan.name,
-            'value': total,
-          };
-          // Check the previous rank
-          const prevRank = lastBiggest.findIndex(
-            ({plan: old}, i) => old.uuid === plan.uuid
-          );
-
-          if (prevRank !== -1) {
-            // ? More Subscribers to this plan
-            const diff = plan.total - lastBiggest[prevRank].total;
-            if(diff > 0) {
-              // 10 : Only 5 plans sol the last one is Rank 10
-              item['previous_rank'] = 10; // UP
-            }else{
-              if(diff < 0) {
-                item['previous_rank'] = 1;// Drop Down
-              }
-            }
-            // item['previous_rank'] = prevRank + 1;
-          }
-          return item;
-        });
-
-        this.setInCache(KEY_BIGGEST_PLANS, biggestCustByPlans);
-        return items;
+    reqGetPlans = (reqGetPlans.plans) ? reqGetPlans.plans : reqGetPlans;
+    // For each plan, GET the customers' count
+    const customersCount = reqGetPlans.map((plan) => {
+      return this.requestChartMogulFor('/metrics/customer-count', {
+        'start-date': config['start-date'],
+        'end-date': config['end-date'],
+        'plans': plan.name,
       });
+    });
+    const [listPlans, ...customersCountByPlan] = await Promise.all([
+      reqGetPlans,
+      ...customersCount,
+    ]);
+
+    // Count plansCustomerCount
+    let [lastBiggest, ...biggestCustByPlans] = await Promise.all([
+      this.getCached(KEY_BIGGEST_PLANS),
+      ...customersCountByPlan.map(({entries}, i) => {
+          return {
+            'plan': listPlans[i],
+            'total': entries.reduce((tot, {customers: c}) => tot += c, 0),
+          };
+        }).filter(({total}) => total > 1) // Keep out the customised plans
+        .sort((p1, p2) => p2.total - p1.total)
+        .slice(0, 5),
+    ]);
+
+    if (lastBiggest === null) { // First fresh fetch
+      lastBiggest = [];
+    }
+    // List
+    /* const items = biggestCustByPlans.map(({total, plan}, i) => {
+      const item = {
+        'title': {
+          'text': plan.name,
+        },
+        'description': total + ' subscribers',
+      };
+      // First Position
+      if (i === 0) {
+        item.label = {
+          'name': 'Best !',
+          'color': '#88dd42',
+        };
+      }
+      // Last one
+      if (i === biggestCustByPlans.length - 1) {
+        item.label = {
+          'name': 'At least !',
+          'color': '#155460',
+        };
+      }
+      // Check the previous rank
+      const prevRank = lastBiggest.findIndex(
+        ({plan: old}, i) => {
+          return old.uuid === plan.uuid;
+        }
+      );
+
+      if (prevRank !== -1) {
+        item['previous_rank'] = prevRank + 1;
+      }
+      return item;
+    });
+    */
+
+    // LeaderBoard
+    const items = biggestCustByPlans.map(({total, plan}) => {
+      const item = {
+        'label': plan.name,
+        'value': total,
+      };
+      // Check the previous rank
+      const prevRank = lastBiggest.findIndex(
+        ({plan: old}) => old.uuid === plan.uuid
+      );
+
+      if (prevRank !== -1) {
+        // ? More Subscribers to this plan
+        const diff = plan.total - lastBiggest[prevRank].total;
+        if(diff > 0) {
+          // 10 : Only 5 plans sol the last one is Rank 10
+          item['previous_rank'] = 10; // UP
+        }else{
+          if(diff < 0) {
+            item['previous_rank'] = 1;// Drop Down
+          }
+        }
+        // item['previous_rank'] = prevRank + 1;
+      }
+      return item;
+    });
+
+    this.setInCache(KEY_BIGGEST_PLANS, biggestCustByPlans);
+    return items;
   }
 
   /**
@@ -687,56 +673,61 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-  fetchLatestCustomers(config) {
+  async fetchLatestCustomers(config) {
     // Convert to bool if other type then Bool
     const onlyLead = Boolean(config.onlyLead);
     // const today = new Date().setHours(0, 0, 0, 0);
-    return this.fetchAndFilterCustomers(1, {
+    const leads = await this.fetchAndFilterCustomers(1, {
       onlyLead: onlyLead,
       status: (onlyLead) ? 'Lead' : 'Active',
-    }).then((leads) => {
-      return leads
-        // .filter((lead) => {
-        //   const dte = (onlyLead)
-        //     ? lead['lead_created_at']
-        //     : lead['customer-since'];
-        //   return new Date(dte).getTime() >= today;
-        // })
-        .sort((cust1, cust2) => {
-          const cust1DateTime = (onlyLead)
-            ? cust1['lead_created_at']
-            : cust1['customer-since'];
-          const cust2DateTime = (onlyLead)
-            ? cust2['lead_created_at']
-            : cust2['customer-since'];
+    });
 
-          const cmp = new Date(cust2DateTime).getTime() -
-            new Date(cust1DateTime).getTime();
-          return (cmp !== 0) ? cmp : cust2.mrr - cust1.mrr;
-        })
-        .slice(0, 5)
-        .map((cust, i) => {
-          const when = new Date(
-            (onlyLead)
-              ? cust['lead_created_at']
-              : cust['customer-since']
-          );
+    return leads
+      .sort((cust1, cust2) => {
+        const cust1DateTime = (onlyLead)
+          ? cust1['lead_created_at']
+          : cust1['customer-since'];
+        const cust2DateTime = (onlyLead)
+          ? cust2['lead_created_at']
+          : cust2['customer-since'];
+
+        const cmp = new Date(cust2DateTime).getTime() -
+          new Date(cust1DateTime).getTime();
+        return (cmp !== 0) ? cmp : cust2.mrr - cust1.mrr;
+      })
+      .slice(0, 5)
+      .map((cust, i) => {
+        const when = new Date(
+          (onlyLead)
+            ? cust['lead_created_at']
+            : cust['customer-since']
+        );
+
+        if(config.format === 'json') {
           return {
-            'type': ((i === 0) ? 1 : 0),
-            // 'text': (company || name)+' at '+
-            //   new Date(cust.lead_created_at).toLocaleString('fr-FR')
-            //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
-            'text': HTMLFormatter.toListCustomer({
-              'who': cust.company || cust.name,
-              'when': when,
-              'where': cust.country,
-              'city': cust.city,
-              'mrr': (!onlyLead) ? cust.mrr : undefined,
-            }),
+            'country': cust.country,
+            'country_full': Util.getCountryFromISOCode(cust.country),
+            'name': cust.name,
+            'company': cust.company,
+            'date': when.toISOString(),
+            'mrr': (!onlyLead) ? cust.mrr : undefined,
           };
         }
-        );
-    });
+
+        return {
+          'type': ((i === 0) ? 1 : 0),
+          // 'text': (company || name)+' at '+
+          //   new Date(cust.lead_created_at).toLocaleString('fr-FR')
+          //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
+          'text': HTMLFormatter.toListCustomer({
+            'who': cust.company || cust.name,
+            'when': when,
+            'where': cust.country,
+            'city': cust.city,
+            'mrr': (!onlyLead) ? cust.mrr : undefined,
+          }),
+        };
+      });
   }
 
 
@@ -748,12 +739,12 @@ class ChartMogulFeed extends Feeder {
    *
    * @memberOf ChartMogulFeed
    */
-   fetchCountriesByCustomers(config) {
-     return this.fetchAndFilterCustomers(1, {
+   async fetchCountriesByCustomers(config) {
+     const customers = await this.fetchAndFilterCustomers(1, {
        status: 'Active',
-     }).then((customers)=>{
-       return customers
-       .sort((cust1, cust2) => {
+     });
+
+     const points = await customers.sort((cust1, cust2) => {
           return new Date(cust2['customer-since']).getTime() -
             new Date(cust1['customer-since']).getTime();
         })
@@ -773,13 +764,12 @@ class ChartMogulFeed extends Feeder {
           // return true;
         // })
         ;
-     }).then((points)=>{
+
        return {
          'points': {
            'point': points,
          },
        };
-     });
    }
 
 

@@ -54,15 +54,20 @@ class Pusher {
    * @memberOf Pusher
    */
   async push() {
-    const data = await this.fnPromData_();
-    request.post('https://push.geckoboard.com/v1/send/' + this.widgetId_)
-      .send({'api_key': Config.geckoBoard.apiKey})
-      .send({'data': data})
-      .end((err, {body}) => {
-        return (err)
-          ? Logger.error(this.widgetId_, body)
-          : Logger.info(this.widgetId_, body);
-      });
+    try {
+      const data = await this.fnPromData_();
+      request.post(Config.geckoBoard.pushUrl + this.widgetId_)
+        .send({'api_key': Config.geckoBoard.apiKey})
+        .send({'data': data})
+        .end((err, {body}) => {
+          return (err)
+            ? Logger.error(this.widgetId_, body)
+            : Logger.info(this.widgetId_, body);
+        });    
+    } catch (e) {
+      Logger.error(this.widgetId_, e);
+    }
+    
   }
 
 

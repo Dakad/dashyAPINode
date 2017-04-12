@@ -113,7 +113,7 @@ class Feeder {
    * @memberOf Feeder
    */
   requestAPI(destination, query, keyForCache) {
-    return super.getCached(key) // Get The cached response for this request
+    return super.getCached(query) // Get The cached response for this request
       .catch((err) => { // No cached response for this request
         return new Promise((resolve, reject) => {
           if (!destination) {

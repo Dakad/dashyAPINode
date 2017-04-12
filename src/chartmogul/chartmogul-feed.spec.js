@@ -210,7 +210,7 @@ describe('ChartMogul : Feeder', () => {
 
     it('should return customers : [4]', () => {
       const customers = feed.fetchAndFilterCustomers(1);
-      return customers.done((data) => {
+      return customers.then((data) => {
         expect(data).to.be.a('array').and.to.not.be.empty;
         expect(data).to.have.lengthOf(6);
       });
@@ -218,7 +218,7 @@ describe('ChartMogul : Feeder', () => {
 
     it('should return leads : [11]', () => {
       const leads = feed.fetchAndFilterCustomers(1, {onlyLead: true});
-      return leads.done((data) => {
+      return leads.then((data) => {
         expect(data).to.be.a('array').and.to.not.be.empty;
         expect(data).to.have.lengthOf(10);
       });
@@ -226,23 +226,23 @@ describe('ChartMogul : Feeder', () => {
 
     it('should return customers && leads : []', () => {
       let leads = feed.fetchAndFilterCustomers(3, {});
-      leads.done((data) => {
+      leads.then((data) => {
         expect(data).to.be.a('array').and.to.be.empty;
       });
 
       leads = feed.fetchAndFilterCustomers(3, {onlyLead: true});
-      leads.done((data) => {
+      leads.then((data) => {
         expect(data).to.be.a('array').and.to.be.empty;
       });
 
       leads = feed.fetchAndFilterCustomers(3, {status: 'Lead'});
-      return leads.done((data) => {
+      return leads.then((data) => {
         expect(data).to.be.a('array').and.to.be.empty;
       });
     });
   });
 
-  describe('Fetcher - basicFetchers', (done) => {
+  describe('Fetcher - basicFetchers', () => {
     const middlewares = [
       {'fetch': feed.fetchMrr, 'url': '/metrics/mrr', 'config': {}},
       {
@@ -286,7 +286,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe('Fetcher : fetchMRRMovements', (done) => {
+  describe('Fetcher : fetchMRRMovements', () => {
     beforeEach(() => {
       spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
     });
@@ -313,7 +313,7 @@ describe('ChartMogul : Feeder', () => {
     // TODO Unit test for the parametred req
   });
 
-  describe('Fetcher : fetchNetMRRMovements', (done) => {
+  describe('Fetcher : fetchNetMRRMovements', () => {
     let spyCalcNetMRRMovement;
     let spyFindMaxNetMRR;
     let mogulFeed;

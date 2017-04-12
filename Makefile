@@ -78,7 +78,7 @@ test-cover: lint
 		--reporter-dir=$(DIR_DOCS)/coverage \
 		$(_MOCHA) $(ALL_TESTS);
 
-	@open ./docs/coverage/lcov-report/*.html
+	#@open ./docs/coverage/lcov-report/*.html
 	@echo "#####  NYC Test Covering ... : DONE" ;
 
 
@@ -100,7 +100,7 @@ api-doc:
 
 	@echo "#### ApiDoc-ing folder: $(DIR_SRC)";
 	@$(APIDOC)
-	@open $(DIR_DOCS)/api/index.html
+	#@open $(DIR_DOCS)/api/index.html
 	@echo "#### ApiDoc-ing ... : DONE";
 
 
@@ -116,7 +116,7 @@ docs: clean test-cover test-doc api-doc
 		--verbose \
 		$(DIR_SRC) ;
 
-	@open $(DIR_DOCS)/doc/index.html
+	#@open $(DIR_DOCS)/doc/index.html
 	
 
 	@echo "#####  Generating docs ... : DONE" ;

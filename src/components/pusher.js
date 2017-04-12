@@ -20,7 +20,7 @@ const request = require('superagent');
 
 // Mine
 const Logger = require('./logger');
-const PUSH_TIME_OUT = require('../components/router').PUSH_TIME_OUT;
+// const PUSH_TIME_OUT = require('../components/router').PUSH_TIME_OUT;
 
 // -------------------------------------------------------------------
 // Properties
@@ -37,11 +37,11 @@ class Pusher {
    * Creates an instance of Pusher.
    * @param {string} widgetId - The GeckoBoard Widget Key.
    * @param {Function} promData - The function to call
-   * @param {number} [timeOut=PUSH_TIME_OUT] A specific time.
+   * @param {number} [timeOut] A specific time.
    *
    * @memberOf Pusher
    */
-  constructor(widgetId, promData, timeOut = PUSH_TIME_OUT) {
+  constructor(widgetId, promData, timeOut) {
     this.widgetId_ = widgetId;
     this.fnPromData_ = promData;
     this.timeOut_ = timeOut;

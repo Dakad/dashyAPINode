@@ -61,11 +61,11 @@ class Pusher {
         .send({'data': data})
         .end((err, {body}) => {
           return (err)
-            ? Logger.error(this.widgetId_, body)
-            : Logger.info(this.widgetId_, body);
+            ? Logger.error('[PUSHER] '+this.widgetId_, body)
+            : Logger.info('[PUSHER] '+this.widgetId_, body);
         });
     } catch (e) {
-      Logger.error(this.widgetId_, e);
+      Logger.error('[PUSHER] '+this.widgetId_, e);
     }
   }
 

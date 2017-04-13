@@ -9,6 +9,11 @@ pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
-          - npm install
-          - make setup
-          - npm test
+          - npm install 
+          - npm test 
+        services: 
+          - redis 
+definitions: 
+  services: 
+    redis: 
+      image: redis

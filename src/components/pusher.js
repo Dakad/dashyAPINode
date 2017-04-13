@@ -63,11 +63,10 @@ class Pusher {
           return (err)
             ? Logger.error(this.widgetId_, body)
             : Logger.info(this.widgetId_, body);
-        });    
+        });
     } catch (e) {
       Logger.error(this.widgetId_, e);
     }
-    
   }
 
 

@@ -35,7 +35,7 @@
       "src/**/*.spec.js",
       "test/**/*.spec.js"
     ],
-    "cache" : true,
+    "cache": true,
     "all": true,
     "check-coverage": false,
     "lines": 75,
@@ -75,6 +75,7 @@
     "istanbul": "^0.4.5",
     "jsdoc": "^3.4.3",
     "jsdoc-strip-async-await": "^0.1.0",
+    "madge": "^1.6.0",
     "mocha": "^3.2.0",
     "mocha-istanbul": "^0.3.0",
     "mochawesome": "^2.0.4",
@@ -82,12 +83,13 @@
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2",
     "nyc": "^10.1.2",
+    "pm2": "^2.4.4",
     "sinon": "^1.17.7",
     "superagent-mock": "^3.3.0",
     "supertest": "^3.0.0"
   },
   "scripts": {
     "test": "make test",
-    "start": "node src/app.js"
+    "start": "NODE_ENV=production ./node_modules/.bin/pm2 start .pm2.json"
   }
 }

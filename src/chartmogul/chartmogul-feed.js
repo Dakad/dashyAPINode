@@ -378,11 +378,11 @@ class ChartMogulFeed extends Feeder {
     const {entries: [previous, current]} = req;
     return [
       { // The mrr for today
-        'value': current.mrr / 100,
+        'value': Math.round(current.mrr / 100),
         'prefix': '€',
       },
       { // Take the first one because it'll be for the end of month
-        'value': previous.mrr / 100,
+        'value': Math.round(previous.mrr / 100),
       },
     ];
   }
@@ -534,14 +534,26 @@ class ChartMogulFeed extends Feeder {
 
     const otherMrr = entries.pop();
 
-    return Object.assign({}, {
-      'format': 'currency',
-      'unit': 'EUR',
-      'items': mrrsEntries.map((item) => ({
+    // return Object.assign({}, {
+    //   'format': 'currency',
+    //   'unit': 'EUR',
+    //   'items': mrrsEntries.map((item) => ({
+    //     'label': item.label,
+    //     'value': otherMrr[item.entrie] / 100,
+    //   })),
+    // });
+    
+    const mrrMoves = mrrsEntries.map((item) => ({
         'label': item.label,
         'value': otherMrr[item.entrie] / 100,
-      })),
-    });
+      }));
+    mrrMoves.pop();
+    
+    return [{
+      'text': HTMLFormatter.toTextMRRMovements(mrrMoves)
+    }];
+    // return '<div>'+html+'</div>'
+    ;
   }
 
   /**
@@ -558,8 +570,8 @@ class ChartMogulFeed extends Feeder {
       config
     );
     return [
-      {value: current.arr / 100, prefix: '€'},
-      {value: previous.arr / 100},
+      {value: Math.round(current.arr) / 100, prefix: '€'},
+      {value: Math.round(previous.arr) / 100},
     ];
   }
 
@@ -577,8 +589,8 @@ class ChartMogulFeed extends Feeder {
       config
     );
     return [
-      {value: current.arpa / 100, prefix: '€'},
-      {value: previous.arpa / 100},
+      {value: Math.round(current.arpa / 100), prefix: '€'},
+      {value: Math.round(previous.arpa / 100)},
     ];
   }
 

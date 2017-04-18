@@ -128,12 +128,12 @@ class CharMogulHTMLFormatter {
    * @memberOf CharMogulHTMLFormatter
    */
   static toTextNetMrr(current, best) {
-    return `<p style='font-size:1.3em'>${(''+current).trim()}</p>`+
+    return `<p style='font-size:1.1em'>${(''+current).trim()}</p>`+
           `<img src='${Config.api.host}/assets/img/icons/cup.png'
                         alt='***'
                         style='float:left;width:45px;height:35px;margin:0 5px;'
                   />
-          <h1 style='font-size:1.5em;'>${(''+best).trim()}</h1>`;
+          <h1 style='font-size:1.3em;'>${(''+best).trim()}</h1>`;
   }
 
  /**
@@ -141,21 +141,29 @@ class CharMogulHTMLFormatter {
    *
    * @static
    *
-   * @param {Object} move - The MRR Movements
-   * @param {string} move.label - Which MRR.
-   * @param {number} move.mrr - The move' mrr.
-   * @param {string} move.hasSeparator - Has to be separated with <hr>.
+   * @param {Array} mrrMoves - The MRR Movements
    *
    * @return {String} A HTML Output.
    * @memberOf CharMogulHTMLFormatter
    */
-  static toTextMRRMovements({label, mrr, hasSeparator}) {
-    return `${hasSeparator ? '<hr>' : ''}`
-      +`<span style='font-size:0.5em'>${label}</span>`
-      +`<span style='font-size:0.6em;float:right;color:
-          ${(mrr>0)?'#90c564':'#E3524F'}'>${
-          Util.toMoneyFormat(mrr, ',', '.')}
-        </span>`
+  static toTextMRRMovements(mrrMoves = []) {
+    const toHtml = ([label, mrr, hasSeparator]) =>{
+      console.log(label,mrr,hasSeparator);
+      const color = (mrr>0) ? '#90C564' : '#E3524F';
+      return `<tr style='${hasSeparator ? 'border-top: 1px solid;' : ''}'>`
+      +`<td style='font-size:1em'>${label}</td>`
+      +`<td style='padding:10px 5px;font-weight:bold;text-align:right;color:${color}'>`
+      +  Util.toMoneyFormat(mrr, ',', '.')
+      + '</td>'
+      + '</tr>';
+    };
+    
+    return mrrMoves.reduce( 
+      (html,mrr,i) => html + toHtml([mrr.label, mrr.value , (i!==0)])
+     ,'<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
+    ) + '</table>'
+    
+    
     ;
   }
 

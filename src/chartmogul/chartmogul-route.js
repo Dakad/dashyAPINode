@@ -284,7 +284,8 @@ class ChartMogulRouter extends BaseRouter {
      *
      */
     this.router_.get('/mrr/move', async ({state}, next) => {
-      state.data = await this.feed_.fetchMRRMovements(state.config, next);
+      const item = await this.feed_.fetchMRRMovements(state.config, next);
+      state.data.item = item;
       return next();
     });
 

@@ -148,22 +148,21 @@ class CharMogulHTMLFormatter {
    */
   static toTextMRRMovements(mrrMoves = []) {
     const toHtml = ([label, mrr, hasSeparator]) =>{
-      console.log(label,mrr,hasSeparator);
       const color = (mrr>0) ? '#90C564' : '#E3524F';
-      return `<tr style='${hasSeparator ? 'border-top: 1px solid;' : ''}'>`
+      return `<tr style='${(hasSeparator) ? 'border-top: 1px solid;' : ''}'>`
       +`<td style='font-size:1em'>${label}</td>`
       +`<td style='padding:10px 5px;font-weight:bold;text-align:right;color:${color}'>`
-      +  Util.toMoneyFormat(mrr, ',', '.')
+      + Util.toMoneyFormat(mrr, ',', '.')
       + '</td>'
       + '</tr>';
     };
-    
-    return mrrMoves.reduce( 
-      (html,mrr,i) => html + toHtml([mrr.label, mrr.value , (i!==0)])
-     ,'<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
+
+    return mrrMoves.reduce(
+      (html, mrr, i) => html + toHtml([mrr.label, mrr.value, (i!==0)])
+     , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>'
-    
-    
+
+
     ;
   }
 

@@ -145,16 +145,16 @@ class CharMogulHTMLFormatter {
    * @param {string} move.label - Which MRR.
    * @param {number} move.mrr - The move' mrr.
    * @param {string} move.hasSeparator - Has to be separated with <hr>.
-   * 
+   *
    * @return {String} A HTML Output.
    * @memberOf CharMogulHTMLFormatter
    */
-  static toTextMRRMovements({label,mrr,hasSeparator}){
+  static toTextMRRMovements({label, mrr, hasSeparator}) {
     return `${hasSeparator ? '<hr>' : ''}`
       +`<span style='font-size:0.5em'>${label}</span>`
       +`<span style='font-size:0.6em;float:right;color:
           ${(mrr>0)?'#90c564':'#E3524F'}'>${
-          Util.toMoneyFormat(mrr,',','.')}
+          Util.toMoneyFormat(mrr, ',', '.')}
         </span>`
     ;
   }

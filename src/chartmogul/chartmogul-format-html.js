@@ -19,7 +19,7 @@ const Config = require('config');
 
 // Mine
 const Countries = require('../../config/countriesByISO-3166-alpha-2');
-// const Util = require('../components/util');
+const Util = require('../components/util');
 
 
 // -------------------------------------------------------------------
@@ -128,8 +128,35 @@ class CharMogulHTMLFormatter {
    * @memberOf CharMogulHTMLFormatter
    */
   static toTextNetMrr(current, best) {
-    return `<p style='font-size:1.5em'>${(''+current).trim()}</p>`+
-          `<h1 style='font-size:1.5em;color:#1c99e3'>${(''+best).trim()}</h1>`;
+    return `<p style='font-size:1.3em'>${(''+current).trim()}</p>`+
+          `<img src='${Config.api.host}/assets/img/icons/cup.png'
+                        alt='***'
+                        style='float:left;width:45px;height:35px;margin:0 5px;'
+                  />
+          <h1 style='font-size:1.5em;'>${(''+best).trim()}</h1>`;
+  }
+
+ /**
+   * Generate a HTML text with customer for a widget List.
+   *
+   * @static
+   *
+   * @param {Object} move - The MRR Movements
+   * @param {string} move.label - Which MRR.
+   * @param {number} move.mrr - The move' mrr.
+   * @param {string} move.hasSeparator - Has to be separated with <hr>.
+   * 
+   * @return {String} A HTML Output.
+   * @memberOf CharMogulHTMLFormatter
+   */
+  static toTextMRRMovements({label,mrr,hasSeparator}){
+    return `${hasSeparator ? '<hr>' : ''}`
+      +`<span style='font-size:0.5em'>${label}</span>`
+      +`<span style='font-size:0.6em;float:right;color:
+          ${(mrr>0)?'#90c564':'#E3524F'}'>${
+          Util.toMoneyFormat(mrr,',','.')}
+        </span>`
+    ;
   }
 
 }

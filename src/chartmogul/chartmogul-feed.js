@@ -542,15 +542,15 @@ class ChartMogulFeed extends Feeder {
     //     'value': otherMrr[item.entrie] / 100,
     //   })),
     // });
-    
+
     const mrrMoves = mrrsEntries.map((item) => ({
         'label': item.label,
         'value': otherMrr[item.entrie] / 100,
       }));
     mrrMoves.pop();
-    
+
     return [{
-      'text': HTMLFormatter.toTextMRRMovements(mrrMoves)
+      'text': HTMLFormatter.toTextMRRMovements(mrrMoves),
     }];
     // return '<div>'+html+'</div>'
     ;

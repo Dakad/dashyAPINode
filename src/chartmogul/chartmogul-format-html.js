@@ -40,16 +40,19 @@ class CharMogulHTMLFormatter {
    * @static
    *
    * @param {string} isoCountry The country in ISO-3166 format.
+   * @param {string} [width=150] The width for this image
+   * @param {string} [height=150] The height for this image.
    *
    * @return {String} A HTML Output.
    *
    * @memberOf CharMogulHTMLFormatter
    */
-  static generateFlagImg(isoCountry) {
+  static generateFlagImg(isoCountry, width=150, height=150) {
     const srcLink = Config.api.host + '/assets/img/flags';
     return `<img src='${srcLink}/${isoCountry}.png' `+
              `alt='Flag of ${Countries[isoCountry]['name']}' `+
-             `style='float:left;margin: 0 5px;width:150px;height:150px;' >`;
+             'style=\'float:left;margin: 0 5px;'
+              +`width:${width}px;height:${height}px;'>`;
   }
 
   /**
@@ -128,12 +131,13 @@ class CharMogulHTMLFormatter {
    * @memberOf CharMogulHTMLFormatter
    */
   static toTextNetMrr(current, best) {
-    return `<p style='font-size:1.1em'>${(''+current).trim()}</p>`+
+    return `<p style='font-size:1.3em'>${(''+current).trim()}</p>`+
           `<img src='${Config.api.host}/assets/img/icons/cup.png'
-                        alt='***'
-                        style='float:left;width:45px;height:35px;margin:0 5px;'
-                  />
-          <h1 style='font-size:1.3em;'>${(''+best).trim()}</h1>`;
+                alt='Best Net MRR'
+                style='float:left;width:45px;height:35px;margin:0 2px;'
+          />
+          <h1 style='font-size:1.1em;'>${(''+best).trim()}</h1>`
+          .replace(/\n/g, '');
   }
 
  /**
@@ -151,7 +155,8 @@ class CharMogulHTMLFormatter {
       const color = (mrr>0) ? '#90C564' : '#E3524F';
       return `<tr style='${(hasSeparator) ? 'border-top: 1px solid;' : ''}'>`
       +`<td style='font-size:1em'>${label}</td>`
-      +`<td style='padding:10px 5px;font-weight:bold;text-align:right;color:${color}'>`
+      +'<td style=\'padding:10px 5px;font-weight:bold;'
+        + `text-align:right;color:${color}'>`
       + Util.toMoneyFormat(mrr, ',', '.')
       + '</td>'
       + '</tr>';
@@ -160,10 +165,40 @@ class CharMogulHTMLFormatter {
     return mrrMoves.reduce(
       (html, mrr, i) => html + toHtml([mrr.label, mrr.value, (i!==0)])
      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
-    ) + '</table>'
+    ) + '</table>';
+  }
 
 
-    ;
+ /**
+   * Generate a HTML text with last customer' count
+   *  and country for a widget List.
+   *
+   * @static
+   *
+   * @param {Object} countryCount - The countries<Key> with the count<Value>
+   *
+   * @return {String} A HTML Output.
+   * @memberOf CharMogulHTMLFormatter
+   */
+  static toTextMrrCountryCount(countryCount) {
+    const toHtml = (iso, count) => {
+      return '<tr style=\'border-bottom: 1px solid;\'>'
+        +'<td style=\'font-size:1em;vertical-align:middle\'>'
+        + CharMogulHTMLFormatter.generateFlagImg(iso, 32, 32)
+        +'</td>'
+        +'<td style=\'vertical-align:middle\'>'
+        + Countries[iso].name
+        +'</td>'
+        +'<td style=\'padding:10px 5px;font-weight:bold;text-align:right;\'>'
+        + count
+        + '</td>'
+      + '</tr>';
+    };
+
+    return Object.keys(countryCount).reduce(
+      (html, iso) => html + toHtml(iso, countryCount[iso])
+     , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
+    ) + '</table>';
   }
 
 }

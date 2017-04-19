@@ -58,7 +58,7 @@ test: lint
 	$(eval REDIS_DB = $(REDIS_DB_TEST))
 	$(REDIS_CLI) FLUSHALL;
 
-	@NODE_ENV=test $(MOCHA) $(ALL_TESTS);
+	@NODE_ENV=test $(MOCHA)  $(ALL_TESTS);
 	@echo "#####  Mocha Testing : DONE";
 
 test-watch:
@@ -127,7 +127,7 @@ setup:
 	@$(find ./logs -name "*.log")
 	@node --harmony setup.js
 
-archive : docs
+archive: docs
 	@echo "Archive Release ..."
 	@echo "Create the release directory ..."
 	@test -d $(DIR_RELEASE) || mkdir -pv $(DIR_RELEASE);

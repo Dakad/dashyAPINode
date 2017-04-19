@@ -178,7 +178,7 @@ describe('ChartMogul : Router', () => {
 
     it('/mrr/move', (done) => {
       Supertest(openedServer)
-        .get('/chartmogul/mrr/move')
+        .get('/chartmogul/mrr/move?format=list')
         .expect(200)
         .expect(({body}) => {
           expect(body).to.be.a('object')

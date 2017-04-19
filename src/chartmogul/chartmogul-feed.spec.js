@@ -294,14 +294,24 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFeedReqChartMogul.restore());
 
     it('should call requestChartMogulFor()', () => {
-      return feed.fetchMRRMovements({}).then((data) => {
+      return feed.fetchMRRMovements({}).then(() => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         expect(spyFeedReqChartMogul.calledWith('/metrics/mrr')).to.be.true;
       });
     });
 
-    it('should fill data with items', () => {
+    it('should fill data with item text', () => {
       return feed.fetchMRRMovements({}).then((data) => {
+        expect(data).to.contains.all.keys('item');
+        expect(data.item).to.a('array').and.to.not.be.empty;
+        expect(data.item[0]).to.be.a('object').and.to.contains.all.keys('text');
+        expect(data.item[0].text).to.be.a('string');
+        // expect(data.items).to.have.lengthOf(4);
+      });
+    });
+
+    it('should fill data with items', () => {
+      return feed.fetchMRRMovements({format: 'list'}).then((data) => {
         expect(data).to.contains.all.keys('format', 'unit', 'items');
         expect(data.format).to.be.a('string').and.eq('currency');
         expect(data.unit).to.be.a('string');
@@ -522,21 +532,16 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFeedReqChartMogul.restore());
 
     it('should call fetchAndFilterCustomers', () => {
-      return feed.fetchCountriesByCustomers().then(() => {
+      return feed.fetchCountriesByCustomers({}).then(() => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
       });
     });
 
     it('should fill data with items', () => {
-      return feed.fetchCountriesByCustomers()
-        .then(({points}) => {
-          expect(points).to.contains.all.keys('point');
-          expect(points.point).to.be.an('Array').and.to.not.be.empty;
-
-          expect(points.point[0]).to.contains.all.keys('city', 'size');
-          expect(points.point[0].city)
-            .to.contains.all.keys('city_name', 'country_code');
+      return feed.fetchCountriesByCustomers({format: 'json'})
+        .then((data) => {
+          expect(data).to.be.an('Object').and.to.not.be.empty;
         });
     });
   });

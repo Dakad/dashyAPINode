@@ -284,8 +284,7 @@ class ChartMogulRouter extends BaseRouter {
      *
      */
     this.router_.get('/mrr/move', async ({state}, next) => {
-      const item = await this.feed_.fetchMRRMovements(state.config, next);
-      state.data.item = item;
+      state.data = await this.feed_.fetchMRRMovements(state.config, next);
       return next();
     });
 
@@ -579,7 +578,7 @@ class ChartMogulRouter extends BaseRouter {
         widgets.leadsToday.fetchTime,
       ],
       [
-        widgets.latestCustomers.id, // Customers Month
+        widgets.latestCustomers.id, // Last Customers Month
         async () => ({
           'item': await this.feed_.fetchLatestCustomers({
             onlyLead: false,
@@ -588,7 +587,7 @@ class ChartMogulRouter extends BaseRouter {
         widgets.latestCustomers.fetchTime,
       ],
       [
-        widgets.latestLeads.id, // Leads Month
+        widgets.latestLeads.id, // Last Leads Month
         async () => ({
           'item': await this.feed_.fetchLatestCustomers({
             onlyLead: true,

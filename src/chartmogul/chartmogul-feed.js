@@ -269,15 +269,19 @@ class ChartMogulFeed extends Feeder {
   async fetchNbLeads(config) {
     // The first day in this month at 00:00:00:00
     const firstInMonth = new Date();
+    const month = firstInMonth.getMonth();
     firstInMonth.setDate(1);
     firstInMonth.setHours(0, 0, 0, 0);
 
     // The first day in the prev. month at 00:00:00:00
-    let previousMonth = new Date();
+    let firstInPastMonth = new Date();
     // Set this data to the last day of the prev. month.
-    previousMonth.setDate(0);
-    previousMonth.setDate(1);
-    previousMonth.setHours(0, 0, 0, 0);
+    firstInPastMonth.setDate(0);
+    firstInPastMonth.setDate(1);
+    firstInPastMonth.setHours(0, 0, 0, 0);
+
+    let dte = new Date();
+    const dateInPastMonth = new Date(dte.setMonth(month - 1));
 
     const [leads, nbLastMonth] = await Promise.all([
       this.fetchAndFilterCustomers(this.leads_.startPage, {onlyLead: true}),
@@ -295,8 +299,8 @@ class ChartMogulFeed extends Feeder {
       // ? No cached value for the lastMonth ?
       if (nbLastMonth === null
         // Only the Leads made within the previous month
-        && leadDateInMs >= previousMonth.getTime()
-        && leadDateInMs < firstInMonth.getTime()) {
+        && leadDateInMs >= firstInPastMonth
+        && leadDateInMs <= dateInPastMonth) {
         item[1].value += 1;
       }
       return item;
@@ -514,8 +518,8 @@ class ChartMogulFeed extends Feeder {
     const netMrr = this.calcNetMRR(entries.pop());
     return [{
       'text': HTMLFormatter.toTextNetMrr(
-        Util.toMoneyFormat(netMrr, '', ',')
-        , Util.toMoneyFormat(this.bestNetMRR_.val, '', ',')
+        Util.toMoneyFormat(netMrr, ',', '.')
+        , Util.toMoneyFormat(this.bestNetMRR_.val, ',', '.')
       ),
     }];
   }
@@ -530,30 +534,40 @@ class ChartMogulFeed extends Feeder {
    * @memberOf ChartMogulFeed
    */
   async fetchMRRMovements(config) {
-    const {entries} = await this.requestChartMogulFor('/metrics/mrr', config);
+    const {entries} = await this.requestChartMogulFor('/metrics/mrr', {
+      'start-date': config['start-date'],
+      'end-date': config['end-date'],
+      'interval': config['interval'],
+    });
 
     const otherMrr = entries.pop();
 
-    // return Object.assign({}, {
-    //   'format': 'currency',
-    //   'unit': 'EUR',
-    //   'items': mrrsEntries.map((item) => ({
-    //     'label': item.label,
-    //     'value': otherMrr[item.entrie] / 100,
-    //   })),
-    // });
+    switch(config.format) {
+      case 'list':
+        return Object.assign({}, {
+          'format': 'currency',
+          'unit': 'EUR',
+          'items': mrrsEntries.map((item) => ({
+            'label': item.label,
+            'value': otherMrr[item.entrie] / 100,
+          })),
+        });
 
-    const mrrMoves = mrrsEntries.map((item) => ({
-        'label': item.label,
-        'value': otherMrr[item.entrie] / 100,
-      }));
-    mrrMoves.pop();
+      case 'html':
+      default:
+        const mrrMoves = mrrsEntries.map((item) => ({
+          'label': item.label,
+          'value': otherMrr[item.entrie] / 100,
+        }));
 
-    return [{
-      'text': HTMLFormatter.toTextMRRMovements(mrrMoves),
-    }];
-    // return '<div>'+html+'</div>'
-    ;
+        mrrMoves.pop();
+
+        return {
+          'item': [{
+            'text': HTMLFormatter.toTextMRRMovements(mrrMoves),
+          }],
+        };
+      }
   }
 
   /**
@@ -786,31 +800,29 @@ class ChartMogulFeed extends Feeder {
       status: 'Active',
     });
 
-    const points = await customers.sort((cust1, cust2) => {
+    const countryCount = await customers.sort((cust1, cust2) => {
       return new Date(cust2['customer-since']).getTime() -
         new Date(cust1['customer-since']).getTime();
     })
-      .slice(0, 10)
-      .map(({city, country: iso}) => ({
-        'city': {
-          'city_name': (city || Util.getCountryFromISOCode(iso).capital),
-          'country_code': iso,
-        },
-        'size': 5,
-        'color': Util.hashColor(
-          city || Util.getCountryFromISOCode(iso).capital
-        ),
-      })
-      )
-      // .filter((cust)=>{ // Duplicate Country & City
-      // return true;
-      // })
-      ;
+    .slice(0, 10)
+    .reduce(
+      (countryCount, {country}, i) => {
+        let count = countryCount[country];
+        countryCount[country] = (!count) ? 1 : ++count;
+        return countryCount;
+      }
+      , {}
+    );
+
+    if(config.format === 'json') {
+      return countryCount;
+    }
+
 
     return {
-      'points': {
-        'point': points,
-      },
+      'item': [{
+        'text': HTMLFormatter.toTextMrrCountryCount(countryCount),
+      }],
     };
   }
 

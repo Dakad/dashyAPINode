@@ -704,15 +704,14 @@ class ChartMogulFeed extends Feeder {
         // ? More Subscribers to this plan
         const diff = plan.total - lastBiggest[prevRank].total;
         if (diff > 0) {
-          // 10 : Only 5 plans thus, the last one is Rank 10 (last position)
-          // Set to 10 randomly, could have been 6 : Wiser choice
           item['previous_rank'] = 10; // Move UP
+          // 10 : Only 5 plans thus, the last one is Rank 10 (last position)
+          // Set to 10 randomly, could have been [6 : Wiser choice :-)]
         } else {
           if (diff < 0) {
             item['previous_rank'] = 1;// Drop DOWN
           }
         }
-        // item['previous_rank'] = prevRank + 1;
       }
       return item;
     });

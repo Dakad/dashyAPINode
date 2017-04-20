@@ -405,7 +405,7 @@ class ChartMogulRouter extends BaseRouter {
       const firstInMonth = new Date();
       firstInMonth.setDate(1);
       state.config['start-date'] = Util.convertDate(firstInMonth);
-      
+
       const top = await this.feed_.fetchMostPlansPurchased(state.config);
       state.data.items = top;
       return next();

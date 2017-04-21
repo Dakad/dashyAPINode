@@ -18,7 +18,7 @@ REDIS_PWD	= pwd
 REDIS_DB_TEST = 7
 REDIS_DB_PROD = 5
 
-GIT_LAST_VERS = $(shell git describe --tags --abbrev=0)
+GIT_LAST_VERS = $(shell git tag -l v* | tail -n1)
 
 APIDOC		= $(DIR_BIN)/apidoc -f ".+route.*\\.js$""  -i $(DIR_SRC) -o $(DIR_DOCS)/api/;
 ESLINT		= $(DIR_BIN)/eslint --cache

@@ -33,5 +33,6 @@
   },
   "google-analytics":{
     "iss" : "GA_SERVICE_EMAIL",
+    "viewId" : "GA_VIEW_ID"
   }
 }

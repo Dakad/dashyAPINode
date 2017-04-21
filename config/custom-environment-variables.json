@@ -30,5 +30,8 @@
   "chartMogul": {
     "apiToken": "CHARTMOGUL_API_TOKEN",
     "apiSecret": "CHARTMOGUL_API_SECRET"
+  },
+  "google-analytics":{
+    "iss" : "GA_SERVICE_EMAIL",
   }
 }

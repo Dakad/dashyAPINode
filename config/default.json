@@ -68,6 +68,12 @@
       "startPage" : 8
     }
   },
+  "google-analytics":{
+    "iss" : "761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com",
+    "scope" : "https://www.googleapis.com/auth/analytics.readonly",
+    "aud":"https://www.googleapis.com/oauth2/v4/token",
+    "viewId" : 1234567890
+  },
   "pipeDrive": {
     "apiUrl": "https://api.pipedrive.com/v1",
     "pipeline": "The inbound",

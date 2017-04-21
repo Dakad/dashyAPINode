@@ -37,6 +37,6 @@ chai.use(chaiAsPromised);
 // Test Units
 
 
-describe('ChartMogul : Feeder', () => {
+describe('GoogleAnalytics : Feeder', () => {
   beforeEach(() => { });
 });

@@ -50,6 +50,7 @@ yarn-error.log*
 #Config file
 config/prod.*
 config/production.*
+config/google-credentials*
 
 # Runtime data
 pids

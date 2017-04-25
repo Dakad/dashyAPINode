@@ -1,6 +1,6 @@
-const {request} = require('config');
+// const {request} = require('config');
 
-const {hashCode} = require('../components/util');
+// const {hashCode} = require('../components/util');
 
 const extractParamsFromQuery = function convert(str = '') {
   return str.substr(1).split('&')
@@ -15,7 +15,7 @@ exports = module.exports = [{
   /**
    * regular expression of URL
    */
-  pattern: /https:\/\/api.chartmogul.mock\/v1(\/[\w]*[^/?])(\/[\w-]*)?(\?.*)?/,
+  pattern: /https:\/\/www.googleapis.mock\/analytics\/v3\/data\/ga(.*)/,
 
   /**
    * returns the data
@@ -27,57 +27,13 @@ exports = module.exports = [{
    * @return {void} nada
    */
   fixtures: function(match, params, headers, context) {
-    // Firstly, check if the request is authenticated
-    if (!headers['Authorization']) {
-      throw new Error(401); // Unauthorized
+    const query = extractParamsFromQuery(match[1]);
+
+    console.log(query);
+
+    if(query.metrics == 'ga:newUsers') {
+
     }
-
-    let query = {};
-    if (match[3]) {
-      query = extractParamsFromQuery(match[3]);
-    }
-
-    if (match[1] === '/404') {
-      throw new Error(404);
-    }
-
-    if(match[1].startsWith('/plans')) {
-      return request.chartMogul.plans;
-    }
-
-    if (match[1].startsWith('/customers')) {
-      const maxCustomers = request.chartMogul.customers.length;
-      let {page = 1} = query;
-      page = (page > maxCustomers) ? maxCustomers : page;
-
-      // Put a delay because the amount of customers is huuuge
-      // context.delay = 12000; // This will delay the response by 12 seconds
-      return request.chartMogul.customers[page - 1];
-    }
-
-    if (match[1].startsWith('/metrics')) {
-      switch (match[2]) {
-        case '/mrr':
-          return request.chartMogul.mrr;
-        case '/mrr-churn-rate':
-          return request.chartMogul.mrrChurnRate;
-        case '/arr':
-          return request.chartMogul.arr;
-        case '/arpa':
-          return request.chartMogul.arpa;
-        case '/customer-count':
-          if(query.plans) {
-            const planHash = Math.abs(hashCode(query.plans));
-            const nb = planHash % request.chartMogul.plans.plans.length;
-            return request.chartMogul.customersCountForPlans[nb];
-          }
-          return request.chartMogul.customersCount;
-        case '/all':
-        default:
-          return request.chartMogul.metrics;
-      }
-    }
-
 
     throw new Error(404);
   },

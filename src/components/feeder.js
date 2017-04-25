@@ -17,7 +17,8 @@
 
 // Import
 // const Config = require('config');
-const Promise = require('bluebird');
+// const Promise = require('bluebird');
+const request = require('superagent');
 
 // Built-in
 
@@ -113,47 +114,47 @@ class Feeder {
    * @memberOf Feeder
    */
   async requestAPI(destination, query, keyForCache) {
-    try {
-      return this.getCached(query); // Get The cached response for this request
-    } catch (err) {
-      return new Promise((resolve, reject) => {
-        if (!destination) {
-          return reject(
-            new Error('Missing the destination for ' + this.apiEndPoint_)
-          );
-        }
-        if (!destination.startsWith('/')) {
-          destination = '/' + destination;
-        }
-        // Sending the request to the API
-        request.get(this.apiEndPoint_ + destination)
-          .query(query)
-          .end((err, res) => {
-            if (err) {
-              return reject(err);
-            }
-            if (keyForCache) {
-              this.cacheResponse(keyForCache, res.body);
-            }
-            return resolve(res.body);
-          });
-      });
+    // Get The cached response for this request
+    const cachedResp = await this.getCached(query);
+
+    if (cachedResp !== null) {
+      return cachedResp;
     }
-  }
+    if (!destination) {
+      return reject(
+        new Error('Missing the destination for ' + this.apiEndPoint_)
+      );
+    }
+    if (!destination.startsWith('/')) {
+      destination = '/' + destination;
+    }
+    try {
+    // Sending the request to the API
+      const {body} = await request
+        .get(this.apiEndPoint_ + destination)
+        .query(query);
+
+      // Store the resp in cache if necessary.
+      return this.cacheResponse(keyForCache, body);
+    } catch (err) {
+        throw err;
+    }
+}
 
 
-  /**
-   * Check if the params sent is valid.
-   * If valid, using it to fill the req.config
-   * Otherwise, sent a error with the corresponding message.
-     *
-   * @param {any} ctx - Context of the request and response
-   * @param {Function} next The next middleware to call.
-   * @return {Promise} The next middleware
-     */
-  checkParams(ctx, next) {
-    return next();
-  }
+/**
+ * Check if the params sent is valid.
+ * If valid, using it to fill the req.config
+ * Otherwise, sent a error with the corresponding message.
+ *
+ * @param {any} ctx - Context of the request and response
+ * @param {Function} next The next middleware to call.
+ * @return {Promise} The next middleware
+ */
+checkParams(ctx, next) {
+  // TODO If not future check, remove it;
+  return next();
+}
 
 };
 

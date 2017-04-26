@@ -74,9 +74,7 @@ class GoogleAnalyticsFeed extends Feeder {
   /** @override */
   cacheResponse(key, resp) {
     if (key) { // ? Defined a key for the store ?
-
     }
-    console.log(resp);
 
     return resp;
     // TODO Must implements the cacheResponse()
@@ -101,12 +99,32 @@ class GoogleAnalyticsFeed extends Feeder {
     const flatFilter = (flt, comb) => {
       comb = (flt.length === 4) ? flt.shift() : combinator;
       const flat = flt.reduce((str, f) => str + f, '');
-      return flat + ( (!comb) ? '' : ((comb === 'OR') ? ',' : ';'));
+      return flat + ((!comb) ? '' : ((comb === 'OR') ? ',' : ';'));
     };
     return filters = filters.reduce((str, filter) => {
       return str + ((Array.isArray(filter)) ? flatFilter(filter) : filter);
     }, '');
   }
+
+
+  /**
+   *
+   * Retrieve the token stored in cache or
+   * Use Google Auth to get a token for a request.
+   *
+   * @private
+   *
+   * @return {Promise} - The token in cache
+   */
+  async getAccessToken() {
+    return new Promise((resolve, reject) => {
+      // No token stored in cache
+      this.gaJWTClient_.getToken((err, token) => {
+        return (err) ? reject(err) : resolve(token);
+      });
+    });
+  }
+
 
   /**
    * Send a request to ChartMogul API.
@@ -143,7 +161,9 @@ class GoogleAnalyticsFeed extends Feeder {
       }
 
       // Flat the filters array into a string if defined
-      query.filters = this.flatFilters(query.filters, query.filterCombinator);
+      if (Array.isArray(query.filters)) {
+        query.filters = this.flatFilters(query.filters, query.filterCombinator);
+      }
 
       // Add viewIDs
       query['ids'] = 'ga:' + ConfigGA.viewId;
@@ -151,7 +171,9 @@ class GoogleAnalyticsFeed extends Feeder {
       query['access_token'] = await this.getAccessToken();
 
       // Sending the request to the API
-      const {body: resp} = await request.get(this.apiEndPoint_).query(query);
+      const {
+        body: resp,
+      } = await request.get(this.apiEndPoint_).query(query);
 
       // Send the resp to be cached if necessary.
       return this.cacheResponse(keyForCache, {
@@ -160,35 +182,19 @@ class GoogleAnalyticsFeed extends Feeder {
         'rows': resp.rows,
       });
     } catch (error) {
-      const {response: res} = error;
+      const {
+        response: res,
+      } = error;
       if (res && res.body && res.body.error) {
         const resErr = res.body.error;
         Logger.error(resErr.code + ' - ' + resErr.message, resErr);
-      }else{
+      } else {
         Logger.error(error);
       }
       throw error;
     }
   }
 
-
-  /**
-   *
-   * Retrieve the token stored in cache or
-   * Use Google Auth to get a token for a request.
-   *
-   * @private
-   *
-   * @return {Promise} - The token in cache
-   */
-  async getAccessToken() {
-    return new Promise((resolve, reject) => {
-      // No token stored in cache
-      this.gaJWTClient_.getToken((err, token) => {
-        return (err) ? reject(err) : resolve(token);
-      });
-    });
-  }
 
   /**
    *
@@ -200,22 +206,43 @@ class GoogleAnalyticsFeed extends Feeder {
    * @memberOf GoogleAnalyticsFeed
    */
   async fetchNbUniqueVisitors(config) {
-    /**
-     * URL SAMPLE to SEND TO :
-     *
-     * DECODE VERSION :
-     *
-     * ids=ga:71071062&start-date=2017-04-01&end-date=2017-04-24
-     * &metrics=ga:newUsers&dimensions=ga:userType&filters=ga:visitorType=~New
-     *
-     * ENCODED VERSION :
-     * https://www.googleapis.com/analytics/v3/data/ga?ids=ga%3A71071062&start-date=2017-04-01&end-date=2017-04-24&metrics=ga%3AnewUsers&dimensions=ga%3AuserType&filters=ga%3AvisitorType%3D~New
-     *
-     *
-     */
+    const metrics = ['ga:newUsers'];
+    const filters = ['ga:visitorType', '=~', 'New'];
 
+    const query = {
+      'current': {
+        'start-date': config['start-date'],
+        'end-date': config['end-date'],
+        metrics,
+        filters,
+      },
+      'last': {
+        'start-date': config['last-start-date'],
+        'end-date': config['last-end-date'],
+        metrics,
+        filters,
+      },
+    };
 
-    return null;
+    const [{
+      totals: current,
+    }, {
+      totals: last,
+    }] = await Promise.all([
+      this.requestGAFor(query.current),
+      this.requestGAFor(query.last),
+
+    ]);
+
+    return {
+      'item': [{
+          'value': Number.parseInt(current[metrics[0]]),
+        },
+        {
+          'value': Number.parseInt(last[metrics[0]]),
+        },
+      ],
+    };
   }
 
 
@@ -229,15 +256,41 @@ class GoogleAnalyticsFeed extends Feeder {
    * @memberOf GoogleAnalyticsFeed
    */
   async fetchSessionDuration(config) {
-    /**
-     * URL SAMPLE to SEND TO :
-     *
-     * ENCODED VERSION :
-     * &metrics=ga%3AavgSessionDuration
-     *
-     */
+    const metrics = ['ga:avgSessionDuration'];
+    const query = {
+      'current': {
+        'start-date': config['start-date'],
+        'end-date': config['end-date'],
+        metrics,
+      },
+      'last': {
+        'start-date': config['last-start-date'],
+        'end-date': config['last-end-date'],
+        metrics,
+      },
+    };
 
-    return null;
+    const [{
+      totals: current,
+    }, {
+      totals: last,
+    }] = await Promise.all([
+      this.requestGAFor(query.current),
+      this.requestGAFor(query.last),
+
+    ]);
+
+    return {
+      'absolute': true,
+      'item': [{
+          'type': 'time_duration',
+          'value': Number.parseFloat(current[metrics[0]]) * 1000,
+        },
+        {
+          'value': Number.parseFloat(last[metrics[0]]) * 1000,
+        },
+      ],
+    };
   }
 
   /**
@@ -258,7 +311,42 @@ class GoogleAnalyticsFeed extends Feeder {
      *
      */
 
-    return null;
+    const metrics = ['ga:bounceRate'];
+
+    const query = {
+      'current': {
+        'start-date': config['start-date'],
+        'end-date': config['end-date'],
+        metrics,
+      },
+      'last': {
+        'start-date': config['last-start-date'],
+        'end-date': config['last-end-date'],
+        metrics,
+      },
+    };
+
+    const [{
+      totals: current,
+    }, {
+      totals: last,
+    }] = await Promise.all([
+      this.requestGAFor(query.current),
+      this.requestGAFor(query.last),
+
+    ]);
+
+    return {
+      'absolute': true,
+      'item': [{
+          'value': Math.round(Number.parseFloat(current[metrics[0]])),
+          'prefix': '%',
+        },
+        {
+          'value': Math.round(Number.parseFloat(last[metrics[0]])),
+        },
+      ],
+    };
   }
 
 

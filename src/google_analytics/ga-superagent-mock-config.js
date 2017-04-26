@@ -40,6 +40,7 @@ exports = module.exports = [{
 
 
       if (query.metrics == 'ga:newUsers') {
+        // return request.ga.newUsers;
         return {columnHeaders: [], totalsForAllResults: {}, rows: []};
       }
 

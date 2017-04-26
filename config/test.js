@@ -55,7 +55,7 @@ module.exports = {
       'aud': 'https://www.googleapis.mock/oauth2/v2/token',
       'keyFile': './google-credentials.pem'
     },
-    'viewId': 481516334248151633424815163342
+    'viewId': '4•8•15•16•33•42|4•8•15•16•33•42|4•8•15•16•33•42'
   },
   'pipeDrive': {
     'apiUrl': 'https://api.pipedrive.mock/v1',

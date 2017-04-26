@@ -42,12 +42,12 @@ let superagentMock = mockRequest(request, mockReqConf,
 // Test Units
 
 
-describe('GoogleAnalytics : Feeder', () => {
+describe.only('GoogleAnalytics : Feeder', () => {
   before(() => {
-    // sinon.stub(feed,
-    //  'getAccessToken',
-    //   () => Promise.resolve('GA_ACCESS_TOKEN')
-    // );
+    sinon.stub(feed,
+      'getAccessToken',
+      () => Promise.resolve('GA_ACCESS_TOKEN')
+    );
   });
 
   beforeEach(() => {});
@@ -61,18 +61,14 @@ describe('GoogleAnalytics : Feeder', () => {
 
     afterEach(() => spySuperAgent.restore());
 
-    it('should returns a Promise', () => {
-      const promise = feed.requestGAFor().catch(console.assert);
+    it('should returns a Promise.rejected', (done) => {
+      const promise = feed.requestGAFor();
       expect(promise).to.eventually.not.be.undefined.and.null;
       expect(promise).to.eventually.be.rejected;
-
-      return promise;
-    });
-
-
-    it('should return a Promise.rejected - args[args]:/mocky', (done) => {
-      const promise = feed.requestGAFor();
-      expect(promise).to.be.rejected.and.notify(done);
+      promise.catch((err) => {
+        expect(err).to.be.instanceOf(Error);
+        done();
+      });
     });
 
     it('should return a Promise.fulfilled - uniqueVistors', (done) => {

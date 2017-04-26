@@ -119,7 +119,7 @@ class GoogleAnalyticsFeed extends Feeder {
   async requestGAFor(query) {
     try {
       if (Util.isEmptyOrNull(query)) {
-        reject(new Error('Arguments:query must be defined'));
+        throw new Error('Arguments:query must be defined');
       }
 
       // Key to be hash for REDIS
@@ -129,7 +129,7 @@ class GoogleAnalyticsFeed extends Feeder {
       // Check if got all required key into the query
       requiredQuery.forEach((requiredKey) => {
         if (!query[requiredKey]) {
-          return reject(new Error(`Missing ${requiredKey} in the query`));
+          throw (new Error(`Missing ${requiredKey} in the query`));
         }
       });
       // ['ga:time','ga:views'] => 'ga:time,ga:views'
@@ -159,13 +159,15 @@ class GoogleAnalyticsFeed extends Feeder {
         'totals': resp.totalsForAllResults,
         'rows': resp.rows,
       });
-    } catch (err) {
-      const {response: res} = err;
+    } catch (error) {
+      const {response: res} = error;
       if (res && res.body && res.body.error) {
-        const error = res.body.error;
-        throw new Error(error.code + ' - ' + error.message);
+        const resErr = res.body.error;
+        Logger.error(resErr.code + ' - ' + resErr.message, resErr);
+      }else{
+        Logger.error(error);
       }
-      throw err;
+      throw error;
     }
   }
 

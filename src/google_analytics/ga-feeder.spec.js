@@ -19,7 +19,7 @@ const mockRequest = require('superagent-mock');
 // Mine
 // const Config = require('../../config/test');
 const Util = require('../components/util');
-const GAFeed = require('./ga-feed');
+const GAFeed = require('./ga-feeder');
 const mockReqConf = require('./ga-superagent-mock-config');
 
 
@@ -188,12 +188,11 @@ describe.only('GoogleAnalytics : Feeder', () => {
       });
 
       it('should return corresponding data to widget format ', () => {
-        return feed.fetchSessionDuration(config).then((data) => {
-          expect(data).to.contains.all.keys(['absolute', 'item']);
-          expect(data.item).to.be.a('array').and.to.not.be.empty;
-          expect(data.item).to.have.lengthOf(2);
-          expect(data.item[0]).to.contains.all.keys(['type', 'value']);
-          expect(data.item[0].type).eql('time_duration');
+        return feed.fetchSessionDuration(config).then(({item}) => {
+          expect(item).to.be.a('array').and.to.not.be.empty;
+          expect(item).to.have.lengthOf(2);
+          expect(item[0]).to.contains.all.keys(['type', 'value']);
+          expect(item[0].type).eql('time_duration');
         });
       });
     });
@@ -217,5 +216,80 @@ describe.only('GoogleAnalytics : Feeder', () => {
         });
       });
     });
+    
+    
+    describe('fetchBlogPageViews', () => {
+      it('should call requestGoogleAnalyticsFor()', () => {
+        return feed.fetchBlogPageViews(config).then(() => {
+          expect(spyFeedReqGA.called).to.be.true;
+          expect(spyFeedReqGA.callCount).eql(2);
+        });
+      });
+
+      it('should return corresponding data to widget format ', () => {
+        return feed.fetchBlogPageViews(config).then(({
+          item,
+        }) => {
+          expect(item).to.be.a('array').and.to.not.be.empty;
+          expect(item).to.have.lengthOf(2);
+        });
+      });
+    });
+
+
+    describe('fetchBlogPageAVGDuration', () => {
+      it('should call requestGoogleAnalyticsFor()', () => {
+        return feed.fetchBlogPageAVGDuration(config).then(() => {
+          expect(spyFeedReqGA.called).to.be.true;
+          expect(spyFeedReqGA.callCount).eql(2);
+        });
+      });
+
+      it('should return corresponding data to widget format ', () => {
+        return feed.fetchBlogPageAVGDuration(config).then(({item}) => {
+          expect(item).to.be.a('array').and.to.not.be.empty;
+          expect(item).to.have.lengthOf(2);
+          expect(item[0]).to.contains.all.keys(['type', 'value']);
+          expect(item[0].type).eql('time_duration');
+        });
+      });
+    });
+
+
+    describe.only('fetchMostBlogPost', () => {
+      it('should call requestGoogleAnalyticsFor()', () => {
+        return feed.fetchMostBlogPost(config).then(() => {
+          expect(spyFeedReqGA.called).to.be.true;
+        });
+      });
+
+      it('should return corresponding data to widget format ', () => {
+        return feed.fetchMostBlogPost(config).then(({
+          items,
+        }) => {
+          expect(items).to.be.a('array').and.to.not.be.empty;
+          expect(items).to.have.lengthOf(10);
+        });
+      });
+    });
+    
+    
+    describe.only('fetchBestAcquisitionSrc', () => {
+      it('should call requestGoogleAnalyticsFor()', () => {
+        return feed.fetchBestAcquisitionSrc(config).then(() => {
+          expect(spyFeedReqGA.called).to.be.true;
+        });
+      });
+
+      it('should return corresponding data to widget format ', () => {
+        return feed.fetchBestAcquisitionSrc(config).then((data) => {
+          console.log(data);
+          // expect(items).to.be.a('array').and.to.not.be.empty;
+          // expect(items).to.have.lengthOf(10);
+        });
+      });
+    });
+    
+    
   });
 });

@@ -35,7 +35,7 @@
     "viewId": "GA_VIEW_ID",
     "auth": {
       "iss": "GA_SERVICE_EMAIL",
-      "keyFile": "GA_KEY_FILE_PATH"
+      "keyFile" : "GA_KEY_FILE_PATH"
     }
   }
 }

@@ -48,7 +48,8 @@ module.exports = class Util {
     if (arguments.length === 0 || date === null) {
       date = new Date();
     }
-    if (typeof date === 'string') {
+
+    if (Number.isInteger(date) || typeof date === 'string') {
       date = new Date(date);
     }
     return date.toISOString().slice(0, 10);
@@ -202,7 +203,9 @@ module.exports = class Util {
     // Set this data to the last day of the prev. month.
     firstInPastMonth.setDate(0);
     firstInPastMonth.setDate(1);
-    firstInPastMonth.setHours(0, 0, 0, 0);
+
+
+    console.log(firstInPastMonth);
 
     // The last day in the past month
     const endInPastMonth = new Date();
@@ -211,7 +214,7 @@ module.exports = class Util {
     // The first day in this month at 00:00:00:00
     const firstInMonth = new Date();
     firstInMonth.setDate(1);
-    firstInMonth.setHours(0, 0, 0, 0);
+
 
     const today = new Date();
 

@@ -61,15 +61,15 @@ const leadsNecessaryKeys = [
 /**
  * Feeder for ChartMogul route
  *
- * @class ChartMogulFeed
+ * @class ChartMogulFeeder
  * @extends {Feeder}
  */
-class ChartMogulFeed extends Feeder {
+class ChartMogulFeeder extends Feeder {
 
   /**
-   * Creates an instance of ChartMogulFeed.
+   * Creates an instance of ChartMogulFeeder.
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   constructor() {
     super(Config.chartMogul.apiUrl);
@@ -130,7 +130,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} query - The query params to send to ChartMogul
    * @return {Promise}
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   requestChartMogulFor(destination, query) {
     if (destination && !destination.startsWith('/')) {
@@ -183,7 +183,7 @@ class ChartMogulFeed extends Feeder {
    * @param {boolean} [onlyLead=false] - Which kind of customer must be kept.
    * @return {Array<Object>} All customers filtered.
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   filterCustomers(customers, onlyLead = false) {
     if (!Array.isArray(customers)) {
@@ -234,7 +234,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @return {Array<Object>} - All customers||leads filtered.
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchAndFilterCustomers(startingPage = 1, opts = {}) {
     const {onlyLead = false, status} = opts;
@@ -264,7 +264,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchNbLeads(config) {
     // The first day in this month at 00:00:00:00
@@ -322,7 +322,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchNbLeadsToday(config) {
     const today = new Date();
@@ -375,7 +375,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchMrr(config) {
     const req = await this.requestChartMogulFor('/metrics/mrr', config);
@@ -397,7 +397,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchNbCustomers(config) {
     const {entries: [previous, current]} = await this.requestChartMogulFor(
@@ -417,7 +417,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchNetMRRChurnRate(config) {
     const {entries: [previous, current]} = await this.requestChartMogulFor(
@@ -441,7 +441,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @return {number} - The NET MRR
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   calcNetMRR(mrrs = []) {
     if (!mrrs) {
@@ -466,7 +466,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @return {number} - The MAX NET
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   findMaxNetMRR(mrrs) {
     if (!Array.isArray(mrrs)) {
@@ -492,7 +492,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchNetMRRMovement(config) {
     // 1,000 ms * 60 secs * 60 mins * 24 hrs * 7 days
@@ -531,7 +531,7 @@ class ChartMogulFeed extends Feeder {
    *
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchMRRMovements(config) {
     const {entries} = await this.requestChartMogulFor('/metrics/mrr', {
@@ -576,7 +576,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchArr(config) {
     const {entries: [previous, current]} = await this.requestChartMogulFor(
@@ -595,7 +595,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchArpa(config) {
     const {entries: [previous, current]} = await this.requestChartMogulFor(
@@ -615,7 +615,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchMostPlansPurchased(config) {
     // Recup all plans
@@ -726,7 +726,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchLatestCustomers(config) {
     // Convert to bool if other type then Bool
@@ -792,7 +792,7 @@ class ChartMogulFeed extends Feeder {
    * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
-   * @memberOf ChartMogulFeed
+   * @memberOf ChartMogulFeeder
    */
   async fetchCountriesByCustomers(config) {
     const customers = await this.fetchAndFilterCustomers(1, {
@@ -831,4 +831,4 @@ class ChartMogulFeed extends Feeder {
 // -------------------------------------------------------------------
 // Exports
 
-module.exports = ChartMogulFeed;
+module.exports = ChartMogulFeeder;

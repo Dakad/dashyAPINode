@@ -330,11 +330,11 @@ class GoogleAnalyticsFeeder extends Feeder {
     return {
       'absolute': true,
       'item': [{
-          'value': Number.parseFloat(current[metrics[0]]),
+          'value': Math.round(Number.parseFloat(current[metrics[0]])),
           'prefix': '%',
         },
         {
-          'value': Number.parseFloat(last[metrics[0]]),
+          'value': Math.round(Number.parseFloat(last[metrics[0]])),
         },
       ],
     };
@@ -402,7 +402,7 @@ class GoogleAnalyticsFeeder extends Feeder {
    *
    * @memberOf GoogleAnalyticsFeed
    */
-  async fetchBlogPageAVGDuration(config) {
+  async fetchBlogPageDuration(config) {
     const metrics = ['ga:avgTimeOnPage'];
     const filters = ['ga:pagePathLevel1', '==', '/aso-blog/'];
 
@@ -432,6 +432,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     ]);
 
     return {
+      'absolute' : true,
       'item': [{
           'type': 'time_duration',
           'value': Number.parseFloat(current[metrics[0]]) * 1000,

@@ -19,11 +19,7 @@ const mockRequest = require('superagent-mock');
 // Mine
 // const Config = require('../../config/test');
 const Util = require('../components/util');
-<<<<<<< HEAD
-const GAFeed = require('./ga-feed');
-=======
 const GAFeed = require('./ga-feeder');
->>>>>>> 34399e0bd6a11b1149d99d856dff465693445290
 const mockReqConf = require('./ga-superagent-mock-config');
 
 
@@ -50,11 +46,7 @@ const dates = Util.getAllDates();
 // Test Units
 
 
-<<<<<<< HEAD
-describe.only('GoogleAnalytics : Feeder', () => {
-=======
 describe('GoogleAnalytics : Feeder', () => {
->>>>>>> 34399e0bd6a11b1149d99d856dff465693445290
   before(() => {
     // sinon.stub(feed,
     //   'getAccessToken',
@@ -196,20 +188,12 @@ describe('GoogleAnalytics : Feeder', () => {
       });
 
       it('should return corresponding data to widget format ', () => {
-<<<<<<< HEAD
         return feed.fetchSessionDuration(config).then((data) => {
           expect(data).to.contains.all.keys(['absolute', 'item']);
           expect(data.item).to.be.a('array').and.to.not.be.empty;
           expect(data.item).to.have.lengthOf(2);
           expect(data.item[0]).to.contains.all.keys(['type', 'value']);
           expect(data.item[0].type).eql('time_duration');
-=======
-        return feed.fetchSessionDuration(config).then(({item}) => {
-          expect(item).to.be.a('array').and.to.not.be.empty;
-          expect(item).to.have.lengthOf(2);
-          expect(item[0]).to.contains.all.keys(['type', 'value']);
-          expect(item[0].type).eql('time_duration');
->>>>>>> 34399e0bd6a11b1149d99d856dff465693445290
         });
       });
     });
@@ -233,8 +217,6 @@ describe('GoogleAnalytics : Feeder', () => {
         });
       });
     });
-<<<<<<< HEAD
-=======
 
 
     describe('fetchBlogPageViews', () => {
@@ -308,6 +290,5 @@ describe('GoogleAnalytics : Feeder', () => {
         });
       });
     });
->>>>>>> 34399e0bd6a11b1149d99d856dff465693445290
   });
 });

@@ -83,7 +83,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
     });
 
 
-    this.router_.get('/session/duration/avg', async ({state}, next) => {
+    this.router_.get('/sessions/duration/avg', async ({state}, next) => {
       state.data = await this.feed_.fetchSessionDuration(state.config);
       return next();
     });
@@ -94,7 +94,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
     });
 
     this.router_.get('/acq/src', async ({state}, next) => {
-      state.data = await this.feed_.fetchAcquisitionSrc(state.config);
+      state.data = await this.feed_.fetchBestAcquisitionSrc(state.config);
       return next();
     });
 

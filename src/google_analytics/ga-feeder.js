@@ -324,11 +324,11 @@ class GoogleAnalyticsFeeder extends Feeder {
     }] = await Promise.all([
       this.requestGAFor(query.current),
       this.requestGAFor(query.last),
-
     ]);
 
     return {
       'absolute': true,
+      'type' : 'reverse',
       'item': [{
           'value': Math.round(Number.parseFloat(current[metrics[0]])),
           'prefix': '%',
@@ -516,7 +516,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     const [metrics, dimensions, filters] = [
       ['ga:newUsers'],
       ['ga:source'],
-      ['ga:channelGrouping', '==', 'Referral'],
+      ['ga:medium', '==', 'referral'],
     ];
 
     const {

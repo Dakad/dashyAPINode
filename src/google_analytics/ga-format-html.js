@@ -100,7 +100,7 @@ class GoogleAnalyticsFormatter {
    * @memberOf GoogleAnalyticsFormatter
    */
   static toTextForTopsAcqSources(sources) {
-/**
+/*
 <tr>
   <td class="tg-s6z2">(%)2</td>
   <td class="tg-s6z2" colspan="2" rowspan="2">example.com/azerty2</td>

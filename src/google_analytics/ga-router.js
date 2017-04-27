@@ -117,10 +117,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
   /**
    * @override
    */
-  handlerPusher() {
-    // const widgets = Config.geckoBoard.widgets;
-
-  };
+  handlerPusher() {};
 
 };
 

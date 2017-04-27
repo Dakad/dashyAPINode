@@ -71,6 +71,13 @@ class BaseRouter extends Router {
    */
   handler() {
     this.router_.use(this.sendResponse);
+    
+    this.router_.get('/',(ctx,next) =>{
+      if(this.url_ !== '/'){
+      return ctx.redirect(`/assets/routes/${this.url_}.json`);
+      }
+      return ctx.redirect('/zen');
+    })
 
     /**
       *

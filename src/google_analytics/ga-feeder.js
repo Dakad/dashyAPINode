@@ -438,6 +438,7 @@ class GoogleAnalyticsFeeder extends Feeder {
           'value': Number.parseFloat(current[metrics[0]]) * 1000,
         },
         {
+          'type': 'time_duration',
           'value': Number.parseFloat(last[metrics[0]]) * 1000,
         },
       ],
@@ -530,19 +531,39 @@ class GoogleAnalyticsFeeder extends Feeder {
       dimensions,
       filters,
     });
+    
 
-    return tops;
-    /*
-    return tops.map(([title,nbViews]) => {
-      return {
-        "label":title.replace(' - ASO Blog',''),
-        "value": nbViews+" views"
-      };
-    }).reduce((data,item)=>{
-      data.items.push(item);
-      return data;
-    },{'items':[]});
-    */
+    switch(config.format){
+      default:
+        return {
+      'item' : [{
+        'text' : HTMLFormatter.toTextForBlogPostViews(tops.slice(0,5))
+      }]
+    };
+      
+      case 'funnel':
+        return {
+          'percentage' :'hide',
+          'item' : tops.map(([title, nbViews]) => 
+            ({
+              'label': title.replace(' - ASO Blog', ''),
+              'value': Number.parseInt(nbViews),
+            })
+          )
+        };
+              
+      case 'json':
+        return tops.map(([title, nbViews]) => {
+          return {
+            'source': title,
+            'newUsers': nbViews
+          };
+        });
+        
+    }
+      
+    
+    
   }
 
 

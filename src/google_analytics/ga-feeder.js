@@ -27,7 +27,7 @@ const googleToken = require('gtoken');
 const Logger = require('../components/logger');
 const Feeder = require('../components/feeder');
 const Util = require('../components/util');
-// const HTMLFormatter = require('./ga-format-html');
+const HTMLFormatter = require('./ga-format-html');
 
 
 // -------------------------------------------------------------------
@@ -432,7 +432,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     ]);
 
     return {
-      'absolute' : true,
+      'absolute': true,
       'item': [{
           'type': 'time_duration',
           'value': Number.parseFloat(current[metrics[0]]) * 1000,
@@ -459,7 +459,9 @@ class GoogleAnalyticsFeeder extends Feeder {
     const dimensions = ['ga:pageTitle'];
     const filters = ['ga:pagePathLevel1', '==', '/aso-blog/'];
 
-    const {rows: tops} = await this.requestGAFor({
+    const {
+      rows: tops,
+    } = await this.requestGAFor({
       'start-date': config['start-date'],
       'end-date': config['end-date'],
       'max-results': 10,
@@ -470,15 +472,16 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     });
 
-    return tops.map(([title, nbViews]) => {
-      return {
-        'label': title.replace(' - ASO Blog', ''),
-        'value': nbViews+' views',
-      };
-    }).reduce((data, item)=>{
-      data.items.push(item);
-      return data;
-    }, {'items': []});
+    if (config.format === 'json') {
+      return tops.map(([title, nbViews]) => {
+        return {
+          'post': title.replace(' - ASO Blog', ''),
+          'views': nbViews,
+        };
+      });
+    }
+
+    return HTMLFormatter.toTextForBlogPostViews(tops);
   }
 
 
@@ -492,20 +495,15 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @memberOf GoogleAnalyticsFeed
    */
   async fetchBestAcquisitionSrc(config) {
-    /**
-     * URL SAMPLE to SEND TO :
-     *
-     * ENCODED VERSION :
-     * &sort=-ga:newUsers
-     * &filters=ga:channelGrouping==Referral
-     * &max-results=10
-     *
-     */
-    const metrics = ['ga:newUsers'];
-    const dimensions = ['ga:source'];
-    const filters = ['ga:channelGrouping', '==', 'Referral'];
+    const [metrics, dimensions, filters] = [
+      ['ga:newUsers'],
+      ['ga:source'],
+      ['ga:channelGrouping', '==', 'Referral'],
+    ];
 
-    const {rows: tops} = await this.requestGAFor({
+    const {
+      rows: tops,
+    } = await this.requestGAFor({
       'start-date': config['start-date'],
       'end-date': config['end-date'],
       'max-results': 10,

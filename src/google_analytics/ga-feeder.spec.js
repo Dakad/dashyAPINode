@@ -238,16 +238,16 @@ describe('GoogleAnalytics : Feeder', () => {
     });
 
 
-    describe('fetchBlogPageAVGDuration', () => {
+    describe('fetchBlogPageDuration', () => {
       it('should call requestGoogleAnalyticsFor()', () => {
-        return feed.fetchBlogPageAVGDuration(config).then(() => {
+        return feed.fetchBlogPageDuration(config).then(() => {
           expect(spyFeedReqGA.called).to.be.true;
           expect(spyFeedReqGA.callCount).eql(2);
         });
       });
 
       it('should return corresponding data to widget format ', () => {
-        return feed.fetchBlogPageAVGDuration(config).then(({item}) => {
+        return feed.fetchBlogPageDuration(config).then(({item}) => {
           expect(item).to.be.a('array').and.to.not.be.empty;
           expect(item).to.have.lengthOf(2);
           expect(item[0]).to.contains.all.keys(['type', 'value']);
@@ -266,10 +266,12 @@ describe('GoogleAnalytics : Feeder', () => {
 
       it('should return corresponding data to widget format ', () => {
         return feed.fetchMostBlogPost(config).then(({
-          items,
+          item,
         }) => {
-          expect(items).to.be.a('array').and.to.not.be.empty;
-          expect(items).to.have.lengthOf(10);
+          expect(item).to.be.a('array')
+            .and.to.not.be.empty;
+          expect(item[0]).to.not.be.empty;
+          expect(item[0].text).to.not.be.empty;
         });
       });
     });

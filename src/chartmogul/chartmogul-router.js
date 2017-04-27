@@ -95,9 +95,6 @@ class ChartMogulRouter extends BaseRouter {
       *
       *
       */
-    this.router_.get('/', async (ctx, next) => {
-      return ctx.redirect('/assets/routes/chartmogul.json');
-    });
 
     /**
      *

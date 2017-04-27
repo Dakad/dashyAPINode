@@ -201,6 +201,7 @@ module.exports = class Util {
     // The first day in the prev. month at 00:00:00:00
     const firstInPastMonth = new Date();
     // Set this data to the last day of the prev. month.
+    const month = firstInPastMonth.getMonth();
     firstInPastMonth.setDate(0);
     firstInPastMonth.setDate(1);
 
@@ -219,8 +220,9 @@ module.exports = class Util {
     const today = new Date();
 
     // The same day in the prev. month
-    const dateInPastMonth = new Date(today.getTime());
-    dateInPastMonth.setDate(today.getDate() - 30);
+    const dte = new Date();
+    const dateInPastMonth = new Date(dte.setMonth(month - 1));
+    // dateInPastMonth.setDate(today.getDate() - 30);
 
     const dates = {
       firstInPastMonth,

@@ -472,16 +472,34 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     });
 
-    if (config.format === 'json') {
-      return tops.map(([title, nbViews]) => {
+
+    switch(config.format){
+      default:
         return {
-          'post': title.replace(' - ASO Blog', ''),
-          'views': nbViews,
+      'item' : [{
+        'text' : HTMLFormatter.toTextForBlogPostViews(tops.slice(0,4))
+      }]
+    };
+      
+      case 'json':
+        return tops.map(([title, nbViews]) => {
+          return {
+            'post': title.replace(' - ASO Blog', ''),
+            'views': nbViews,
+          };
+        });
+      
+      case 'list':
+        return {
+          'items' : tops.map(([title, nbViews]) => 
+            ({
+              'label': title.replace(' - ASO Blog', ''),
+              'value': nbViews,
+            })
+          )
         };
-      });
     }
 
-    return HTMLFormatter.toTextForBlogPostViews(tops);
   }
 
 

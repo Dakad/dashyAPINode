@@ -19,13 +19,13 @@ const mockRequest = require('superagent-mock');
 // Mine
 const Server = require('../components/server');
 const Util = require('../components/util');
-const ChartMogulFeed = require('./chartmogul-feed');
-const ChartMogulRouter = require('./chartmogul-route');
+const ChartMogulFeeder = require('./chartmogul-feeder');
+const ChartMogulRouter = require('./chartmogul-router');
 const mockReqConf = require('./superagent-mock-config');
 
 // -------------------------------------------------------------------
 // Properties
-const feed = new ChartMogulFeed();
+const feed = new ChartMogulFeeder();
 const server = new Server(0);
 
 

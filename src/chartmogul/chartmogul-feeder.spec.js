@@ -1,5 +1,5 @@
 /**
- * Unit Test  for the ChartMogulFeed.
+ * Unit Test  for the ChartMogulFeeder.
  */
 
 
@@ -19,13 +19,13 @@ const mockRequest = require('superagent-mock');
 // Mine
 const Config = require('../../config/test');
 const Util = require('../components/util');
-const ChartMogulFeed = require('./chartmogul-feed');
+const ChartMogulFeeder = require('./chartmogul-feeder');
 const mockReqConf = require('./superagent-mock-config');
 
 
 // -------------------------------------------------------------------
 // Properties
-let feed = new ChartMogulFeed();
+let feed = new ChartMogulFeeder();
 chai.use(chaiAsPromised);
 const {expect} = chai;
 
@@ -155,7 +155,7 @@ describe('ChartMogul : Feeder', () => {
     let spyFetchAndFilter;
 
     beforeEach(() => {
-      feed = new ChartMogulFeed();
+      feed = new ChartMogulFeeder();
       spyFeedReqChartMogul = sinon.spy(feed, 'requestChartMogulFor');
       spyFetchAndFilter = sinon.spy(feed, 'fetchAndFilterCustomers');
     });
@@ -329,7 +329,7 @@ describe('ChartMogul : Feeder', () => {
     let mogulFeed;
 
     beforeEach(() => {
-      mogulFeed = new ChartMogulFeed();
+      mogulFeed = new ChartMogulFeeder();
       spyFeedReqChartMogul = sinon.spy(mogulFeed, 'requestChartMogulFor');
       spyFindMaxNetMRR = sinon.spy(mogulFeed, 'findMaxNetMRR');
       spycalcNetMRR = sinon.spy(mogulFeed, 'calcNetMRR');

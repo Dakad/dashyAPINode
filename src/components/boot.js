@@ -33,8 +33,8 @@ const Server = require('./server');
 
 const BaseRouter = require('../base/baserouter');
 
-const ChartMogulRouter = require('../chartmogul/chartmogul-route');
-const ChartMogulFeed = require('../chartmogul/chartmogul-feed');
+const ChartMogulRouter = require('../chartmogul/chartmogul-router');
+const ChartMogulFeeder = require('../chartmogul/chartmogul-feeder');
 
 // -------------------------------------------------------------------
 // Properties
@@ -47,7 +47,7 @@ const ChartMogulFeed = require('../chartmogul/chartmogul-feed');
  */
 const routes_ = [
   BaseRouter.getInstance(),
-  new ChartMogulRouter(new ChartMogulFeed()),
+  new ChartMogulRouter(new ChartMogulFeeder()),
 
 ];
 

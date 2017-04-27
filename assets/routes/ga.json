@@ -1,0 +1,17 @@
+
+{
+    
+    "Nb Unique Visitors" : "GET /visitors/unique",
+    
+    "Session Duration" : "GET /session/duration/avg",
+    
+    "BounceRate" : "GET /bounce_rate",
+    
+    "Acquisition Source" : "GET /acq/src",
+    
+    "Blog PageViews" : "GET /blog/views",
+    
+    "Blog PageDuration" : "GET /blog/duration",
+    
+    "Top Blog Post" : "GET /blog/most"
+}

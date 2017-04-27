@@ -36,6 +36,9 @@ const BaseRouter = require('../base/baserouter');
 const ChartMogulRouter = require('../chartmogul/chartmogul-route');
 const ChartMogulFeed = require('../chartmogul/chartmogul-feed');
 
+const GARouter = require('../google_analytics/ga-router');
+const GAFeeder = require('../google_analytics/ga-feeder');
+
 // -------------------------------------------------------------------
 // Properties
 
@@ -48,7 +51,7 @@ const ChartMogulFeed = require('../chartmogul/chartmogul-feed');
 const routes_ = [
   BaseRouter.getInstance(),
   new ChartMogulRouter(new ChartMogulFeed()),
-
+  new GARouter(new GAFeeder()),
 ];
 
 /**

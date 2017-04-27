@@ -76,8 +76,41 @@ class GoogleAnalyticsRouter extends BaseRouter {
 
     this.router_.use(this.configByParams);
 
-    this.router_.get('/', async (ctx, next) => {
-      return ctx.redirect('/assets/routes/ga.json');
+
+    this.router_.get('/visitors/(unik|uniq|unique)', async ({state}, next) => {
+      state.data = await this.feed_.fetchNbUniqueVisitors(state.config);
+      return next();
+    });
+
+
+    this.router_.get('/session/duration/avg', async ({state}, next) => {
+      state.data = await this.feed_.fetchSessionDuration(state.config);
+      return next();
+    });
+
+    this.router_.get('/bounce_rate', async ({state}, next) => {
+      state.data = await this.feed_.fetchBounceRate(state.config);
+      return next();
+    });
+
+    this.router_.get('/acq/src', async ({state}, next) => {
+      state.data = await this.feed_.fetchAcquisitionSrc(state.config);
+      return next();
+    });
+
+    this.router_.get('/blog/views', async ({state}, next) => {
+      state.data = await this.feed_.fetchBlogPageViews(state.config);
+      return next();
+    });
+
+    this.router_.get('/blog/duration', async ({state}, next) => {
+      state.data = await this.feed_.fetchBlogPageDuration(state.config);
+      return next();
+    });
+
+    this.router_.get('/blog/most', async ({state}, next) => {
+      state.data = await this.feed_.fetchMostBlogPost(state.config);
+      return next();
     });
   }
 

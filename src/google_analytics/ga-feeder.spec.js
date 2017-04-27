@@ -46,7 +46,7 @@ const dates = Util.getAllDates();
 // Test Units
 
 
-describe.only('GoogleAnalytics : Feeder', () => {
+describe('GoogleAnalytics : Feeder', () => {
   before(() => {
     // sinon.stub(feed,
     //   'getAccessToken',
@@ -216,8 +216,8 @@ describe.only('GoogleAnalytics : Feeder', () => {
         });
       });
     });
-    
-    
+
+
     describe('fetchBlogPageViews', () => {
       it('should call requestGoogleAnalyticsFor()', () => {
         return feed.fetchBlogPageViews(config).then(() => {
@@ -256,7 +256,7 @@ describe.only('GoogleAnalytics : Feeder', () => {
     });
 
 
-    describe.only('fetchMostBlogPost', () => {
+    describe('fetchMostBlogPost', () => {
       it('should call requestGoogleAnalyticsFor()', () => {
         return feed.fetchMostBlogPost(config).then(() => {
           expect(spyFeedReqGA.called).to.be.true;
@@ -272,9 +272,9 @@ describe.only('GoogleAnalytics : Feeder', () => {
         });
       });
     });
-    
-    
-    describe.only('fetchBestAcquisitionSrc', () => {
+
+
+    describe('fetchBestAcquisitionSrc', () => {
       it('should call requestGoogleAnalyticsFor()', () => {
         return feed.fetchBestAcquisitionSrc(config).then(() => {
           expect(spyFeedReqGA.called).to.be.true;
@@ -289,7 +289,5 @@ describe.only('GoogleAnalytics : Feeder', () => {
         });
       });
     });
-    
-    
   });
 });

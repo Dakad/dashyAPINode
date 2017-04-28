@@ -618,28 +618,41 @@ class ChartMogulFeeder extends Feeder {
    * @memberOf ChartMogulFeeder
    */
   async fetchMostPlansPurchased(config) {
-    // Recup all plans
+    // Recup all plans or filtered
+    let keyForCache = KEY_BIGGEST_PLANS;
     let reqPlans = await this.requestChartMogulFor('/plans');
 
-    reqPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
+console.log(config);
 
-    // For each plan, GET the customers' count with this plan
-    const customersCount = reqPlans.map((plan) => {
+    let listPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
+    
+    if(config.filter) {
+      let filter = config.filter.toLowerCase();
+      const onExclude = filter.startsWith('!');
+      filter = (onExclude) ? filter.substr(1) : filter;
+      
+      keyForCache += filter;
+      listPlans = listPlans.filter((p) => {
+        const contains = p.name.toLowerCase().includes(filter);
+        return (onExclude) ? !contains : contains;
+      });
+    }
+
+    const [...customersCountByPlan] = await Promise.all([
+      // For each plan, GET the customers' count with this plan
+      ...listPlans.map((plan) => {
       return this.requestChartMogulFor('/metrics/customer-count', {
         'start-date': config['start-date'],
         'end-date': config['end-date'],
         'plans': plan.name,
       });
-    });
-
-    const [listPlans, ...customersCountByPlan] = await Promise.all([
-      reqPlans,
-      ...customersCount,
+    }),
     ]);
 
-    // Count plansCustomerCount
     let [lastBiggest, ...biggestCustByPlans] = await Promise.all([
-      this.getCached(KEY_BIGGEST_PLANS),
+      this.getCached(keyForCache),
+      
+      // Sum, filter & sort plansCustomerCount
       ...customersCountByPlan.map(({entries}, i) => {
         return {
           'plan': listPlans[i],
@@ -716,7 +729,7 @@ class ChartMogulFeeder extends Feeder {
       return item;
     });
 
-    this.setInCache(KEY_BIGGEST_PLANS, biggestCustByPlans);
+    this.setInCache(keyForCache, biggestCustByPlans);
     return items;
   }
 

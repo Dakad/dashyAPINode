@@ -183,10 +183,10 @@ class CharMogulHTMLFormatter {
   static toTextMrrCountryCount(countryCount) {
     const toHtml = (iso, count) => {
       return '<tr style=\'border-bottom: 1px solid;\'>'
-        +'<td style=\'font-size:1em;vertical-align:middle\'>'
+        +'<td style=\'vertical-align:middle\'>'
         + CharMogulHTMLFormatter.generateFlagImg(iso, 32, 32)
         +'</td>'
-        +'<td style=\'vertical-align:middle\'>'
+        +'<td style=\'font-size:1em;vertical-align:middle\'>'
         + Countries[iso].name
         +'</td>'
         +'<td style=\'padding:10px 5px;font-weight:bold;text-align:right;\'>'

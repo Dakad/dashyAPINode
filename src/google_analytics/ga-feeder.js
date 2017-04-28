@@ -328,7 +328,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     return {
       'absolute': true,
-      'type' : 'reverse',
+      'type': 'reverse',
       'item': [{
           'value': Math.round(Number.parseFloat(current[metrics[0]])),
           'prefix': '%',
@@ -474,14 +474,14 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
 
 
-    switch(config.format){
+    switch(config.format) {
       default:
         return {
-      'item' : [{
-        'text' : HTMLFormatter.toTextForBlogPostViews(tops.slice(0,4))
-      }]
+      'item': [{
+        'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 4)),
+      }],
     };
-      
+
       case 'json':
         return tops.map(([title, nbViews]) => {
           return {
@@ -489,18 +489,17 @@ class GoogleAnalyticsFeeder extends Feeder {
             'views': nbViews,
           };
         });
-      
+
       case 'list':
         return {
-          'items' : tops.map(([title, nbViews]) => 
+          'items': tops.map(([title, nbViews]) =>
             ({
               'label': title.replace(' - ASO Blog', ''),
               'value': nbViews,
             })
-          )
+          ),
         };
     }
-
   }
 
 
@@ -531,39 +530,36 @@ class GoogleAnalyticsFeeder extends Feeder {
       dimensions,
       filters,
     });
-    
 
-    switch(config.format){
+
+    switch(config.format) {
       default:
         return {
-      'item' : [{
-        'text' : HTMLFormatter.toTextForBlogPostViews(tops.slice(0,5))
-      }]
+      'item': [{
+        'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 5)),
+      }],
     };
-      
+
       case 'funnel':
         return {
-          'percentage' :'hide',
-          'item' : tops.map(([title, nbViews]) => 
+          'percentage': 'hide',
+          'item': tops.map(([title, nbViews]) =>
             ({
               'label': title.replace(' - ASO Blog', ''),
               'value': Number.parseInt(nbViews),
             })
-          )
+          ),
         };
-              
+
       case 'json':
         return tops.map(([title, nbViews]) => {
           return {
             'source': title,
-            'newUsers': nbViews
+            'newUsers': nbViews,
           };
         });
-        
+
     }
-      
-    
-    
   }
 
 

@@ -71,8 +71,8 @@ class GoogleAnalyticsFormatter {
   static toTextForBlogPostViews(blogsViews = []) {
     const toHtml = ([post, views, hasSeparator]) =>{
       let title = post.replace(' - ASO Blog', '');
-      if(title.length > 37){
-        title = title.substr(0,32) + '...';
+      if(title.length > 37) {
+        title = title.substr(0, 32) + '...';
       }
       return `<tr style='${(hasSeparator) ? 'border-top: 1px solid;' : ''}'>`
       +`<td style='padding-bottom:2.3px;font-size:1em'>${title}</td>`

@@ -123,9 +123,11 @@ docs: clean test-cover test-doc api-doc
 
 
 setup:
-
-	@$(find ./logs -name "*.log")
+	@echo "#####  Setup ..." ;
+	@echo "#####  Set the correct timezone ..." ;
+	sudo ln -fs /usr/share/zoneinfo/Etc/GMT$offset /etc/localtime
 	@node --harmony setup.js
+	@echo "#####  Setup ... : DONE" ;
 
 archive: docs
 	@echo "Archive Release ..."

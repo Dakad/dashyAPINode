@@ -69,83 +69,45 @@ class GoogleAnalyticsFormatter {
    * @memberOf GoogleAnalyticsFormatter
    */
   static toTextForBlogPostViews(blogsViews = []) {
-    const toHtml = ([post, views, hasSeparator]) =>{
+    const styleCenter = 'vertical-align:middle;text-align:center';
+    const getClassColor = (nb) => (nb => 0) ?' positive':' negative';
+    const getIcon = (nb) => {
+      const klass = 'arrow-' +((nb => 0) ?'up ':'down ')+getClassColor(nb);
+      return '<i class=\'t-size-x30 '+ klass +'\'>&nbsp;</i>';
+    };
+    
+    const toHtml = ([post, views , progress, hasSeparator]) =>{
       let title = post.replace(' - ASO Blog', '');
-      if(title.length > 37){
-        title = title.substr(0,32) + '...';
+      if(title.length > 45){
+        title = title.substr(0,42) + '...';
       }
       return `<tr style='${(hasSeparator) ? 'border-top: 1px solid;' : ''}'>`
-      +`<td style='padding-bottom:2.3px;font-size:1em'>${title}</td>`
-      +'<td style=\'padding:10px 5px;font-weight:bold;\'>'+ views + '</td>'
+      +'<td style=\''+styleCenter+';padding-bottom:.3px;\'>'+
+        getIcon(progress)
+      +'</td>'
+      +'<td style=\'font-size:1em\'>'+
+        title
+      +'</td>'
+      +'<td style=\''+styleCenter+';padding-right:3px;font-weight:bold;\'>'+ 
+        views 
+      + '</td>'      
+      +'<td class=\''+getClassColor(progress)+'\''
+      +'style=\''+styleCenter+';padding-left:3px;font-weight:bold;\'>'+ 
+        Math.abs(progress)
+      + '</td>'
       + '</tr>';
     };
 
     return blogsViews.reduce(
-      (html, [post, views], i) => html + toHtml([post, views, (i!==0)])
+      (html, [post, views, progress=0], i) => html + toHtml([
+        post, views, progress, (i!==0)
+        ])
      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';
   }
 
 
- /**
-   * Generate a HTML text for the acquisition sources with
-   * The name, count & progression
-   *
-   * @static
-   *
-   * @param {Array} sources  - The acquisition sources
-   *  with the name, views, progression
-   *
-   * @return {String} A HTML Output.
-   * @memberOf GoogleAnalyticsFormatter
-   */
-  static toTextForTopsAcqSources(sources) {
-/*
-<tr>
-  <td class="tg-s6z2">(%)2</td>
-  <td class="tg-s6z2" colspan="2" rowspan="2">example.com/azerty2</td>
-  <td class="tg-s6z2">(NB)2</td>
-</tr>
-<tr>
-  <td class="tg-s6z2">(IMG)2</td>
-  <td class="tg-s6z2">Views2</td>
-</tr>
-*/
 
-    const toHtml = ([src, count, progress]) => {
-      const styleCenter = 'vertical-align:middle;text-align:center';
-      const progressIcon = 'icons/'+ ((progress < 0) ? 'down' : 'up') + '.png';
-
-      return;
-      '<tr style=\'border-bottom: 1px solid;\'>'
-        +'<td style=\''+styleCenter+';font-size:1em;\'>'
-        + progress
-        +'</td>'
-        +'<td style=\''+styleCenter+'\'colspan="2" rowspan="2" >'
-        + src
-        +'</td>'
-        +'<td style=\'padding:10px 5px;font-weight:bold;text-align:right;\'>'
-        + count
-        + '</td>'
-      +'</tr>'
-      +'<tr style=\'border-bottom: 1px solid;\'>'
-        +'<td style=\''+styleCenter+';font-size:1em;\'>'
-        + GoogleAnalyticsFormatter.generateImg({
-          src: progressIcon,
-          alt: 'Progress icon',
-          width: 48,
-          height: 48,
-        })
-        +'</td>'
-        +'<td style=\''+styleCenter+'\'>Views</td>'
-      + '</tr>';
-    };
-
-    return sources.reduce(
-      (html, src) => html + toHtml(src)
-     , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
-    ) + '</table>';
-  }
 
 }
 

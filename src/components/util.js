@@ -205,9 +205,6 @@ module.exports = class Util {
     firstInPastMonth.setDate(0);
     firstInPastMonth.setDate(1);
 
-
-    console.log(firstInPastMonth);
-
     // The last day in the past month
     const endInPastMonth = new Date();
     endInPastMonth.setDate(0);

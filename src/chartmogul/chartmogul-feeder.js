@@ -618,12 +618,10 @@ class ChartMogulFeeder extends Feeder {
    * @memberOf ChartMogulFeeder
    */
   async fetchMostPlansPurchased(config) {
-    // Recup all plans or filtered
+    // Recup all plans
     let keyForCache = KEY_BIGGEST_PLANS;
+    
     let reqPlans = await this.requestChartMogulFor('/plans');
-
-console.log(config);
-
     let listPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
     
     if(config.filter) {
@@ -811,12 +809,13 @@ console.log(config);
     const customers = await this.fetchAndFilterCustomers(1, {
       status: 'Active',
     });
-
-    const countryCount = await customers.sort((cust1, cust2) => {
-      return new Date(cust2['customer-since']).getTime() -
-        new Date(cust1['customer-since']).getTime();
+      const firstInMonth = new Date();
+      firstInMonth.setDate(1);
+      
+    const tmpCountryCount = await customers.filter((cust) => {
+      return new Date(cust['customer-since']).getTime() 
+        >= firstInMonth.getTime();
     })
-    .slice(0, 10)
     .reduce(
       (countryCount, {country}, i) => {
         let count = countryCount[country];
@@ -825,11 +824,16 @@ console.log(config);
       }
       , {}
     );
+    
 
     if(config.format === 'json') {
-      return countryCount;
+      return tmpCountryCount;
     }
 
+    const countryCount = Object.keys(tmpCountryCount)
+      .sort((c1,c2)=> tmpCountryCount[c2] - tmpCountryCount[c1])
+      .slice(0,10)
+      .map((iso)=>[iso,tmpCountryCount[iso]])
 
     return {
       'item': [{

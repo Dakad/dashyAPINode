@@ -175,7 +175,7 @@ class CharMogulHTMLFormatter {
    *
    * @static
    *
-   * @param {Object} countryCount - The countries<Key> with the count<Value>
+   * @param {Array} countryCount - The countries<Key> with the count<Value>
    *
    * @return {String} A HTML Output.
    * @memberOf CharMogulHTMLFormatter
@@ -194,9 +194,8 @@ class CharMogulHTMLFormatter {
         + '</td>'
       + '</tr>';
     };
-
-    return Object.keys(countryCount).reduce(
-      (html, iso) => html + toHtml(iso, countryCount[iso])
+    return countryCount.reduce(
+      (html, [iso,count]) => html + toHtml(iso, count)
      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';
   }

@@ -542,7 +542,7 @@ class ChartMogulFeeder extends Feeder {
 
     const otherMrr = entries.pop();
 
-    switch(config.format) {
+    switch(config.out) {
       case 'list':
         return Object.assign({}, {
           'format': 'currency',
@@ -769,7 +769,7 @@ class ChartMogulFeeder extends Feeder {
             : cust['customer-since']
         );
 
-        if (config.format === 'json') {
+        if (config.out === 'json') {
           return {
             'country': cust.country,
             'country_full': Util.getCountryFromISOCode(cust.country),
@@ -826,7 +826,7 @@ class ChartMogulFeeder extends Feeder {
     );
     
 
-    if(config.format === 'json') {
+    if(config.out === 'json') {
       return tmpCountryCount;
     }
 

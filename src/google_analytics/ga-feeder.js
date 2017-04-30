@@ -168,6 +168,10 @@ class GoogleAnalyticsFeeder extends Feeder {
 
       query['access_token'] = await this.getAccessToken();
 
+
+      // TODO Check for cached response for this query
+      
+
       // Sending the request to the API
       const {
         body: resp,
@@ -278,17 +282,32 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     ]);
 
-    return {
-      'absolute': true,
-      'item': [{
-          'type': 'time_duration',
-          'value': Number.parseFloat(current[metrics[0]]) * 1000,
-        },
-        {
-          'value': Number.parseFloat(last[metrics[0]]) * 1000,
-        },
-      ],
-    };
+    const firstRes = current[metrics[0]];
+    const secondRes = last[metrics[0]];
+    
+    switch (config.out) {
+      case 'html':
+      return {
+        'item' : [{
+          'text' : HTMLFormatter.toTextForDuration(firstRes,secondRes)  
+        }]
+      };
+      
+      default:
+        return {
+          'absolute': true,
+          'item': [{
+              'type': 'time_duration',
+              'value': Number.parseFloat(firstRes) * 1000,
+            },{
+              'type': 'time_duration',
+              'value': Number.parseFloat(secondRes) * 1000,
+            },
+          ],
+        };
+    
+    }
+
   }
 
 
@@ -428,21 +447,35 @@ class GoogleAnalyticsFeeder extends Feeder {
     }] = await Promise.all([
       this.requestGAFor(query.current),
       this.requestGAFor(query.last),
-
     ]);
-
+    
+    const firstRes = current[metrics[0]];
+    const secondRes = last[metrics[0]];
+    
+    
+    switch (config.out) {
+      case 'html':
+        return {
+      'item' : [{
+        'text' : HTMLFormatter.toTextForDuration(firstRes,secondRes)  
+      }]
+    };
+      default:
     return {
       'absolute': true,
       'item': [{
           'type': 'time_duration',
-          'value': Number.parseFloat(current[metrics[0]]) * 1000,
+          'value': Number.parseFloat(firstRes) * 1000,
         },
         {
           'type': 'time_duration',
-          'value': Number.parseFloat(last[metrics[0]]) * 1000,
+          'value': Number.parseFloat(secondRes) * 1000,
         },
       ],
     };
+    
+    }
+
   }
 
 
@@ -474,7 +507,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
 
 
-    switch(config.format){
+    switch(config.out){
       default:
         return {
       'item' : [{
@@ -533,7 +566,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
     
 
-    switch(config.format){
+    switch(config.out){
       default:
         return {
       'item' : [{

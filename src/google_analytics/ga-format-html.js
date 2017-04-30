@@ -18,12 +18,17 @@ const Config = require('config');
 // Built-in
 
 // Mine
-// const Util = require('../components/util');
+const Util = require('../components/util');
 
 
 // -------------------------------------------------------------------
 // Properties
 
+const getClassColor = (nb) => (nb >= 0) ?' positive ':' negative ';
+
+const getClassArrow =(nb) => {
+  return 'arrow-' +(nb >= 0 ?'up ':'down ')+ getClassColor(nb);
+};
 
 /**
  * The feeder by excellence.
@@ -70,10 +75,10 @@ class GoogleAnalyticsFormatter {
    */
   static toTextForBlogPostViews(blogsViews = []) {
     const styleCenter = 'vertical-align:middle;text-align:center';
-    const getClassColor = (nb) => (nb => 0) ?' positive':' negative';
     const getIcon = (nb) => {
-      const klass = 'arrow-' +((nb => 0) ?'up ':'down ')+getClassColor(nb);
-      return '<i class=\'t-size-x30 '+ klass +'\'>&nbsp;</i>';
+      return '<i class=\'t-size-x30 arrow '+ 
+        ((nb != 0 ) ? getClassArrow(nb) : '')
+      +'\'>&nbsp;</i>';
     };
     
     const toHtml = ([post, views , progress, hasSeparator]) =>{
@@ -107,6 +112,43 @@ class GoogleAnalyticsFormatter {
   }
 
 
+
+  static toTextForDuration(first,second){
+    first = Number.parseInt(first,10);
+    const spanUnit= (time) => {
+      return Object.keys(time)
+        .filter((key) => [ 'm', 's'].indexOf(key) !== -1)
+        .reduce((html,unit) =>{
+          console.log(unit,time[unit]);
+          if(time[unit] > 0){
+            return html + ` ${time[unit]}<span class="unit">${unit}</span>`;
+          }
+          return html;
+        },'');
+    };
+    
+
+    let html = '<div class="main-stat t-size-x52">';
+    html+=spanUnit(Util.toHHMMSS(first,10));
+    html+='</div>';    
+    
+    if(second){
+      second = Number.parseFloat(second);
+      html +='<br>';
+      const diff = first-second;
+      console.log(first,second,diff);
+      html += '<div class="main-stat t-size-x44 arrow ';
+      if(diff !== 0){
+        html+= getClassArrow(diff);
+      }
+      html+= '">';
+      html+=spanUnit(Util.toHHMMSS(Math.abs(diff)));
+      html+='</div>'; 
+      
+    }
+
+    return html;
+  }
 
 
 }

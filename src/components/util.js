@@ -235,5 +235,44 @@ module.exports = class Util {
 
     return dates;
   }
+  
+  
+  
+  
+  static toHHMMSS(sec){
+    let duration = Date.now();
+    if(sec !== undefined || sec !== null){
+      duration = sec * 1000;
+    }
+    const [time, h, m, s] = new Date(duration).toUTCString()
+        .match(/(\d{2}):(\d{2}):(\d{2})/)
+        .slice(0,4)
+        .map((res,i)=>{
+          if(i!==0){
+            return Number.parseInt(res,10);
+          }
+          return res
+        });
+        
+    let format = '';
+    
+    if(h > 0){
+     format += h+'h '; 
+    }
+    
+    if(m > 0){
+     format += m+'m '; 
+    }
+
+    if(s > 0){
+      format += s+'s'; 
+    }
+    
+    format= format.trim();
+    
+    return {
+      time, h ,m , s , format
+    }
+  }
 
 };

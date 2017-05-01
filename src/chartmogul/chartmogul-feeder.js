@@ -190,14 +190,11 @@ class ChartMogulFeeder extends Feeder {
       return [];
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    // MUST KEEP THAT, cause the JS month start with 0
-    // To avoid some bug if the month is January : 0
-    const month = today.getMonth() + 1;
-    const lastMonthDate = new Date(
-      `${today.getFullYear()}-${month - 1}-1`)
-      .getTime();
+    const lastMonthDate = new Date();
+    lastMonthDate.setDate(0);
+    lastMonthDate.setDate(1);
+    lastMonthDate.setHours(0,0,0,0);
+    
 
     return customers
       .filter((customer) => {
@@ -208,10 +205,10 @@ class ChartMogulFeeder extends Feeder {
             return false;
           }
           const leadDate = new Date(customer['lead_created_at']).getTime();
-          return (leadDate >= lastMonthDate);
+          return (leadDate >= lastMonthDate.getTime());
         }
         const customerDate = new Date(customer['customer-since']).getTime();
-        return (customerDate >= lastMonthDate);
+        return (customerDate >= lastMonthDate.getTime());
       })
       .map((entry) => {
         return leadsNecessaryKeys.reduce((nEntry, key) => {
@@ -271,14 +268,14 @@ class ChartMogulFeeder extends Feeder {
     const firstInMonth = new Date();
     const month = firstInMonth.getMonth();
     firstInMonth.setDate(1);
-    firstInMonth.setHours(0, 0, 0, 0);
+    firstInMonth.setHours(0,0,0,0)
 
     // The first day in the prev. month at 00:00:00:00
     let firstInPastMonth = new Date();
     // Set this data to the last day of the prev. month.
     firstInPastMonth.setDate(0);
     firstInPastMonth.setDate(1);
-    firstInPastMonth.setHours(0, 0, 0, 0);
+    firstInPastMonth.setHours(0,0,0,0)
 
     let dte = new Date();
     const dateInPastMonth = new Date(dte.setMonth(month - 1));
@@ -291,8 +288,8 @@ class ChartMogulFeeder extends Feeder {
     // console.log('Nb Filtered : ' + leads.length, nbLastMonth);
     const item = leads.reduce((item, lead) => {
       // const leadDate = Util.convertDate(lead['lead_created_at']);
-      // console.log('Lead : '+leadDate);
       const leadDateInMs = new Date(lead['lead_created_at']).getTime();
+      
       if (leadDateInMs >= firstInMonth) {
         item[0].value += 1;
       }

@@ -402,6 +402,10 @@ class ChartMogulRouter extends BaseRouter {
      */
     this.router_.get('/plans/top', async ({state}, next) => {
       const firstInMonth = new Date();
+      
+      if(firstInMonth.getDate() === 1){
+        firstInMonth.setDate(0); // Point it to end last month
+      }
       firstInMonth.setDate(1);
       state.config['start-date'] = Util.convertDate(firstInMonth);
 

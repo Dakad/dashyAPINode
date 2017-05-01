@@ -806,15 +806,21 @@ class ChartMogulFeeder extends Feeder {
     const customers = await this.fetchAndFilterCustomers(1, {
       status: 'Active',
     });
-      const firstInMonth = new Date();
-      firstInMonth.setDate(1);
+    
+    const firstInMonth = new Date();
+    
+    if(firstInMonth.getDate() === 1){
+      firstInMonth.setDate(0); // Point it to end last month
+    }
+    
+    firstInMonth.setDate(1);
       
     const tmpCountryCount = await customers.filter((cust) => {
       return new Date(cust['customer-since']).getTime() 
         >= firstInMonth.getTime();
     })
     .reduce(
-      (countryCount, {country}, i) => {
+      (countryCount, {country}) => {
         let count = countryCount[country];
         countryCount[country] = (!count) ? 1 : ++count;
         return countryCount;
@@ -830,7 +836,7 @@ class ChartMogulFeeder extends Feeder {
     const countryCount = Object.keys(tmpCountryCount)
       .sort((c1,c2)=> tmpCountryCount[c2] - tmpCountryCount[c1])
       .slice(0,10)
-      .map((iso)=>[iso,tmpCountryCount[iso]])
+      .map((iso)=>[iso,tmpCountryCount[iso]]);
 
     return {
       'item': [{

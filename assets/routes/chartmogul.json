@@ -1,7 +1,18 @@
 {
+  "prefix" : "*/chartmogul/*",
   "leads": "GET /leads",
-  "mrr": "GET /mrr",
-  "Nb Clients": "GET /customers",
-  "Net MRR Churn": "GET /mrr/churn",
-  "Top plans/customers": "GET /plans/top"
+  "leadsToday": "GET /leads/today",
+  "MRR": "GET /mrr",
+  "Nb Customers": "GET /customers",
+  "Net MRR Churn": "GET /mrrfee/churn",
+  "Top plans/customers": "GET /plans/top?filter=!api",
+  "Top API Plans": "GET /plans/top?filter=api",
+  "Country customers": "GET /mrr/map",
+  "Net MRR Movements": "GET /mrr/net",
+  "Net MRR Movements": "GET /mrr/move",
+  "ARR": "GET /arr",
+  "ARPA": "GET /arpa",
+  "Latest Leads": "GET /customers/last",
+  "Latest Leads": "GET /leads/last",
+  
 }

@@ -189,7 +189,7 @@ class CharMogulHTMLFormatter {
         +'<td style=\'font-size:1em;vertical-align:middle\'>'
         + Countries[iso].name
         +'</td>'
-        +'<td style=\'padding:10px 5px;font-weight:bold;text-align:right;\'>'
+        +'<td style=\'padding:11px;font-weight:bold;text-align:right;\'>'
         + count
         + '</td>'
       + '</tr>';

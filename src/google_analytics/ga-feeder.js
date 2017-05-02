@@ -36,6 +36,7 @@ const HTMLFormatter = require('./ga-format-html');
 /** @private  @constant {String} The key for the nbLeads in the cache */
 // const KEY_GA_TOKEN = 'GoogleAuthAccessToken';
 
+
 /** @private The required query for the request to GA  */
 const requiredKeysForQuery = [
   'start-date',
@@ -81,29 +82,29 @@ class GoogleAnalyticsFeeder extends Feeder {
 
 
   /**
-   * 
+   *
    * Hash the query to form a key for the cache.
    * Only hash the query if the end-date is not in the current month.
-   * 
-   * @private 
-   * 
+   *
+   * @private
+   *
    * @param {Object} q - The query params to be send.
-   * 
+   *
    * @return {string} - The corresponding hash or null.
    */
   hashQueryForKey(q) {
-    if(Util.isEmptyOrNull(q)){
+    if (Util.isEmptyOrNull(q)) {
       return null;
     }
     const firstInMonth = new Date();
     firstInMonth.setDate(1);
-    
+
     const qEndDate = new Date(q['end-date']);
-    
+
     if (qEndDate.getTime() <= firstInMonth.getTime()) {
       return Util.hashCode(q);
     }
-    
+
     return null;
   }
 
@@ -191,21 +192,20 @@ class GoogleAnalyticsFeeder extends Feeder {
       // Add viewIDs
       query['ids'] = 'ga:' + ConfigGA.viewId;
 
-      
-      // Key to be hash for REDIS
-      let keyForCache = null;
-      // let keyForCache = this.hashQueryForKey(query);
-    
-      // console.log(query,keyForCache);
 
-      // Get The cached response for this request 
+      // Key to be hash for REDIS
+      let keyForCache = this.hashQueryForKey(query);
+
+      console.log(query, keyForCache);
+
+      // Get The cached response for this request
       const cachedResp = await super.getCached(keyForCache);
       if (cachedResp != null) {
         return cachedResp;
       }
 
       query['access_token'] = await this.getAccessToken();
-      
+
       // Sending the request to the API
       const {
         body: resp,
@@ -318,30 +318,28 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     const firstRes = current[metrics[0]];
     const secondRes = last[metrics[0]];
-    
+
     switch (config.out) {
       case 'html':
-      return {
-        'item' : [{
-          'text' : HTMLFormatter.toTextForDuration(firstRes,secondRes)  
-        }]
-      };
-      
+        return {
+          'item': [{
+            'text': HTMLFormatter.toTextForDuration(firstRes, secondRes),
+          }],
+        };
+
       default:
         return {
           'absolute': true,
           'item': [{
-              'type': 'time_duration',
-              'value': Number.parseFloat(firstRes) * 1000,
-            },{
-              'type': 'time_duration',
-              'value': Number.parseFloat(secondRes) * 1000,
-            },
-          ],
+            'type': 'time_duration',
+            'value': Number.parseFloat(firstRes) * 1000,
+          }, {
+            'type': 'time_duration',
+            'value': Number.parseFloat(secondRes) * 1000,
+          }],
         };
-    
-    }
 
+    }
   }
 
 
@@ -482,34 +480,33 @@ class GoogleAnalyticsFeeder extends Feeder {
       this.requestGAFor(query.current),
       this.requestGAFor(query.last),
     ]);
-    
+
     const firstRes = current[metrics[0]];
     const secondRes = last[metrics[0]];
-    
-    
+
     switch (config.out) {
       case 'html':
+        let diff = Number.parseFloat(firstRes) - Number.parseFloat(secondRes);
         return {
-      'item' : [{
-        'text' : HTMLFormatter.toTextForDuration(firstRes,secondRes)  
-      }]
-    };
+          'item': [{
+            'text': HTMLFormatter.toTextForDuration(firstRes, diff),
+          }],
+        };
       default:
-    return {
-      'absolute': true,
-      'item': [{
-          'type': 'time_duration',
-          'value': Number.parseFloat(firstRes) * 1000,
-        },
-        {
-          'type': 'time_duration',
-          'value': Number.parseFloat(secondRes) * 1000,
-        },
-      ],
-    };
-    
-    }
+        return {
+          'absolute': true,
+          'item': [{
+              'type': 'time_duration',
+              'value': firstRes,
+            },
+            {
+              'type': 'time_duration',
+              'value': secondRes,
+            },
+          ],
+        };
 
+    }
   }
 
 
@@ -524,10 +521,10 @@ class GoogleAnalyticsFeeder extends Feeder {
    */
   async fetchMostBlogPost(config) {
     const metrics = ['ga:pageviews'];
-    const dimensions = ['ga:pageTitle','ga:pagePath'];
+    const dimensions = ['ga:pageTitle', 'ga:pagePath'];
     const filters = ['ga:pagePathLevel1', '==', '/aso-blog/'];
 
-    const {
+    let {
       rows: tops,
     } = await this.requestGAFor({
       'start-date': config['start-date'],
@@ -538,34 +535,40 @@ class GoogleAnalyticsFeeder extends Feeder {
       dimensions,
       filters,
     });
-    
-    
-    const [... reqOldTopValue] = tops.map(([path]) => {
-      return await this.requestGAFor({
+
+    let oldTopValue = await Promise.all(tops.map(async([path]) => {
+      return this.requestGAFor({
         'start-date': config['last-start-date'],
         'end-date': config['last-end-date'],
         'max-results': 1,
-        'sort': '-ga:pageviews',
-        'filters' : ['ga:pagePath', '==', path],
+        'filters': ['ga:pagePath', '==', path],
         metrics,
         dimensions,
         filters,
-      });  
-    })
-    
-    const oldTopValue = await Promise.all(... reqOldTopValue);
+      });
+    }));
+
+    // CANNOT be stored in cache coz the most post can change in the month.
+    oldTopValue = oldTopValue.reduce((old, [path, title, nbViews]) => {
+      old[path] = nbViews;
+      return old;
+    }, {});
 
 
-    switch(config.out){
-      default:
-        return {
-      'item': [{
-        'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 4)),
-      }],
-    };
+    // Insert the old value into tops
+    tops = tops.map(([path, title, nbViews]) => {
+      return [path, title, oldTopValue[path]];
+    });
+
+    switch (config.out) {
+      default: return {
+        'item': [{
+          'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 4)),
+        }],
+      };
 
       case 'json':
-        return tops.map(([path,title, nbViews]) => {
+          return tops.map(([path, title, nbViews]) => {
           return {
             'post': title.replace(' - ASO Blog', ''),
             'views': nbViews,
@@ -573,8 +576,8 @@ class GoogleAnalyticsFeeder extends Feeder {
         });
 
       case 'list':
-        return {
-          'items': tops.map(([title, nbViews]) =>
+          return {
+          'items': tops.map(([, title, nbViews]) =>
             ({
               'label': title.replace(' - ASO Blog', ''),
               'value': nbViews,
@@ -613,27 +616,26 @@ class GoogleAnalyticsFeeder extends Feeder {
       filters,
     });
 
-    switch(config.out){
-      default:
-        return {
-      'item': [{
-        'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 5)),
-      }],
-    };
+    switch (config.out) {
+      default: return {
+        'percentage': 'hide',
+        'item': tops.map(([title, nbViews]) =>
+          ({
+            'label': title.replace(' - ASO Blog', ''),
+            'value': Number.parseInt(nbViews),
+          })
+        ),
+      };
 
-      case 'funnel':
-        return {
-          'percentage': 'hide',
-          'item': tops.map(([title, nbViews]) =>
-            ({
-              'label': title.replace(' - ASO Blog', ''),
-              'value': Number.parseInt(nbViews),
-            })
-          ),
+      case 'list':
+          return {
+          'item': [{
+            'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 5)),
+          }],
         };
 
       case 'json':
-        return tops.map(([title, nbViews]) => {
+          return tops.map(([title, nbViews]) => {
           return {
             'source': title,
             'newUsers': nbViews,

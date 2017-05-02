@@ -24,14 +24,14 @@ const Util = require('../components/util');
 // -------------------------------------------------------------------
 // Properties
 
-const getClassColor = (nb) => (nb >= 0) ?' positive ':' negative ';
+const getClassColor = (nb) => (nb >= 0) ? ' positive ' : ' negative ';
 
-const getClassArrow =(nb) => {
-  return 'arrow-' +(nb >= 0 ?'up ':'down ')+ getClassColor(nb);
+const getClassArrow = (nb) => {
+  return 'arrow-' + (nb >= 0 ? 'up ' : 'down ') + getClassColor(nb);
 };
 
 /**
- * The feeder by excellence.
+ * The formatter by excellence for All Widgets related to GoogleAnalytics.
  *
  * @class GoogleAnalyticsFormatter
  */
@@ -54,17 +54,22 @@ class GoogleAnalyticsFormatter {
    *
    * @memberOf CharMogulHTMLFormatter
    */
-  static generateImg({src, alt, width=150, height=150}) {
-    const srcLink = Config.api.host + '/assets/img/'+src;
-    return `<img src='${srcLink}' `+
-             `alt='${alt}' `+
-             'style=\'margin: 0 5px;'
-              +`width:${width}px;height:${height}px;'>`;
+  static generateImg({
+    src,
+    alt,
+    width = 150,
+    height = 150,
+  }) {
+    const srcLink = Config.api.host + '/assets/img/' + src;
+    return `<img src='${srcLink}' ` +
+      `alt='${alt}' ` +
+      'style=\'margin: 0 5px;' +
+      `width:${width}px;height:${height}px;'>`;
   }
 
 
-/**
-   * Generate a HTML text for the most blog post's views .
+  /**
+   * Generate a HTML text for the most blog post's views.
    *
    * @static
    *
@@ -76,50 +81,63 @@ class GoogleAnalyticsFormatter {
   static toTextForBlogPostViews(blogsViews = []) {
     const styleCenter = 'vertical-align:middle;text-align:center';
     const getIcon = (nb) => {
-      return '<i class=\'t-size-x30 arrow '+
-        ((nb != 0 ) ? getClassArrow(nb) : '')
-      +'\'>&nbsp;</i>';
+      return '<i class=\'t-size-x30 arrow ' +
+        ((nb != 0) ? getClassArrow(nb) : '') +
+        '\'>&nbsp;</i>';
     };
 
-    const toHtml = ([post, views, progress, hasSeparator]) =>{
+    const toHtml = ([post, views, progress, hasSeparator]) => {
       let title = post.replace(' - ASO Blog', '');
-      if(title.length > 45) {
+      if (title.length > 45) {
         title = title.substr(0, 42) + '...';
       }
-      return `<tr style='${(hasSeparator) ? 'border-top: 1px solid;' : ''}'>`
-      +'<td style=\''+styleCenter+';padding-bottom:.3px;\'>'+
-        getIcon(progress)
-      +'</td>'
-      +'<td style=\'font-size:1em\'>'+
-        title
-      +'</td>'
-      +'<td style=\''+styleCenter+';padding-right:3px;font-weight:bold;\'>'+
-        views
-      + '</td>'
-      +'<td class=\''+getClassColor(progress)+'\''
-      +'style=\''+styleCenter+';padding-left:3px;font-weight:bold;\'>'+
-        Math.abs(progress)
-      + '</td>'
-      + '</tr>';
+      return `<tr style='${(hasSeparator) ? 'border-top: 1px solid;' : ''}'>` +
+        '<td style=\'' + styleCenter + ';padding-bottom:.3px;\'>' +
+        getIcon(progress) +
+        '</td>' +
+        '<td style=\'font-size:1em\'>' +
+        title +
+        '</td>' +
+        '<td style=\'' + styleCenter + ';padding:3px;font-weight:bold;\'>' +
+        views +
+        '</td>' +
+        '<td class=\'' + getClassColor(progress) + '\'' +
+        'style=\'' + styleCenter + ';padding-left:3px;font-weight:bold;\'>' +
+        Math.abs(progress) +
+        '</td>' +
+        '</tr>';
     };
 
     return blogsViews.reduce(
-      (html, [post, views, progress=0], i) => html + toHtml([
-        post, views, progress, (i!==0),
-        ])
-     , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
+      (html, [post, views, progress = 0], i) => html + toHtml([
+        post, views, progress, (i !== 0),
+      ])
+      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';
   }
 
 
-  static toTextForDuration(first, second) {
-    first = Number.parseInt(first, 10);
-    const spanUnit= (time) => {
+  /**
+   *
+   * Generate a HTML text for the durations for AVG Sessions and Blog Post.
+   *
+   *
+   * @static
+   *
+   * @param {string|number} primary - The primary value
+   * @param {any} second - The second value.
+   *
+   * @return {String} A HTML Output.
+   *
+   * @memberOf GoogleAnalyticsFormatter
+   */
+  static toTextForDuration(primary, second) {
+    primary = Number.parseFloat(primary, 10);
+    const spanUnit = (time) => {
       return Object.keys(time)
         .filter((key) => ['m', 's'].indexOf(key) !== -1)
-        .reduce((html, unit) =>{
-          console.log(unit, time[unit]);
-          if(time[unit] > 0) {
+        .reduce((html, unit) => {
+          if (time[unit] > 0) {
             return html + ` ${time[unit]}<span class="unit">${unit}</span>`;
           }
           return html;
@@ -128,20 +146,17 @@ class GoogleAnalyticsFormatter {
 
 
     let html = '<div class="main-stat t-size-x52">';
-    html+=spanUnit(Util.toHHMMSS(first, 10));
-    html+='</div>';
+    html += spanUnit(Util.toHHMMSS(primary));
+    html += '</div>';
 
-    if(second) {
+    if (second) {
       second = Number.parseFloat(second);
-      const diff = first-second;
-      html +='<br>';
+      html += '<br>';
       html += '<div class="main-stat t-size-x44 arrow ';
-      if(diff !== 0) {
-        html+= getClassArrow(diff);
-      }
-      html+= '">';
-      html+=spanUnit(Util.toHHMMSS(Math.abs(diff)));
-      html+='</div>';
+      html += (second !== 0) ? getClassArrow(second) : '';
+      html += '">';
+      html += spanUnit(Util.toHHMMSS(Math.abs(second)));
+      html += '</div>';
     }
 
     return html;

@@ -1,5 +1,6 @@
 
 {
+    "prefix" : "ga",
     
     "Nb Unique Visitors" : "GET /visitors/unique",
     

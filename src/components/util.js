@@ -244,6 +244,7 @@ module.exports = class Util {
     if(sec !== undefined || sec !== null){
       duration = sec * 1000;
     }
+    console.log(duration);
     const [time, h, m, s] = new Date(duration).toUTCString()
         .match(/(\d{2}):(\d{2}):(\d{2})/)
         .slice(0,4)

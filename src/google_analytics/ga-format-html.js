@@ -134,9 +134,8 @@ class GoogleAnalyticsFormatter {
     
     if(second){
       second = Number.parseFloat(second);
-      html +='<br>';
       const diff = first-second;
-      console.log(first,second,diff);
+      html +='<br>';
       html += '<div class="main-stat t-size-x44 arrow ';
       if(diff !== 0){
         html+= getClassArrow(diff);

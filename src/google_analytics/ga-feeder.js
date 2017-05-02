@@ -71,11 +71,40 @@ class GoogleAnalyticsFeeder extends Feeder {
 
   /** @override */
   cacheResponse(key, resp) {
-    if (key) { // ? Defined a key for the store ?
+    if (!Util.isEmptyOrNull(key)) { // ? Defined a key for the store ?
+      super.setInCache(key, resp);
     }
 
     return resp;
     // TODO Must implements the cacheResponse()
+  }
+
+
+  /**
+   * 
+   * Hash the query to form a key for the cache.
+   * Only hash the query if the end-date is not in the current month.
+   * 
+   * @private 
+   * 
+   * @param {Object} q - The query params to be send.
+   * 
+   * @return {string} - The corresponding hash or null.
+   */
+  hashQueryForKey(q) {
+    if(Util.isEmptyOrNull(q)){
+      return null;
+    }
+    const firstInMonth = new Date();
+    firstInMonth.setDate(1);
+    
+    const qEndDate = new Date(q['end-date']);
+    
+    if (qEndDate.getTime() <= firstInMonth.getTime()) {
+      return Util.hashCode(q);
+    }
+    
+    return null;
   }
 
 
@@ -125,9 +154,9 @@ class GoogleAnalyticsFeeder extends Feeder {
 
 
   /**
-   * Send a request to ChartMogul API.
+   * Send a request to GoogleAnalytics API.
    *
-   * @param {Object} query - The query params to send to ChartMogul
+   * @param {Object} query - The query params to send to GoogleAnalytics
    * @return {Promise}
    *
    * @memberOf ChartMogulFeed
@@ -137,10 +166,6 @@ class GoogleAnalyticsFeeder extends Feeder {
       if (Util.isEmptyOrNull(query)) {
         throw new Error('Arguments:query must be defined');
       }
-
-      // Key to be hash for REDIS
-      // TODO Only cache the response on certain URL
-      let keyForCache = undefined;
 
       // Check if got all required key into the query
       requiredKeysForQuery.forEach((requiredKey) => {
@@ -166,12 +191,21 @@ class GoogleAnalyticsFeeder extends Feeder {
       // Add viewIDs
       query['ids'] = 'ga:' + ConfigGA.viewId;
 
-      query['access_token'] = await this.getAccessToken();
-
-
-      // TODO Check for cached response for this query
       
+      // Key to be hash for REDIS
+      let keyForCache = null;
+      // let keyForCache = this.hashQueryForKey(query);
+    
+      // console.log(query,keyForCache);
 
+      // Get The cached response for this request 
+      const cachedResp = await super.getCached(keyForCache);
+      if (cachedResp != null) {
+        return cachedResp;
+      }
+
+      query['access_token'] = await this.getAccessToken();
+      
       // Sending the request to the API
       const {
         body: resp,

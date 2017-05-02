@@ -80,7 +80,6 @@ describe('Base : BaseRouter', () => {
           .get('/zen')
           .expect(200)
           .expect(({body}) => {
-            console.log(body);
             expect(body).to.contains.keys('joke');
             expect(body.joke).to.be.a('string');
           })

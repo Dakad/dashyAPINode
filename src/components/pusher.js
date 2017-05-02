@@ -42,7 +42,7 @@ class Pusher {
    * @memberOf Pusher
    */
   constructor(widgetId, promData, timeOut) {
-    if(!widgetId_) {
+    if(!widgetId) {
       throw new Error('Required the Widget ID for pushing');
     }
 

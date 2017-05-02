@@ -42,8 +42,8 @@ class MockRouter extends Router {
   }
 
   handlerPusher(){
-    this.listPushers_.push(new Pusher('widgetId', () => 'widget1'));
-    this.listPushers_.push(new Pusher('widgetId2', () => 'widget2'));
+    this.listPushers_.push(new Pusher('widgetId', Promise.resolve('widget1')));
+    this.listPushers_.push(new Pusher('widgetId2', Promise.resolve('widget2')));
     // return "Handler Pusher implemented, So we good !";
   }
 }

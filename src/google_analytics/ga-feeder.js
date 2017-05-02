@@ -524,7 +524,7 @@ class GoogleAnalyticsFeeder extends Feeder {
    */
   async fetchMostBlogPost(config) {
     const metrics = ['ga:pageviews'];
-    const dimensions = ['ga:pageTitle'];
+    const dimensions = ['ga:pageTitle','ga:pagePath'];
     const filters = ['ga:pagePathLevel1', '==', '/aso-blog/'];
 
     const {
@@ -537,8 +537,23 @@ class GoogleAnalyticsFeeder extends Feeder {
       metrics,
       dimensions,
       filters,
-
     });
+    
+    
+    const [... reqOldTopValue] = tops.map(([path]) => {
+      return await this.requestGAFor({
+        'start-date': config['last-start-date'],
+        'end-date': config['last-end-date'],
+        'max-results': 1,
+        'sort': '-ga:pageviews',
+        'filters' : ['ga:pagePath', '==', path],
+        metrics,
+        dimensions,
+        filters,
+      });  
+    })
+    
+    const oldTopValue = await Promise.all(... reqOldTopValue);
 
 
     switch(config.out){
@@ -550,7 +565,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     };
       
       case 'json':
-        return tops.map(([title, nbViews]) => {
+        return tops.map(([path,title, nbViews]) => {
           return {
             'post': title.replace(' - ASO Blog', ''),
             'views': nbViews,

@@ -89,7 +89,7 @@ class CharMogulHTMLFormatter {
                   :''
                 }
                 <h1 style='margin:0 10px 15px 0;'>
-                  <u>${(who.length>25) ? who.substr(0, 21)+' ...' : who}</u>
+                  <u>${(who.length>21) ? who.substr(0, 21)+'....' : who}</u>
                 </h1>
                 <h2 style='margin-bottom:5px;'>
                   <img src='${Config.api.host}/assets/img/icons/datetime.png'

@@ -546,13 +546,11 @@ class GoogleAnalyticsFeeder extends Feeder {
         dimensions,
       });
     }));
-    
-
 
 
     // CANNOT be stored in cache coz the most post can change in the month.
     oldTopValue = oldTopValue.map(({rows})=> (rows) ? rows.pop() : [])
-    .reduce((old, [path='',,nbViews=0]) => {
+    .reduce((old, [path='',, nbViews=0]) => {
       old[path] = nbViews;
       return old;
     }, {});
@@ -561,10 +559,10 @@ class GoogleAnalyticsFeeder extends Feeder {
     // Insert the old value into tops
     tops = tops.map(([path, title, nbViews]) => {
       return [
-        title.replace(' - ASO Blog', ''), 
-        nbViews, 
+        title.replace(' - ASO Blog', ''),
+        nbViews,
         (oldTopValue[path]||0),
-        path
+        path,
       ];
     });
 

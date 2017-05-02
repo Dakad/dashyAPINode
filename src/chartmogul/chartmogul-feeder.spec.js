@@ -30,14 +30,19 @@ chai.use(chaiAsPromised);
 const {expect} = chai;
 
 let spyFeedReqChartMogul;
-let superagentMock = mockRequest(request, mockReqConf,
-  ({method, url}) => console.log('superagentMock call', method, url));
+let superagentMock;
 
 // -------------------------------------------------------------------
 // Test Units
 
 
 describe('ChartMogul : Feeder', () => {
+    before(() => superagentMock = mockRequest(request, mockReqConf,
+    (log) => console.log('SUPERMockAgent call ChartMogul', log.url)));
+
+  after(() => superagentMock.unset());
+
+
   beforeEach(() => { });
 
 
@@ -311,7 +316,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', () => {
-      return feed.fetchMRRMovements({format: 'list'}).then((data) => {
+      return feed.fetchMRRMovements({out: 'list'}).then((data) => {
         expect(data).to.contains.all.keys('format', 'unit', 'items');
         expect(data.format).to.be.a('string').and.eq('currency');
         expect(data.unit).to.be.a('string');
@@ -539,7 +544,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', () => {
-      return feed.fetchCountriesByCustomers({format: 'json'})
+      return feed.fetchCountriesByCustomers({out: 'json'})
         .then((data) => {
           expect(data).to.be.an('Object').and.to.not.be.empty;
         });

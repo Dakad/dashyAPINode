@@ -253,10 +253,11 @@ module.exports = class Util {
    */
   static toHHMMSS(sec) {
     let duration = Date.now();
-    if (sec !== undefined || sec !== null) {
+    if (sec && (typeof sec === 'number' || typeof sec === 'float')) {
       sec = Number.parseFloat(sec);
-      duration = sec * 1000;
+      duration = (Number.isNaN(sec) ? 0 : sec * 1000);
     }
+
     const [time, h, m, s] = new Date(duration).toUTCString()
       .match(/(\d{2}):(\d{2}):(\d{2})/)
       .slice(0, 4)

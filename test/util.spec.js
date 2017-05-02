@@ -134,7 +134,7 @@ describe('Component : Util', () => {
   });
 
 
-  describe.only('toHHMMSS', () => {
+  describe('toHHMMSS', () => {
     
     it('should use Date.now ', () =>{
       const hhmmss = Util.toHHMMSS();
@@ -176,17 +176,7 @@ describe('Component : Util', () => {
     
   });
 
-
-  // describe('convertArrayToObject', () =>{
-  //   it('should return empty Object', () => {
-  //     const obj = Util.convertArrayToObject();
-  //     expect(obj).to.not.be.undefined.and.null;
-  //     expect(obj).to.be.empty;
-  //   });
-
-  // });
-
-  describe('checkParams', () => {
+  describe.skip('checkParams', () => {
     it('should by default be valid', () => {
       const check = Util.checkParams({});
 

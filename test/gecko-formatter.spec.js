@@ -24,10 +24,9 @@ const GeckoFormatter = require('../src/components/gecko-formatter');
 
 
 
-describe.only('Component : GeckoFormatter', () => {
+describe('Component : GeckoFormatter', () => {
 
   beforeEach(() => {
-
   });
 
   describe('should throws Error for', () => {

@@ -36,12 +36,20 @@ class Pusher {
   /**
    * Creates an instance of Pusher.
    * @param {string} widgetId - The GeckoBoard Widget Key.
-   * @param {Function} promData - The function to call
+   * @param {Promise} promData - The promise to call for widget data.
    * @param {number} [timeOut] A specific time.
    *
    * @memberOf Pusher
    */
   constructor(widgetId, promData, timeOut) {
+    if(!widgetId_) {
+      throw new Error('Required the Widget ID for pushing');
+    }
+
+    if(!promData || !(promData instanceof Promise)) {
+      throw new Error(`[PUSHER] ${this.widgetId_} require a promise`);
+    }
+
     this.widgetId_ = widgetId;
     this.fnPromData_ = promData;
     this.timeOut_ = timeOut;

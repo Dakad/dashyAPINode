@@ -195,7 +195,7 @@ class CharMogulHTMLFormatter {
       + '</tr>';
     };
     return countryCount.reduce(
-      (html, [iso,count]) => html + toHtml(iso, count)
+      (html, [iso, count]) => html + toHtml(iso, count)
      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';
   }

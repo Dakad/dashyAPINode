@@ -193,8 +193,8 @@ class ChartMogulFeeder extends Feeder {
     const lastMonthDate = new Date();
     lastMonthDate.setDate(0);
     lastMonthDate.setDate(1);
-    lastMonthDate.setHours(0,0,0,0);
-    
+    lastMonthDate.setHours(0, 0, 0, 0);
+
 
     return customers
       .filter((customer) => {
@@ -268,14 +268,14 @@ class ChartMogulFeeder extends Feeder {
     const firstInMonth = new Date();
     const month = firstInMonth.getMonth();
     firstInMonth.setDate(1);
-    firstInMonth.setHours(0,0,0,0)
+    firstInMonth.setHours(0, 0, 0, 0);
 
     // The first day in the prev. month at 00:00:00:00
     let firstInPastMonth = new Date();
     // Set this data to the last day of the prev. month.
     firstInPastMonth.setDate(0);
     firstInPastMonth.setDate(1);
-    firstInPastMonth.setHours(0,0,0,0)
+    firstInPastMonth.setHours(0, 0, 0, 0);
 
     let dte = new Date();
     const dateInPastMonth = new Date(dte.setMonth(month - 1));
@@ -289,7 +289,7 @@ class ChartMogulFeeder extends Feeder {
     const item = leads.reduce((item, lead) => {
       // const leadDate = Util.convertDate(lead['lead_created_at']);
       const leadDateInMs = new Date(lead['lead_created_at']).getTime();
-      
+
       if (leadDateInMs >= firstInMonth) {
         item[0].value += 1;
       }
@@ -617,15 +617,15 @@ class ChartMogulFeeder extends Feeder {
   async fetchMostPlansPurchased(config) {
     // Recup all plans
     let keyForCache = KEY_BIGGEST_PLANS;
-    
+
     let reqPlans = await this.requestChartMogulFor('/plans');
     let listPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
-    
+
     if(config.filter) {
       let filter = config.filter.toLowerCase();
       const onExclude = filter.startsWith('!');
       filter = (onExclude) ? filter.substr(1) : filter;
-      
+
       keyForCache += filter;
       listPlans = listPlans.filter((p) => {
         const contains = p.name.toLowerCase().includes(filter);
@@ -646,7 +646,7 @@ class ChartMogulFeeder extends Feeder {
 
     let [lastBiggest, ...biggestCustByPlans] = await Promise.all([
       this.getCached(keyForCache),
-      
+
       // Sum, filter & sort plansCustomerCount
       ...customersCountByPlan.map(({entries}, i) => {
         return {
@@ -808,9 +808,9 @@ class ChartMogulFeeder extends Feeder {
     });
       const firstInMonth = new Date();
       firstInMonth.setDate(1);
-      
+
     const tmpCountryCount = await customers.filter((cust) => {
-      return new Date(cust['customer-since']).getTime() 
+      return new Date(cust['customer-since']).getTime()
         >= firstInMonth.getTime();
     })
     .reduce(
@@ -821,16 +821,16 @@ class ChartMogulFeeder extends Feeder {
       }
       , {}
     );
-    
+
 
     if(config.out === 'json') {
       return tmpCountryCount;
     }
 
     const countryCount = Object.keys(tmpCountryCount)
-      .sort((c1,c2)=> tmpCountryCount[c2] - tmpCountryCount[c1])
-      .slice(0,10)
-      .map((iso)=>[iso,tmpCountryCount[iso]])
+      .sort((c1, c2)=> tmpCountryCount[c2] - tmpCountryCount[c1])
+      .slice(0, 10)
+      .map((iso)=>[iso, tmpCountryCount[iso]]);
 
     return {
       'item': [{

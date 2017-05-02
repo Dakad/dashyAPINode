@@ -11,10 +11,10 @@
 
 
 // Import
-const Config = require('config');
+// const Config = require('config');
 
 // Built-in
-const util_ = require('util');
+// const util_ = require('util');
 
 // Mine
 const Countries = require('../../config/countriesByISO-3166-alpha-2');
@@ -48,7 +48,8 @@ module.exports = class Util {
     if (arguments.length === 0 || date === null) {
       date = new Date();
     }
-    if (typeof date === 'string') {
+
+    if (Number.isInteger(date) || typeof date === 'string') {
       date = new Date(date);
     }
     return date.toISOString().slice(0, 10);
@@ -129,7 +130,7 @@ module.exports = class Util {
    * @return {Object} The country corresponding to the ISO.
    */
   static getCountryFromISOCode(iso) {
-    if(!iso || typeof iso !== 'string') {
+    if (!iso || typeof iso !== 'string') {
       return null;
     }
     const country = Countries[iso];
@@ -143,47 +144,140 @@ module.exports = class Util {
    *
    * @return {Object} Contains a boolean for inValid and a string errMsg.
    */
-  static checkParams(params) {
-    const validParams = Config.api.validParams;
-    const check = {
-      isValid: true,
-      errMsg: null,
+  /*
+    static checkParams(params) {
+      const validParams = Config.api.validParams;
+      const check = {
+        isValid: true,
+        errMsg: null,
+      };
+
+      if (!Util.isEmptyOrNull(params)) {
+        // First , check if that param exists
+        Object.keys(params)
+          .filter((param) => Object.keys(validParams).indexOf(param) !== -1)
+          .some((param) => { // Then, check if valid
+            let paramValue = params[param];
+            switch (param) {
+              default: // This params'value is enumerated;
+                const validParamValues = validParams[param];
+              check.isValid = (validParamValues.indexOf(paramValue) !== -1);
+              break;
+              case 'for': // param for must be a Number
+                  if (typeof params.for === 'string') {
+                    params.for = Number.parseInt(params.for, 10);
+                  }
+                check.isValid = (params.for > 0 && params.for <= 12);
+                break;
+            }
+
+            if (!check.isValid) {
+              let msg = Config.api.msg.err.check[param];
+              if (!msg) {
+                msg = Config.api.msg.err.check._def;
+                msg = util_.format(msg, param, paramValue);
+              }
+              check.errMsg = msg;
+            }
+
+            return !check.isValid; // Stop  the loop if some param is not valid.
+          });
+      }
+
+      return check;
+    }
+  */
+
+
+  /**
+   * Retrieve all necesary dates.
+   *
+   * @private
+   * @static
+   * @param {string} [type] - Only the kind of date
+   * @return {Object} dates - All dates
+   */
+  static getAllDates(type) {
+    // The first day in the prev. month at 00:00:00:00
+    const firstInPastMonth = new Date();
+    // Set this data to the last day of the prev. month.
+    const month = firstInPastMonth.getMonth();
+    firstInPastMonth.setDate(0);
+    firstInPastMonth.setDate(1);
+
+    // The last day in the past month
+    const endInPastMonth = new Date();
+    endInPastMonth.setDate(0);
+
+    // The first day in this month at 00:00:00:00
+    const firstInMonth = new Date();
+    firstInMonth.setDate(1);
+
+
+    const today = new Date();
+
+    // The same day in the prev. month
+    const dte = new Date();
+    const dateInPastMonth = new Date(dte.setMonth(month - 1));
+    // dateInPastMonth.setDate(today.getDate() - 30);
+
+    const dates = {
+      firstInPastMonth,
+      dateInPastMonth,
+      endInPastMonth,
+      firstInMonth,
+      today,
     };
 
-    if (!Util.isEmptyOrNull(params)) {
-      // First , check if that param exists
-      Object.keys(params)
-        .filter((param) => Object.keys(validParams).indexOf(param) !== -1)
-        .some((param) => { // Then, check if valid
-          let paramValue = params[param];
-          switch (param) {
-            default: // This params'value is enumerated;
-              const validParamValues = validParams[param];
-            check.isValid = (validParamValues.indexOf(paramValue) !== -1);
-            break;
-            case 'for': // param for must be a Number
-                if (typeof params.for === 'string') {
-                  params.for = Number.parseInt(params.for, 10);
-                }
-              check.isValid = (params.for > 0 && params.for <= 12);
-              break;
-          }
-
-          if (!check.isValid) {
-            let msg = Config.api.msg.err.check[param];
-            if (!msg) {
-              msg = Config.api.msg.err.check._def;
-              msg = util_.format(msg, param, paramValue);
-            }
-            check.errMsg = msg;
-          }
-
-          return !check.isValid; // Stop  the loop if some param is not valid.
-        });
+    if (type && typeof type === 'string') {
+      return dates[type];
     }
 
-    return check;
+    return dates;
   }
 
+
+  /**
+   * Convert sec to time format MMSS.
+   *
+   * @static
+   *
+   * @param {null|number|string} [sec] - The number of seconds
+   *  if null, use the current time,
+   * @return {Object} hhmmss - Contains the duration in time,
+   * @return {Object} hhmmss.time - The time of duration
+   * @return {Object} hhmmss.h - The number of hours.
+   * @return {Object} hhmmss.m - The number of minutes.
+   * @return {Object} hhmmss.s - The number of seconds.
+   * @return {Object} hhmmss.format - The formatted time '%$M%m %$S%s'
+   */
+  static toHHMMSS(sec) {
+    let duration = Date.now();
+    if (sec && (typeof sec === 'number' || typeof sec === 'float')) {
+      sec = Number.parseFloat(sec);
+      duration = (Number.isNaN(sec) ? 0 : sec * 1000);
+    }
+
+    const [time, h, m, s] = new Date(duration).toUTCString()
+      .match(/(\d{2}):(\d{2}):(\d{2})/)
+      .slice(0, 4)
+      .map((res, i) => (i === 0) ? res : Number.parseInt(res, 10));
+
+    let format = '';
+
+    format += (h > 0) ? h + 'h ' : '';
+    format += (m > 0) ? m + 'm ' : '';
+    format += (s > 0) ? s + 's' : '';
+
+    format = format.trim();
+
+    return {
+      time,
+      h,
+      m,
+      s,
+      format,
+    };
+  }
 
 };

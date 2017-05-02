@@ -33,40 +33,50 @@
       "for": ""
     }
   },
-  "redis" : {
-    "host" : "127.0.0.1",
-    "port" : 6379,
-    "password":"pwd",
-    "db" : 5
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "password": "pwd",
+    "db": 5
   },
   "geckoBoard": {
     "apiKey": "0ecc2de9f3229af5d555b1b14f357ade",
-    "pushUrl" : "https://push.geckoboard.com/v1/send/",
-    "widgets":{
-      "leadsMonth" : {
-        "id" : ""
+    "pushUrl": "https://push.geckoboard.com/v1/send/",
+    "widgets": {
+      "leadsMonth": {
+        "id": ""
       },
       "leadsToday": {
-        "id" : ""
+        "id": ""
       },
-      "latestCustomers" : {
-        "id" : ""
+      "latestCustomers": {
+        "id": ""
       },
-      "latestLeads" : {
-        "id" : ""
+      "latestLeads": {
+        "id": ""
       }
     }
   },
-  "chartMogul" : {
+  "chartMogul": {
     "apiUrl": "https://api.chartmogul.com/v1",
     "apiToken": "3ff446dfa7017e72bc43c2bf1418007f",
     "apiSecret": "3ff446dfa7017e72bc43c2bf1418007f",
-    "bestNetMRR" : {
-      "startDate" : "2014-09-01"
+    "bestNetMRR": {
+      "startDate": "2014-09-01"
     },
-    "leads":{
-      "startPage" : 8
+    "leads": {
+      "startPage": 8
     }
+  },
+  "google-analytics": {
+    "apiUrl": "https://www.googleapis.com/analytics/v3/data/ga",
+    "auth": {
+      "iss": "761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com",
+      "scope": "https://www.googleapis.com/auth/analytics.readonly",
+      "aud": "https://www.googleapis.com/oauth2/v4/token",
+      "keyFile" : "./google-credentials.pem"
+    },
+    "viewId": 1234567890
   },
   "pipeDrive": {
     "apiUrl": "https://api.pipedrive.com/v1",

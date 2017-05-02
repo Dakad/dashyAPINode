@@ -123,9 +123,10 @@ docs: clean test-cover test-doc api-doc
 
 
 setup:
-
-	@$(find ./logs -name "*.log")
-	@node --harmony setup.js
+	@echo "#####  Setup ..." ;
+	@echo "#####  Set the correct timezone ..." ;
+	@node --harmony setup.js;
+	@echo "#####  Setup ... : DONE" ;
 
 archive: docs
 	@echo "Archive Release ..."

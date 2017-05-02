@@ -190,14 +190,11 @@ class ChartMogulFeeder extends Feeder {
       return [];
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    // MUST KEEP THAT, cause the JS month start with 0
-    // To avoid some bug if the month is January : 0
-    const month = today.getMonth() + 1;
-    const lastMonthDate = new Date(
-      `${today.getFullYear()}-${month - 1}-1`)
-      .getTime();
+    const lastMonthDate = new Date();
+    lastMonthDate.setDate(0);
+    lastMonthDate.setDate(1);
+    lastMonthDate.setHours(0,0,0,0);
+    
 
     return customers
       .filter((customer) => {
@@ -208,10 +205,10 @@ class ChartMogulFeeder extends Feeder {
             return false;
           }
           const leadDate = new Date(customer['lead_created_at']).getTime();
-          return (leadDate >= lastMonthDate);
+          return (leadDate >= lastMonthDate.getTime());
         }
         const customerDate = new Date(customer['customer-since']).getTime();
-        return (customerDate >= lastMonthDate);
+        return (customerDate >= lastMonthDate.getTime());
       })
       .map((entry) => {
         return leadsNecessaryKeys.reduce((nEntry, key) => {
@@ -271,14 +268,14 @@ class ChartMogulFeeder extends Feeder {
     const firstInMonth = new Date();
     const month = firstInMonth.getMonth();
     firstInMonth.setDate(1);
-    firstInMonth.setHours(0, 0, 0, 0);
+    firstInMonth.setHours(0,0,0,0)
 
     // The first day in the prev. month at 00:00:00:00
     let firstInPastMonth = new Date();
     // Set this data to the last day of the prev. month.
     firstInPastMonth.setDate(0);
     firstInPastMonth.setDate(1);
-    firstInPastMonth.setHours(0, 0, 0, 0);
+    firstInPastMonth.setHours(0,0,0,0)
 
     let dte = new Date();
     const dateInPastMonth = new Date(dte.setMonth(month - 1));
@@ -291,8 +288,8 @@ class ChartMogulFeeder extends Feeder {
     // console.log('Nb Filtered : ' + leads.length, nbLastMonth);
     const item = leads.reduce((item, lead) => {
       // const leadDate = Util.convertDate(lead['lead_created_at']);
-      // console.log('Lead : '+leadDate);
       const leadDateInMs = new Date(lead['lead_created_at']).getTime();
+      
       if (leadDateInMs >= firstInMonth) {
         item[0].value += 1;
       }
@@ -542,7 +539,7 @@ class ChartMogulFeeder extends Feeder {
 
     const otherMrr = entries.pop();
 
-    switch(config.format) {
+    switch(config.out) {
       case 'list':
         return Object.assign({}, {
           'format': 'currency',
@@ -619,27 +616,38 @@ class ChartMogulFeeder extends Feeder {
    */
   async fetchMostPlansPurchased(config) {
     // Recup all plans
+    let keyForCache = KEY_BIGGEST_PLANS;
+    
     let reqPlans = await this.requestChartMogulFor('/plans');
+    let listPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
+    
+    if(config.filter) {
+      let filter = config.filter.toLowerCase();
+      const onExclude = filter.startsWith('!');
+      filter = (onExclude) ? filter.substr(1) : filter;
+      
+      keyForCache += filter;
+      listPlans = listPlans.filter((p) => {
+        const contains = p.name.toLowerCase().includes(filter);
+        return (onExclude) ? !contains : contains;
+      });
+    }
 
-    reqPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
-
-    // For each plan, GET the customers' count with this plan
-    const customersCount = reqPlans.map((plan) => {
+    const [...customersCountByPlan] = await Promise.all([
+      // For each plan, GET the customers' count with this plan
+      ...listPlans.map((plan) => {
       return this.requestChartMogulFor('/metrics/customer-count', {
         'start-date': config['start-date'],
         'end-date': config['end-date'],
         'plans': plan.name,
       });
-    });
-
-    const [listPlans, ...customersCountByPlan] = await Promise.all([
-      reqPlans,
-      ...customersCount,
+    }),
     ]);
 
-    // Count plansCustomerCount
     let [lastBiggest, ...biggestCustByPlans] = await Promise.all([
-      this.getCached(KEY_BIGGEST_PLANS),
+      this.getCached(keyForCache),
+      
+      // Sum, filter & sort plansCustomerCount
       ...customersCountByPlan.map(({entries}, i) => {
         return {
           'plan': listPlans[i],
@@ -716,7 +724,7 @@ class ChartMogulFeeder extends Feeder {
       return item;
     });
 
-    this.setInCache(KEY_BIGGEST_PLANS, biggestCustByPlans);
+    this.setInCache(keyForCache, biggestCustByPlans);
     return items;
   }
 
@@ -758,7 +766,7 @@ class ChartMogulFeeder extends Feeder {
             : cust['customer-since']
         );
 
-        if (config.format === 'json') {
+        if (config.out === 'json') {
           return {
             'country': cust.country,
             'country_full': Util.getCountryFromISOCode(cust.country),
@@ -798,12 +806,13 @@ class ChartMogulFeeder extends Feeder {
     const customers = await this.fetchAndFilterCustomers(1, {
       status: 'Active',
     });
-
-    const countryCount = await customers.sort((cust1, cust2) => {
-      return new Date(cust2['customer-since']).getTime() -
-        new Date(cust1['customer-since']).getTime();
+      const firstInMonth = new Date();
+      firstInMonth.setDate(1);
+      
+    const tmpCountryCount = await customers.filter((cust) => {
+      return new Date(cust['customer-since']).getTime() 
+        >= firstInMonth.getTime();
     })
-    .slice(0, 10)
     .reduce(
       (countryCount, {country}, i) => {
         let count = countryCount[country];
@@ -812,11 +821,16 @@ class ChartMogulFeeder extends Feeder {
       }
       , {}
     );
+    
 
-    if(config.format === 'json') {
-      return countryCount;
+    if(config.out === 'json') {
+      return tmpCountryCount;
     }
 
+    const countryCount = Object.keys(tmpCountryCount)
+      .sort((c1,c2)=> tmpCountryCount[c2] - tmpCountryCount[c1])
+      .slice(0,10)
+      .map((iso)=>[iso,tmpCountryCount[iso]])
 
     return {
       'item': [{

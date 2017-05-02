@@ -175,7 +175,7 @@ class CharMogulHTMLFormatter {
    *
    * @static
    *
-   * @param {Object} countryCount - The countries<Key> with the count<Value>
+   * @param {Array} countryCount - The countries<Key> with the count<Value>
    *
    * @return {String} A HTML Output.
    * @memberOf CharMogulHTMLFormatter
@@ -183,10 +183,10 @@ class CharMogulHTMLFormatter {
   static toTextMrrCountryCount(countryCount) {
     const toHtml = (iso, count) => {
       return '<tr style=\'border-bottom: 1px solid;\'>'
-        +'<td style=\'font-size:1em;vertical-align:middle\'>'
+        +'<td style=\'vertical-align:middle\'>'
         + CharMogulHTMLFormatter.generateFlagImg(iso, 32, 32)
         +'</td>'
-        +'<td style=\'vertical-align:middle\'>'
+        +'<td style=\'font-size:1em;vertical-align:middle\'>'
         + Countries[iso].name
         +'</td>'
         +'<td style=\'padding:10px 5px;font-weight:bold;text-align:right;\'>'
@@ -194,9 +194,8 @@ class CharMogulHTMLFormatter {
         + '</td>'
       + '</tr>';
     };
-
-    return Object.keys(countryCount).reduce(
-      (html, iso) => html + toHtml(iso, countryCount[iso])
+    return countryCount.reduce(
+      (html, [iso,count]) => html + toHtml(iso, count)
      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';
   }

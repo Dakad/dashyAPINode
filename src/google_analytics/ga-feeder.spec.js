@@ -33,11 +33,7 @@ const {
 } = chai;
 
 // let spyFeedReqGA;
-let superagentMock = mockRequest(request, mockReqConf,
-  ({
-    method,
-    url,
-  }) => console.log('superagentMock call', method, url));
+let superagentMock;
 
 
 const dates = Util.getAllDates();
@@ -46,16 +42,21 @@ const dates = Util.getAllDates();
 // Test Units
 
 
-describe('GoogleAnalytics : Feeder', () => {
+describe.skip('GoogleAnalytics : Feeder', () => {
   before(() => {
-    // sinon.stub(feed,
-    //   'getAccessToken',
-    //   () => Promise.resolve('GA_ACCESS_TOKEN')
-    // );
+    sinon.stub(feed,
+      'getAccessToken',
+      () => Promise.resolve('GA_ACCESS_TOKEN')
+    );
+
+    superagentMock = mockRequest(request, mockReqConf,
+      (log) => console.log('SUPERMockAgent call Google APIS', log.url));
   });
+
   after(() => superagentMock.unset());
 
   beforeEach(() => {});
+
 
   describe('requestGoogleAnalyticsFor', () => {
     let spySuperAgent;

@@ -9,7 +9,7 @@
 // Dependencies
 // Packages
 const {expect} = require('chai');
-// const sinon = require('sinon');
+const sinon = require('sinon');
 const Supertest = require('supertest');
 const request = require('superagent');
 const mockRequest = require('superagent-mock');
@@ -41,13 +41,14 @@ let router;
 
 describe('ChartMogul : Router', () => {
   before(() => superagentMock = mockRequest(request, mockReqConf,
-    (log) => console.log('superagent call', log.url)));
+    (log) => console.log('SUPERMockAgent call ChartMogul', log.url)));
 
   after(() => superagentMock.unset());
 
 
   it('should have the url path set to /chartmogul', () => {
     router = new ChartMogulRouter(feed);
+    sinon.stub(router, 'initPusher', () => null);
     expect(router.getURL()).to.not.be.null;
   });
 
@@ -90,6 +91,7 @@ describe('ChartMogul : Router', () => {
     beforeEach((done) => {
       ctx = {body: {}, state: {config: {}}, status: 404};
       router = new ChartMogulRouter(feed);
+      sinon.stub(router, 'initPusher', () => null);
       server.initRouters(router.init());
       server.init().then(() => {
         openedServer = server.getApp().listen();

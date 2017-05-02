@@ -30,14 +30,19 @@ chai.use(chaiAsPromised);
 const {expect} = chai;
 
 let spyFeedReqChartMogul;
-let superagentMock = mockRequest(request, mockReqConf,
-  ({method, url}) => console.log('superagentMock call', method, url));
+let superagentMock;
 
 // -------------------------------------------------------------------
 // Test Units
 
 
 describe('ChartMogul : Feeder', () => {
+    before(() => superagentMock = mockRequest(request, mockReqConf,
+    (log) => console.log('SUPERMockAgent call ChartMogul', log.url)));
+
+  after(() => superagentMock.unset());
+
+
   beforeEach(() => { });
 
 

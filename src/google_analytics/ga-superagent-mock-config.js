@@ -44,6 +44,30 @@ exports = module.exports = [{
         return {columnHeaders: [], totalsForAllResults: {}, rows: []};
       }
 
+      if (query.metrics == 'ga:avgSessionDuration') {
+        // return request.ga.newUsers;
+        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
+      }
+
+      if (query.metrics == 'ga:bounceRate') {
+        // return request.ga.newUsers;
+        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
+      }
+
+      if (query.metrics == 'ga:pageviews') {
+        // return request.ga.newUsers;
+        if(query.filters === 'ga:pagePathLevel1==/aso-blog/') {
+          return {columnHeaders: [], totalsForAllResults: {}, rows: []};
+        }
+        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
+      }
+
+      if (query.metrics == 'ga:avgTimeOnPage') {
+        // return request.ga.newUsers;
+        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
+      }
+
+
       throw new Error(404);
     },
 

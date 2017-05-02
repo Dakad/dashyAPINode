@@ -8,8 +8,10 @@
 // -------------------------------------------------------------------
 // Dependencies
 // Packages
-const {expect} = require('chai');
-// const sinon = require('sinon');
+const {
+  expect,
+} = require('chai');
+const sinon = require('sinon');
 const Supertest = require('supertest');
 const request = require('superagent');
 const mockRequest = require('superagent-mock');
@@ -34,29 +36,38 @@ const server = new Server(0);
 let openedServer;
 let superagentMock;
 let router;
-// let next;
-
+// let stubRouterInitPusher;
 // -------------------------------------------------------------------
 // Test Units
 
 
-describe('ChartMogul : Router', () => {
-  before(() => superagentMock = mockRequest(request, mockReqConf,
-    (log) => console.log('superagent call', log.url)));
+describe('GoogleAnalytics : Router', () => {
+  before(() => {
+    superagentMock = mockRequest(request, mockReqConf,
+      (log) => console.log('SUPERMockAgent call Google APIS', log.url));
+
+
+    sinon.stub(feed,
+      'getAccessToken',
+      () => Promise.resolve('GA_ACCESS_TOKEN')
+    );
+  });
 
   after(() => superagentMock.unset());
 
 
   it('should have the url path set to /ga', () => {
     router = new GARouter(feed);
+    sinon.stub(router, 'initPusher', () => null);
     expect(router.getURL()).to.not.be.null;
   });
 
   describe.skip('configByParams', () => {
-    let ctx = {body: {}, state: {}, status: 404};
+    ctx = {body: {}, state: {config: {}}, status: 404};
+
 
     beforeEach(() => {
-      ctx = {body: {}, state: {config: {}}, status: 404};
+     ctx = {body: {}, state: {config: {}}, status: 404};
     });
 
     it('should return a object', (done) => {
@@ -88,6 +99,7 @@ describe('ChartMogul : Router', () => {
   describe('Call the routes with the server', () => {
     beforeEach((done) => {
       router = new GARouter(feed);
+      sinon.stub(router, 'initPusher', () => null);
       server.initRouters(router.init());
       server.init().then(() => {
         openedServer = server.getApp().listen();
@@ -103,7 +115,9 @@ describe('ChartMogul : Router', () => {
       Supertest(openedServer)
         .get('/ga/zen')
         .expect(200)
-        .expect(({body}) => {
+        .expect(({
+          body,
+        }) => {
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('joke');
           expect(body.joke).to.be.a('string');
@@ -115,7 +129,9 @@ describe('ChartMogul : Router', () => {
       Supertest(openedServer)
         .get('/ga/visitors/unique')
         .expect(200)
-        .expect(({body}) => {
+        .expect(({
+          body,
+        }) => {
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
@@ -126,9 +142,11 @@ describe('ChartMogul : Router', () => {
 
     it('/session/duration/avg', (done) => {
       Supertest(openedServer)
-        .get('/ga/session/duration/avg')
+        .get('/ga/sessions/duration/avg')
         .expect(200)
-        .expect(({body}) => {
+        .expect(({
+          body,
+        }) => {
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('absolute', 'item');
           expect(body.item).to.be.a('array')
@@ -141,7 +159,9 @@ describe('ChartMogul : Router', () => {
       Supertest(openedServer)
         .get('/ga/bounce_rate')
         .expect(200)
-        .expect(({body}) => {
+        .expect(({
+          body,
+        }) => {
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('absolute', 'item');
           expect(body.item).to.be.a('array')
@@ -155,9 +175,11 @@ describe('ChartMogul : Router', () => {
       Supertest(openedServer)
         .get('/ga/blog/views')
         .expect(200)
-        .expect(({body}) => {
+        .expect(({
+          body,
+        }) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('absolute', 'item');
+          expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
             .and.to.have.lengthOf(2);
         })
@@ -169,7 +191,10 @@ describe('ChartMogul : Router', () => {
       Supertest(openedServer)
         .get('/ga/blog/duration')
         .expect(200)
-        .expect(({body}) => {
+        .expect(({
+          body,
+        }) => {
+          console.log(body);
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('absolute', 'item');
           expect(body.item).to.be.a('array')
@@ -183,24 +208,48 @@ describe('ChartMogul : Router', () => {
       Supertest(openedServer)
         .get('/ga/blog/most')
         .expect(200)
-        .expect(({body}) => {
+        .expect(({
+          body,
+        }) => {
+          console.log(body);
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('items');
-          expect(body.items).to.be.a('array')
-            .and.to.have.lengthOf(10);
+          expect(body).to.contains.all.keys('item');
+          expect(body.item).to.be.a('array')
+            .and.to.have.lengthOf(1);
+          expect(body.item[0].text).to.be.string;
         })
         .end(done);
     });
 
 
-    it.skip('/acq/src', (done) => {
+    it('/blog/most?out=list', (done) => {
       Supertest(openedServer)
-        .get('/ga/acq/src?format=list')
+        .get('/ga/blog/most?out=list')
         .expect(200)
-        .expect(({body}) => {
-          expect(body).to.be.a('object')
-            .and.to.contains.all.keys('format', 'unit', 'items');
+        .expect(({
+          body,
+        }) => {
+          console.log(body);
+          expect(body).to.be.a('object');
+          expect(body).to.contains.all.keys('items');
           expect(body.items).to.be.a('array');
+        })
+        .end(done);
+    });
+
+
+    it('/acq/src', (done) => {
+      Supertest(openedServer)
+        .get('/ga/acq/src')
+        .expect(200)
+        .expect(({
+          body,
+        }) => {
+          console.log(body);
+          expect(body).to.be.a('object')
+            .and.to.contains.all.keys('percentage', 'item');
+          expect(body.percentage).to.be.a('string').and.to.be.eq('hide');
+          expect(body.item).to.be.a('array');
         })
         .end(done);
     });

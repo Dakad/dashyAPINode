@@ -205,9 +205,6 @@ module.exports = class Util {
     firstInPastMonth.setDate(0);
     firstInPastMonth.setDate(1);
 
-
-    console.log(firstInPastMonth);
-
     // The last day in the past month
     const endInPastMonth = new Date();
     endInPastMonth.setDate(0);
@@ -232,11 +229,54 @@ module.exports = class Util {
       today,
     };
 
-    if(type && typeof type === 'string') {
+    if (type && typeof type === 'string') {
       return dates[type];
     }
 
     return dates;
+  }
+
+
+  /**
+   * Convert sec to time format MMSS.
+   *
+   * @static
+   *
+   * @param {null|number|string} [sec] - The number of seconds
+   *  if null, use the current time,
+   * @return {Object} hhmmss - Contains the duration in time,
+   * @return {Object} hhmmss.time - The time of duration
+   * @return {Object} hhmmss.h - The number of hours.
+   * @return {Object} hhmmss.m - The number of minutes.
+   * @return {Object} hhmmss.s - The number of seconds.
+   * @return {Object} hhmmss.format - The formatted time '%$M%m %$S%s'
+   */
+  static toHHMMSS(sec) {
+    let duration = Date.now();
+    if (sec !== undefined || sec !== null) {
+      sec = Number.parseFloat(sec);
+      duration = sec * 1000;
+    }
+    const [time, h, m, s] = new Date(duration).toUTCString()
+      .match(/(\d{2}):(\d{2}):(\d{2})/)
+      .slice(0, 4)
+      .map((res, i) => (i === 0) ? res : Number.parseInt(res, 10));
+
+    let format = '';
+
+    format += (h > 0) ? h + 'h ' : '';
+    format += (m > 0) ? m + 'm ' : '';
+    format += (s > 0) ? s + 's' : '';
+
+    format = format.trim();
+
+    return {
+      time,
+      h,
+      m,
+      s,
+      format,
+    };
   }
 
 };

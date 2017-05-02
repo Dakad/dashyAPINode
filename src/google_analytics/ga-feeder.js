@@ -71,11 +71,40 @@ class GoogleAnalyticsFeeder extends Feeder {
 
   /** @override */
   cacheResponse(key, resp) {
-    if (key) { // ? Defined a key for the store ?
+    if (!Util.isEmptyOrNull(key)) { // ? Defined a key for the store ?
+      super.setInCache(key, resp);
     }
 
     return resp;
     // TODO Must implements the cacheResponse()
+  }
+
+
+  /**
+   * 
+   * Hash the query to form a key for the cache.
+   * Only hash the query if the end-date is not in the current month.
+   * 
+   * @private 
+   * 
+   * @param {Object} q - The query params to be send.
+   * 
+   * @return {string} - The corresponding hash or null.
+   */
+  hashQueryForKey(q) {
+    if(Util.isEmptyOrNull(q)){
+      return null;
+    }
+    const firstInMonth = new Date();
+    firstInMonth.setDate(1);
+    
+    const qEndDate = new Date(q['end-date']);
+    
+    if (qEndDate.getTime() <= firstInMonth.getTime()) {
+      return Util.hashCode(q);
+    }
+    
+    return null;
   }
 
 
@@ -125,9 +154,9 @@ class GoogleAnalyticsFeeder extends Feeder {
 
 
   /**
-   * Send a request to ChartMogul API.
+   * Send a request to GoogleAnalytics API.
    *
-   * @param {Object} query - The query params to send to ChartMogul
+   * @param {Object} query - The query params to send to GoogleAnalytics
    * @return {Promise}
    *
    * @memberOf ChartMogulFeed
@@ -137,10 +166,6 @@ class GoogleAnalyticsFeeder extends Feeder {
       if (Util.isEmptyOrNull(query)) {
         throw new Error('Arguments:query must be defined');
       }
-
-      // Key to be hash for REDIS
-      // TODO Only cache the response on certain URL
-      let keyForCache = undefined;
 
       // Check if got all required key into the query
       requiredKeysForQuery.forEach((requiredKey) => {
@@ -166,8 +191,21 @@ class GoogleAnalyticsFeeder extends Feeder {
       // Add viewIDs
       query['ids'] = 'ga:' + ConfigGA.viewId;
 
-      query['access_token'] = await this.getAccessToken();
+      
+      // Key to be hash for REDIS
+      let keyForCache = null;
+      // let keyForCache = this.hashQueryForKey(query);
+    
+      // console.log(query,keyForCache);
 
+      // Get The cached response for this request 
+      const cachedResp = await super.getCached(keyForCache);
+      if (cachedResp != null) {
+        return cachedResp;
+      }
+
+      query['access_token'] = await this.getAccessToken();
+      
       // Sending the request to the API
       const {
         body: resp,
@@ -278,17 +316,32 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     ]);
 
-    return {
-      'absolute': true,
-      'item': [{
-          'type': 'time_duration',
-          'value': Number.parseFloat(current[metrics[0]]) * 1000,
-        },
-        {
-          'value': Number.parseFloat(last[metrics[0]]) * 1000,
-        },
-      ],
-    };
+    const firstRes = current[metrics[0]];
+    const secondRes = last[metrics[0]];
+    
+    switch (config.out) {
+      case 'html':
+      return {
+        'item' : [{
+          'text' : HTMLFormatter.toTextForDuration(firstRes,secondRes)  
+        }]
+      };
+      
+      default:
+        return {
+          'absolute': true,
+          'item': [{
+              'type': 'time_duration',
+              'value': Number.parseFloat(firstRes) * 1000,
+            },{
+              'type': 'time_duration',
+              'value': Number.parseFloat(secondRes) * 1000,
+            },
+          ],
+        };
+    
+    }
+
   }
 
 
@@ -428,21 +481,35 @@ class GoogleAnalyticsFeeder extends Feeder {
     }] = await Promise.all([
       this.requestGAFor(query.current),
       this.requestGAFor(query.last),
-
     ]);
-
+    
+    const firstRes = current[metrics[0]];
+    const secondRes = last[metrics[0]];
+    
+    
+    switch (config.out) {
+      case 'html':
+        return {
+      'item' : [{
+        'text' : HTMLFormatter.toTextForDuration(firstRes,secondRes)  
+      }]
+    };
+      default:
     return {
       'absolute': true,
       'item': [{
           'type': 'time_duration',
-          'value': Number.parseFloat(current[metrics[0]]) * 1000,
+          'value': Number.parseFloat(firstRes) * 1000,
         },
         {
           'type': 'time_duration',
-          'value': Number.parseFloat(last[metrics[0]]) * 1000,
+          'value': Number.parseFloat(secondRes) * 1000,
         },
       ],
     };
+    
+    }
+
   }
 
 
@@ -457,7 +524,7 @@ class GoogleAnalyticsFeeder extends Feeder {
    */
   async fetchMostBlogPost(config) {
     const metrics = ['ga:pageviews'];
-    const dimensions = ['ga:pageTitle'];
+    const dimensions = ['ga:pageTitle','ga:pagePath'];
     const filters = ['ga:pagePathLevel1', '==', '/aso-blog/'];
 
     const {
@@ -470,11 +537,26 @@ class GoogleAnalyticsFeeder extends Feeder {
       metrics,
       dimensions,
       filters,
-
     });
+    
+    
+    const [... reqOldTopValue] = tops.map(([path]) => {
+      return await this.requestGAFor({
+        'start-date': config['last-start-date'],
+        'end-date': config['last-end-date'],
+        'max-results': 1,
+        'sort': '-ga:pageviews',
+        'filters' : ['ga:pagePath', '==', path],
+        metrics,
+        dimensions,
+        filters,
+      });  
+    })
+    
+    const oldTopValue = await Promise.all(... reqOldTopValue);
 
 
-    switch(config.format) {
+    switch(config.out){
       default:
         return {
       'item': [{
@@ -483,7 +565,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     };
 
       case 'json':
-        return tops.map(([title, nbViews]) => {
+        return tops.map(([path,title, nbViews]) => {
           return {
             'post': title.replace(' - ASO Blog', ''),
             'views': nbViews,
@@ -531,8 +613,7 @@ class GoogleAnalyticsFeeder extends Feeder {
       filters,
     });
 
-
-    switch(config.format) {
+    switch(config.out){
       default:
         return {
       'item': [{

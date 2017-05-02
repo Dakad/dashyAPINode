@@ -69,6 +69,7 @@ describe('Component : Util', () => {
     });
   });
 
+
   describe('formatMoney', () => {
     const inputs = [1, 12, 123, 1234, 12345, 123456, 1234567, 12345.67];
     const outputs = ['€ 1.00', '€ 12.00', '€ 123.00', '€ 1 234.00', '€ 12 345.00', '€ 123 456.00', '€ 1 234 567.00', '€ 12 345.67']
@@ -93,6 +94,7 @@ describe('Component : Util', () => {
       });
     });
   });
+
 
   describe('hashCode', () =>{
 
@@ -130,6 +132,50 @@ describe('Component : Util', () => {
       }
     });
   });
+
+
+  describe.only('toHHMMSS', () => {
+    
+    it('should use Date.now ', () =>{
+      const hhmmss = Util.toHHMMSS();
+
+      expect(hhmmss).to.be.a('object');
+      expect(hhmmss).to.contains.all.keys(['time','h','m','s','format']);
+      expect(hhmmss.time).to.match(/(\d{2}):(\d{2}):(\d{2})/);
+      expect(hhmmss.format).to.match(/(\d{1}h)? (\d{1,}m)? (\d{1,})s/);
+    });
+        
+    it('should return obj ', () =>{
+      expect(
+        Util.toHHMMSS(0)
+      ).to.be.a('object')
+      .and.to.contains.all.keys(['time','h','m','s','format']);
+      
+      
+      let hhmmss = Util.toHHMMSS(1);
+      expect(
+        hhmmss
+      ).to.be.a('object')
+      .and.to.contains.all.keys(['time','h','m','s','format']);
+      expect(hhmmss.format).to.eq('1s');
+
+      hhmmss = Util.toHHMMSS(33);
+      expect(hhmmss.format).to.eq('33s');
+      
+      hhmmss = Util.toHHMMSS(111);
+      expect(hhmmss.format).to.eq('1m 51s');
+      
+      hhmmss = Util.toHHMMSS(599);
+      expect(hhmmss.format).to.eq('9m 59s');
+      
+      hhmmss = Util.toHHMMSS(600);
+      expect(hhmmss.format).to.eq('10m');
+      
+    });
+    
+    
+  });
+
 
   // describe('convertArrayToObject', () =>{
   //   it('should return empty Object', () => {

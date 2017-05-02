@@ -521,7 +521,7 @@ class GoogleAnalyticsFeeder extends Feeder {
    */
   async fetchMostBlogPost(config) {
     const metrics = ['ga:pageviews'];
-    const dimensions = ['ga:pageTitle', 'ga:pagePath'];
+    const dimensions = ['ga:pagePath', 'ga:pageTitle'];
     const filters = ['ga:pagePathLevel1', '==', '/aso-blog/'];
 
     let {
@@ -544,12 +544,15 @@ class GoogleAnalyticsFeeder extends Feeder {
         'filters': ['ga:pagePath', '==', path],
         metrics,
         dimensions,
-        filters,
       });
     }));
+    
+
+
 
     // CANNOT be stored in cache coz the most post can change in the month.
-    oldTopValue = oldTopValue.reduce((old, [path, title, nbViews]) => {
+    oldTopValue = oldTopValue.map(({rows})=> (rows) ? rows.pop() : [])
+    .reduce((old, [path='',,nbViews=0]) => {
       old[path] = nbViews;
       return old;
     }, {});
@@ -557,7 +560,12 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     // Insert the old value into tops
     tops = tops.map(([path, title, nbViews]) => {
-      return [path, title, nbViews, oldTopValue[path]];
+      return [
+        title.replace(' - ASO Blog', ''), 
+        nbViews, 
+        (oldTopValue[path]||0),
+        path
+      ];
     });
 
     switch (config.out) {
@@ -568,18 +576,18 @@ class GoogleAnalyticsFeeder extends Feeder {
       };
 
       case 'json':
-        return tops.map(([path, title, nbViews, oldViews]) => ({
-          'path': path,
-          'post': title.replace(' - ASO Blog', ''),
-          'views': nbViews,
+        return tops.map(([title, nbViews, oldViews, path]) => ({
+          title,
+          path,
+          nbViews,
           oldViews,
         }));
 
       case 'list':
           return {
-          'items': tops.map(([, title, nbViews]) =>
+          'items': tops.map(([title, nbViews]) =>
             ({
-              'label': title.replace(' - ASO Blog', ''),
+              'label': title,
               'value': nbViews,
             })
           ),

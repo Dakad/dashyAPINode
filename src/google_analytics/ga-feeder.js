@@ -557,7 +557,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     // Insert the old value into tops
     tops = tops.map(([path, title, nbViews]) => {
-      return [path, title, oldTopValue[path]];
+      return [path, title, nbViews, oldTopValue[path]];
     });
 
     switch (config.out) {
@@ -568,12 +568,12 @@ class GoogleAnalyticsFeeder extends Feeder {
       };
 
       case 'json':
-          return tops.map(([path, title, nbViews]) => {
-          return {
-            'post': title.replace(' - ASO Blog', ''),
-            'views': nbViews,
-          };
-        });
+        return tops.map(([path, title, nbViews, oldViews]) => ({
+          'path': path,
+          'post': title.replace(' - ASO Blog', ''),
+          'views': nbViews,
+          oldViews,
+        }));
 
       case 'list':
           return {

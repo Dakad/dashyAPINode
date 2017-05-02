@@ -194,7 +194,6 @@ describe('GoogleAnalytics : Router', () => {
         .expect(({
           body,
         }) => {
-          console.log(body);
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('absolute', 'item');
           expect(body.item).to.be.a('array')
@@ -211,7 +210,6 @@ describe('GoogleAnalytics : Router', () => {
         .expect(({
           body,
         }) => {
-          console.log(body);
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('item');
           expect(body.item).to.be.a('array')
@@ -229,7 +227,6 @@ describe('GoogleAnalytics : Router', () => {
         .expect(({
           body,
         }) => {
-          console.log(body);
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('items');
           expect(body.items).to.be.a('array');
@@ -245,7 +242,6 @@ describe('GoogleAnalytics : Router', () => {
         .expect(({
           body,
         }) => {
-          console.log(body);
           expect(body).to.be.a('object')
             .and.to.contains.all.keys('percentage', 'item');
           expect(body.percentage).to.be.a('string').and.to.be.eq('hide');

@@ -26,6 +26,8 @@ const request = require('superagent');
 // Mine
 const Feeder = require('../components/feeder');
 const Util = require('../components/util');
+const GeckoFormatter = require('../components/gecko-formatter');
+
 const HTMLFormatter = require('./chartmogul-format-html');
 
 
@@ -309,7 +311,8 @@ class ChartMogulFeeder extends Feeder {
     if (nbLastMonth === null) { // ? Nothing in cache ?
       super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
     }
-    return item;
+    
+    return GeckoFormatter.toNumberAndSecondStat(item[0],item[1]);
   }
 
 
@@ -330,7 +333,7 @@ class ChartMogulFeeder extends Feeder {
     last30Days.setHours(0, 0, 0, 0);
 
     const item = [
-      {'value': 0},
+      {'value': 0, 'absolute' : true},
       {'value': 0},
     ];
 
@@ -362,7 +365,7 @@ class ChartMogulFeeder extends Feeder {
     } else {
       item[1].value = avgLeadsLastMonth;
     }
-    return item;
+    return GeckoFormatter.toNumberAndSecondStat(item[0],item[1]);
   }
 
 
@@ -377,15 +380,14 @@ class ChartMogulFeeder extends Feeder {
   async fetchMrr(config) {
     const req = await this.requestChartMogulFor('/metrics/mrr', config);
     const {entries: [previous, current]} = req;
-    return [
-      { // The mrr for today
+    
+    return GeckoFormatter.toNumberAndSecondStat({ 
         'value': Math.round(current.mrr / 100),
         'prefix': '€',
       },
       { // Take the first one because it'll be for the end of month
         'value': Math.round(previous.mrr / 100),
-      },
-    ];
+    });
   }
 
   /**
@@ -401,10 +403,10 @@ class ChartMogulFeeder extends Feeder {
       '/metrics/customer-count',
       config
     );
-    return [
-      {value: current['customers']},
-      {value: previous['customers']},
-    ];
+    return GeckoFormatter.toNumberAndSecondStat({ 
+      value: current['customers']},
+      {value: previous['customers']}
+    );
   }
 
 
@@ -421,10 +423,10 @@ class ChartMogulFeeder extends Feeder {
       '/metrics/mrr-churn-rate',
       config
     );
-    return [
-      {prefix: '%', value: current['mrr-churn-rate']},
-      {value: previous['mrr-churn-rate']},
-    ];
+    return GeckoFormatter.toNumberAndSecondStat({ 
+      prefix: '%', value: current['mrr-churn-rate']},
+      {value: previous['mrr-churn-rate']}
+    );
   }
 
 
@@ -513,12 +515,13 @@ class ChartMogulFeeder extends Feeder {
     }
 
     const netMrr = this.calcNetMRR(entries.pop());
-    return [{
+    return {
+      'item' :[{
       'text': HTMLFormatter.toTextNetMrr(
         Util.toMoneyFormat(netMrr, ',', '.')
         , Util.toMoneyFormat(this.bestNetMRR_.val, ',', '.')
       ),
-    }];
+    }]};
   }
 
   /**
@@ -541,7 +544,7 @@ class ChartMogulFeeder extends Feeder {
 
     switch(config.out) {
       case 'list':
-        return Object.assign({}, {
+        return GeckoFormatter.toLeaderboard({
           'format': 'currency',
           'unit': 'EUR',
           'items': mrrsEntries.map((item) => ({
@@ -580,10 +583,10 @@ class ChartMogulFeeder extends Feeder {
       '/metrics/arr',
       config
     );
-    return [
+    return GeckoFormatter.toNumberAndSecondStat(
       {value: Math.round(current.arr) / 100, prefix: '€'},
-      {value: Math.round(previous.arr) / 100},
-    ];
+      {value: Math.round(previous.arr) / 100}
+    );
   }
 
   /**
@@ -599,10 +602,10 @@ class ChartMogulFeeder extends Feeder {
       '/metrics/arpa',
       config
     );
-    return [
+    return GeckoFormatter.toNumberAndSecondStat(
       {value: Math.round(current.arpa / 100), prefix: '€'},
-      {value: Math.round(previous.arpa / 100)},
-    ];
+      {value: Math.round(previous.arpa / 100)}
+    );
   }
 
 
@@ -633,16 +636,16 @@ class ChartMogulFeeder extends Feeder {
       });
     }
 
-    const [...customersCountByPlan] = await Promise.all([
+    const [...customersCountByPlan] = await Promise.all(
       // For each plan, GET the customers' count with this plan
-      ...listPlans.map((plan) => {
+      listPlans.map((plan) => {
       return this.requestChartMogulFor('/metrics/customer-count', {
         'start-date': config['start-date'],
         'end-date': config['end-date'],
         'plans': plan.name,
       });
-    }),
-    ]);
+    })
+    );
 
     let [lastBiggest, ...biggestCustByPlans] = await Promise.all([
       this.getCached(keyForCache),
@@ -661,42 +664,7 @@ class ChartMogulFeeder extends Feeder {
     if (lastBiggest === null) { // First fresh fetch
       lastBiggest = [];
     }
-    // Format the result for the List Widget
-    /* const items = biggestCustByPlans.map(({total, plan}, i) => {
-      const item = {
-        'title': {
-          'text': plan.name,
-        },
-        'description': total + ' subscribers',
-      };
-      // First Position
-      if (i === 0) {
-        item.label = {
-          'name': 'Best !',
-          'color': '#88dd42',
-        };
-      }
-      // Last one
-      if (i === biggestCustByPlans.length - 1) {
-        item.label = {
-          'name': 'At least !',
-          'color': '#155460',
-        };
-      }
-      // Check the previous rank
-      const prevRank = lastBiggest.findIndex(
-        ({plan: old}, i) => {
-          return old.uuid === plan.uuid;
-        }
-      );
-
-      if (prevRank !== -1) {
-        item['previous_rank'] = prevRank + 1;
-      }
-      return item;
-    });
-    */
-
+    
     // Format the result for the LeaderBoard Widget
     const items = biggestCustByPlans.map(({total, plan}) => {
       const item = {
@@ -725,7 +693,7 @@ class ChartMogulFeeder extends Feeder {
     });
 
     this.setInCache(keyForCache, biggestCustByPlans);
-    return items;
+    return GeckoFormatter.toLeaderboard(items);
   }
 
   /**
@@ -745,7 +713,7 @@ class ChartMogulFeeder extends Feeder {
       status: (onlyLead) ? 'Lead' : 'Active',
     });
 
-    return leads
+    const latestLeads =  leads
       .sort((cust1, cust2) => {
         const cust1DateTime = (onlyLead)
           ? cust1['lead_created_at']
@@ -791,6 +759,12 @@ class ChartMogulFeeder extends Feeder {
           }),
         };
       });
+      
+      if (config.out === 'json') {
+       return latestLeads; 
+      }
+      
+      return GeckoFormatter.toText(latestLeads);
   }
 
 
@@ -838,11 +812,8 @@ class ChartMogulFeeder extends Feeder {
       .slice(0, 10)
       .map((iso)=>[iso, tmpCountryCount[iso]]);
 
-    return {
-      'item': [{
-        'text': HTMLFormatter.toTextMrrCountryCount(countryCount),
-      }],
-    };
+    const html = HTMLFormatter.toTextMrrCountryCount(countryCount);
+    return GeckoFormatter.toText(html);
   }
 
 

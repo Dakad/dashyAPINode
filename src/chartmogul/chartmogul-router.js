@@ -149,7 +149,7 @@ class ChartMogulRouter extends BaseRouter {
      *
      */
     this.router_.get('/mrr', async ({state}, next) => {
-      state.data.item = await this.feed_.fetchMrr(state.config, next);
+      state.data = await this.feed_.fetchMrr(state.config, next);
       return next();
     });
 
@@ -176,7 +176,7 @@ class ChartMogulRouter extends BaseRouter {
      *
      */
     this.router_.get('/customers', async ({state}, next) => {
-      state.data.item = await this.feed_.fetchNbCustomers(state.config, next);
+      state.data = await this.feed_.fetchNbCustomers(state.config, next);
       return next();
     });
 
@@ -206,9 +206,7 @@ class ChartMogulRouter extends BaseRouter {
      *
      */
     this.router_.get('/mrr/churn', async ({state}, next) => {
-      const item = await this.feed_.fetchNetMRRChurnRate(state.config, next);
-      state.data.item = item;
-      state.data.type = 'reverse';
+      state.data = await this.feed_.fetchNetMRRChurnRate(state.config, next);
       return next();
     });
 
@@ -236,8 +234,7 @@ class ChartMogulRouter extends BaseRouter {
      *
      */
     this.router_.get('/mrr/net', async ({state}, next) => {
-      const item = await this.feed_.fetchNetMRRMovement(state.config, next);
-      state.data.item = item;
+      state.data = await this.feed_.fetchNetMRRMovement(state.config, next);
       return next();
     });
 
@@ -313,7 +310,7 @@ class ChartMogulRouter extends BaseRouter {
       *
       */
     this.router_.get('/arr', async ({state}, next) => {
-      state.data.item = await this.feed_.fetchArr(state.config, next);
+      state.data = await this.feed_.fetchArr(state.config, next);
       return next();
     });
 
@@ -343,7 +340,7 @@ class ChartMogulRouter extends BaseRouter {
       *
       */
     this.router_.get('/arpa', async ({state}, next) => {
-      state.data.item = await this.feed_.fetchArpa(state.config, next);
+      state.data = await this.feed_.fetchArpa(state.config, next);
       return next();
     });
 
@@ -409,8 +406,7 @@ class ChartMogulRouter extends BaseRouter {
       firstInMonth.setDate(1);
       state.config['start-date'] = Util.convertDate(firstInMonth);
 
-      const top = await this.feed_.fetchMostPlansPurchased(state.config);
-      state.data.items = top;
+      state.data = await this.feed_.fetchMostPlansPurchased(state.config);
       return next();
     });
 
@@ -573,32 +569,25 @@ class ChartMogulRouter extends BaseRouter {
     [
       [
         widgets.leadsMonth.id, // Leads Month
-        async () => ({'item': await this.feed_.fetchNbLeads()}),
+        this.feed_.fetchNbLeads(),
         widgets.leadsMonth.fetchTime,
       ],
       [
         widgets.leadsToday.id, // Leads Today
-        async () => ({
-          'absolute': true,
-          'item': await this.feed_.fetchNbLeadsToday(),
-        }),
+        this.feed_.fetchNbLeadsToday(),
         widgets.leadsToday.fetchTime,
       ],
       [
         widgets.latestCustomers.id, // Last Customers Month
-        async () => ({
-          'item': await this.feed_.fetchLatestCustomers({
+        this.feed_.fetchLatestCustomers({
             onlyLead: false,
-          }),
         }),
         widgets.latestCustomers.fetchTime,
       ],
       [
         widgets.latestLeads.id, // Last Leads Month
-        async () => ({
-          'item': await this.feed_.fetchLatestCustomers({
+        this.feed_.fetchLatestCustomers({
             onlyLead: true,
-          }),
         }),
         widgets.latestLeads.fetchTime,
       ],

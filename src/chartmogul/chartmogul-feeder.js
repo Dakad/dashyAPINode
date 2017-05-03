@@ -423,8 +423,11 @@ class ChartMogulFeeder extends Feeder {
       '/metrics/mrr-churn-rate',
       config
     );
-    return GeckoFormatter.toNumberAndSecondStat({ 
-      prefix: '%', value: current['mrr-churn-rate']},
+    return GeckoFormatter.toNumberAndSecondStat({
+      reverse : true,
+      prefix: '%', 
+      value: current['mrr-churn-rate']
+    },
       {value: previous['mrr-churn-rate']}
     );
   }

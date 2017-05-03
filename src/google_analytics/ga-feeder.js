@@ -27,6 +27,7 @@ const googleToken = require('gtoken');
 const Logger = require('../components/logger');
 const Feeder = require('../components/feeder');
 const Util = require('../components/util');
+const GeckoBoardFormatter = require("../components/gecko-formatter");
 const HTMLFormatter = require('./ga-format-html');
 
 
@@ -73,11 +74,11 @@ class GoogleAnalyticsFeeder extends Feeder {
   /** @override */
   cacheResponse(key, resp) {
     if (!Util.isEmptyOrNull(key)) { // ? Defined a key for the store ?
+      // If got a defined key, this resp must be cached
       super.setInCache(key, resp);
     }
 
     return resp;
-    // TODO Must implements the cacheResponse()
   }
 
 
@@ -192,18 +193,20 @@ class GoogleAnalyticsFeeder extends Feeder {
       // Add viewIDs
       query['ids'] = 'ga:' + ConfigGA.viewId;
 
-
-      // Key to be hash for REDIS
+      // Key to be hashed for REDIS
       let keyForCache = this.hashQueryForKey(query);
 
-      console.log(query, keyForCache);
-
-      // Get The cached response for this request
-      const cachedResp = await super.getCached(keyForCache);
-      if (cachedResp != null) {
-        return cachedResp;
+      if(keyForCache != null){
+        // Get The cached response for this request
+        const cachedResp = await super.getCached(keyForCache);
+        console.log(query['end-date'], keyForCache, (cachedResp === null));
+        if (cachedResp !== null) {
+          return cachedResp;
+        }
       }
-
+      
+      // Request No cache-able or no cached response for this req
+      
       query['access_token'] = await this.getAccessToken();
 
       // Sending the request to the API
@@ -267,18 +270,14 @@ class GoogleAnalyticsFeeder extends Feeder {
     }] = await Promise.all([
       this.requestGAFor(query.current),
       this.requestGAFor(query.last),
-
     ]);
 
-    return {
-      'item': [{
+    return GeckoBoardFormatter.toNumberAndSecondStat({
           'value': Number.parseInt(current[metrics[0]]),
         },
         {
           'value': Number.parseInt(last[metrics[0]]),
-        },
-      ],
-    };
+    });
   }
 
 
@@ -321,24 +320,18 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     switch (config.out) {
       case 'html':
-        return {
-          'item': [{
-            'text': HTMLFormatter.toTextForDuration(firstRes, secondRes),
-          }],
-        };
+        const html = HTMLFormatter.toTextForDuration(firstRes, secondRes);
+        return GeckoBoardFormatter.toText(html);
 
       default:
-        return {
-          'absolute': true,
-          'item': [{
+        return GeckoBoardFormatter.toNumberAndSecondStat({
+            'absolute': true,
             'type': 'time_duration',
             'value': Number.parseFloat(firstRes) * 1000,
           }, {
             'type': 'time_duration',
             'value': Number.parseFloat(secondRes) * 1000,
-          }],
-        };
-
+        });
     }
   }
 
@@ -377,18 +370,15 @@ class GoogleAnalyticsFeeder extends Feeder {
       this.requestGAFor(query.last),
     ]);
 
-    return {
+    return GeckoBoardFormatter.toNumberAndSecondStat({
       'absolute': true,
-      'type': 'reverse',
-      'item': [{
-          'value': Math.round(Number.parseFloat(current[metrics[0]])),
-          'prefix': '%',
-        },
-        {
-          'value': Math.round(Number.parseFloat(last[metrics[0]])),
-        },
-      ],
-    };
+      'reverse' : true,
+      'value': Math.round(current[metrics[0]]),
+      'prefix': '%',
+      },
+      {
+        'value': Math.round(last[metrics[0]]),
+      });
   }
 
 
@@ -432,15 +422,13 @@ class GoogleAnalyticsFeeder extends Feeder {
       this.requestGAFor(query.last),
     ]);
 
-    return {
-      'item': [{
+    return GeckoBoardFormatter.toNumberAndSecondStat({
           'value': Number.parseInt(current[metrics[0]]),
         },
         {
           'value': Number.parseInt(last[metrics[0]]),
-        },
-      ],
-    };
+        }
+    );
   }
 
 
@@ -487,25 +475,20 @@ class GoogleAnalyticsFeeder extends Feeder {
     switch (config.out) {
       case 'html':
         let diff = Number.parseFloat(firstRes) - Number.parseFloat(secondRes);
-        return {
-          'item': [{
-            'text': HTMLFormatter.toTextForDuration(firstRes, diff),
-          }],
-        };
+        const html = HTMLFormatter.toTextForDuration(firstRes, diff);
+        return GeckoBoardFormatter.toText(html);
+        
       default:
-        return {
+        return GeckoBoardFormatter.toNumberAndSecondStat({
           'absolute': true,
-          'item': [{
               'type': 'time_duration',
               'value': firstRes,
             },
             {
               'type': 'time_duration',
               'value': secondRes,
-            },
-          ],
-        };
-
+            }
+        );
     }
   }
 
@@ -567,12 +550,10 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
 
     switch (config.out) {
-      default: return {
-        'item': [{
-          'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 4)),
-        }],
-      };
-
+      default: 
+        const html = HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 4));
+        return GeckoBoardFormatter.toText(html);
+      
       case 'json':
         return tops.map(([title, nbViews, oldViews, path]) => ({
           title,
@@ -582,14 +563,12 @@ class GoogleAnalyticsFeeder extends Feeder {
         }));
 
       case 'list':
-          return {
-          'items': tops.map(([title, nbViews]) =>
+          return GeckoBoardFormatter.toLeaderboard(tops.map(([title, nbViews]) =>
             ({
               'label': title,
               'value': nbViews,
             })
-          ),
-        };
+          ));
     }
   }
 
@@ -623,22 +602,15 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
 
     switch (config.out) {
-      default: return {
-        'percentage': 'hide',
-        'item': tops.map(([title, nbViews]) =>
-          ({
-            'label': title.replace(' - ASO Blog', ''),
-            'value': Number.parseInt(nbViews),
-          })
-        ),
-      };
-
-      case 'list':
-          return {
-          'item': [{
-            'text': HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 5)),
-          }],
-        };
+      default: 
+        return GeckoBoardFormatter.toFunnel(
+          tops.map(([title, nbViews]) =>
+            ({
+              'label': title.replace(' - ASO Blog', ''),
+              'value': Number.parseInt(nbViews,10),
+            })
+          )
+        );
 
       case 'json':
           return tops.map(([title, nbViews]) => {

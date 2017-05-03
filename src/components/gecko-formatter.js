@@ -44,13 +44,13 @@ class GeckoBoardFormatter {
    *
    * @memberOf GeckoBoardFormatter
    */
-  static toFunnel(items, notPercent = false) {
+  static toFunnel(items, notPercent = true) {
     if (Util.isEmptyOrNull(items)) {
       throw new Error('Items is required and cannot be null or empty');
     }
 
     const data = {
-      'item': items.map(([label, value]) => ({
+      'item': items.map(({label, value}) => ({
         label,
         value,
       })),
@@ -196,7 +196,7 @@ class GeckoBoardFormatter {
         text: label,
       }],
       absolute,
-      reverse,
+      'type': (reverse) ? 'reverse' : undefined,
     };
 
     if (Array.isArray(sec)) {
@@ -222,7 +222,7 @@ class GeckoBoardFormatter {
    * @param {string} items.text - The text to display for this item.
    * @param {int} [items.type=0]  
    *
-   * @return {Object} An Output formatted to the LeaderBoard widget.
+   * @return {Object} An Output formatted to the Text widget.
    *
    * @memberOf GeckoBoardFormatter
    */

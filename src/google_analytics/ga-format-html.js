@@ -109,8 +109,8 @@ class GoogleAnalyticsFormatter {
     };
 
     return blogsViews.reduce(
-      (html, [post, views, progress = 0], i) => html + toHtml([
-        post, views, progress, (i !== 0),
+      (html, [post, views, old = 0], i) => html + toHtml([
+        post, views, views - old, (i !== 0),
       ])
       , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';

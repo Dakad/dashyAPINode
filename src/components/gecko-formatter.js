@@ -213,40 +213,38 @@ class GeckoBoardFormatter {
   }
 
 
-
   /**
    *
    * Render data to correspond with the Text Widget.
    *
    * @param {Array} items - Items to display on the widget
    * @param {string} items.text - The text to display for this item.
-   * @param {int} [items.type=0]  
+   * @param {int} [items.type=0]
    *
    * @return {Object} An Output formatted to the Text widget.
    *
    * @memberOf GeckoBoardFormatter
    */
-   static toText(items){
+   static toText(items) {
      const res = {
-       item : []
+       item: [],
      };
-    
-    if(Array.isArray(items)){
+
+    if(Array.isArray(items)) {
       res.item = items;
     }else{
-      if(typeof items === 'object'){
+      if(typeof items === 'object') {
         res.item.push(items);
       }else{
-        if(typeof items === 'string'){
+        if(typeof items === 'string') {
           res.item.push({
-            'text' : items,
-            'type' : 0
+            'text': items,
+            'type': 0,
           });
         }
-        
       }
     }
-    
+
     return res;
   }
 

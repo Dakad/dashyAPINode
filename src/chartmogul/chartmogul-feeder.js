@@ -311,8 +311,8 @@ class ChartMogulFeeder extends Feeder {
     if (nbLastMonth === null) { // ? Nothing in cache ?
       super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
     }
-    
-    return GeckoFormatter.toNumberAndSecondStat(item[0],item[1]);
+
+    return GeckoFormatter.toNumberAndSecondStat(item[0], item[1]);
   }
 
 
@@ -333,7 +333,7 @@ class ChartMogulFeeder extends Feeder {
     last30Days.setHours(0, 0, 0, 0);
 
     const item = [
-      {'value': 0, 'absolute' : true},
+      {'value': 0, 'absolute': true},
       {'value': 0},
     ];
 
@@ -365,7 +365,7 @@ class ChartMogulFeeder extends Feeder {
     } else {
       item[1].value = avgLeadsLastMonth;
     }
-    return GeckoFormatter.toNumberAndSecondStat(item[0],item[1]);
+    return GeckoFormatter.toNumberAndSecondStat(item[0], item[1]);
   }
 
 
@@ -380,8 +380,8 @@ class ChartMogulFeeder extends Feeder {
   async fetchMrr(config) {
     const req = await this.requestChartMogulFor('/metrics/mrr', config);
     const {entries: [previous, current]} = req;
-    
-    return GeckoFormatter.toNumberAndSecondStat({ 
+
+    return GeckoFormatter.toNumberAndSecondStat({
         'value': Math.round(current.mrr / 100),
         'prefix': '€',
       },
@@ -403,7 +403,7 @@ class ChartMogulFeeder extends Feeder {
       '/metrics/customer-count',
       config
     );
-    return GeckoFormatter.toNumberAndSecondStat({ 
+    return GeckoFormatter.toNumberAndSecondStat({
       value: current['customers']},
       {value: previous['customers']}
     );
@@ -424,9 +424,9 @@ class ChartMogulFeeder extends Feeder {
       config
     );
     return GeckoFormatter.toNumberAndSecondStat({
-      reverse : true,
-      prefix: '%', 
-      value: current['mrr-churn-rate']
+      reverse: true,
+      prefix: '%',
+      value: current['mrr-churn-rate'],
     },
       {value: previous['mrr-churn-rate']}
     );
@@ -519,7 +519,7 @@ class ChartMogulFeeder extends Feeder {
 
     const netMrr = this.calcNetMRR(entries.pop());
     return {
-      'item' :[{
+      'item': [{
       'text': HTMLFormatter.toTextNetMrr(
         Util.toMoneyFormat(netMrr, ',', '.')
         , Util.toMoneyFormat(this.bestNetMRR_.val, ',', '.')
@@ -667,7 +667,7 @@ class ChartMogulFeeder extends Feeder {
     if (lastBiggest === null) { // First fresh fetch
       lastBiggest = [];
     }
-    
+
     // Format the result for the LeaderBoard Widget
     const items = biggestCustByPlans.map(({total, plan}) => {
       const item = {
@@ -716,7 +716,7 @@ class ChartMogulFeeder extends Feeder {
       status: (onlyLead) ? 'Lead' : 'Active',
     });
 
-    const latestLeads =  leads
+    const latestLeads = leads
       .sort((cust1, cust2) => {
         const cust1DateTime = (onlyLead)
           ? cust1['lead_created_at']
@@ -762,11 +762,11 @@ class ChartMogulFeeder extends Feeder {
           }),
         };
       });
-      
+
       if (config.out === 'json') {
-       return latestLeads; 
+       return latestLeads;
       }
-      
+
       return GeckoFormatter.toText(latestLeads);
   }
 
@@ -783,15 +783,15 @@ class ChartMogulFeeder extends Feeder {
     const customers = await this.fetchAndFilterCustomers(1, {
       status: 'Active',
     });
-    
+
     const firstInMonth = new Date();
-    
-    if(firstInMonth.getDate() === 1){
+
+    if(firstInMonth.getDate() === 1) {
       firstInMonth.setDate(0); // Point it to end last month
     }
-    
+
     firstInMonth.setDate(1);
-      
+
     const tmpCountryCount = await customers.filter((cust) => {
       return new Date(cust['customer-since']).getTime()
         >= firstInMonth.getTime();

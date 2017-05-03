@@ -27,7 +27,7 @@ const googleToken = require('gtoken');
 const Logger = require('../components/logger');
 const Feeder = require('../components/feeder');
 const Util = require('../components/util');
-const GeckoBoardFormatter = require("../components/gecko-formatter");
+const GeckoBoardFormatter = require('../components/gecko-formatter');
 const HTMLFormatter = require('./ga-format-html');
 
 
@@ -196,7 +196,7 @@ class GoogleAnalyticsFeeder extends Feeder {
       // Key to be hashed for REDIS
       let keyForCache = this.hashQueryForKey(query);
 
-      if(keyForCache != null){
+      if(keyForCache != null) {
         // Get The cached response for this request
         const cachedResp = await super.getCached(keyForCache);
         console.log(query['end-date'], keyForCache, (cachedResp === null));
@@ -204,9 +204,9 @@ class GoogleAnalyticsFeeder extends Feeder {
           return cachedResp;
         }
       }
-      
+
       // Request No cache-able or no cached response for this req
-      
+
       query['access_token'] = await this.getAccessToken();
 
       // Sending the request to the API
@@ -372,7 +372,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     return GeckoBoardFormatter.toNumberAndSecondStat({
       'absolute': true,
-      'reverse' : true,
+      'reverse': true,
       'value': Math.round(current[metrics[0]]),
       'prefix': '%',
       },
@@ -477,7 +477,7 @@ class GoogleAnalyticsFeeder extends Feeder {
         let diff = Number.parseFloat(firstRes) - Number.parseFloat(secondRes);
         const html = HTMLFormatter.toTextForDuration(firstRes, diff);
         return GeckoBoardFormatter.toText(html);
-        
+
       default:
         return GeckoBoardFormatter.toNumberAndSecondStat({
           'absolute': true,
@@ -550,10 +550,10 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
 
     switch (config.out) {
-      default: 
+      default:
         const html = HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 4));
         return GeckoBoardFormatter.toText(html);
-      
+
       case 'json':
         return tops.map(([title, nbViews, oldViews, path]) => ({
           title,
@@ -563,11 +563,12 @@ class GoogleAnalyticsFeeder extends Feeder {
         }));
 
       case 'list':
-          return GeckoBoardFormatter.toLeaderboard(tops.map(([title, nbViews]) =>
-            ({
-              'label': title,
-              'value': nbViews,
-            })
+          return GeckoBoardFormatter.toLeaderboard(
+            tops.map(([title, nbViews]) =>
+              ({
+                'label': title,
+                'value': nbViews,
+              })
           ));
     }
   }
@@ -602,12 +603,12 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
 
     switch (config.out) {
-      default: 
+      default:
         return GeckoBoardFormatter.toFunnel(
           tops.map(([title, nbViews]) =>
             ({
               'label': title.replace(' - ASO Blog', ''),
-              'value': Number.parseInt(nbViews,10),
+              'value': Number.parseInt(nbViews, 10),
             })
           )
         );

@@ -83,7 +83,7 @@ class GeckoBoardFormatter {
     const data = {
       'format': format,
       'unit': unit,
-      'item': items.map(([label, value, prevRank]) => ({
+      'items': items.map(({label, value, prevRank}) => ({
         label,
         value,
         'previous_rank': prevRank,
@@ -203,13 +203,51 @@ class GeckoBoardFormatter {
       data.item.push(sec);
     } else {
       data.item.push({
-        'value': sec,
+        'value': (sec['value']) ? sec.value : sec,
         type,
         prefix,
       });
     }
 
     return data;
+  }
+
+
+
+  /**
+   *
+   * Render data to correspond with the Text Widget.
+   *
+   * @param {Array} items - Items to display on the widget
+   * @param {string} items.text - The text to display for this item.
+   * @param {int} [items.type=0]  
+   *
+   * @return {Object} An Output formatted to the LeaderBoard widget.
+   *
+   * @memberOf GeckoBoardFormatter
+   */
+   static toText(items){
+     const res = {
+       item : []
+     };
+    
+    if(Array.isArray(items)){
+      res.item = items;
+    }else{
+      if(typeof items === 'object'){
+        res.item.push(items);
+      }else{
+        if(typeof items === 'string'){
+          res.item.push({
+            'text' : items,
+            'type' : 0
+          });
+        }
+        
+      }
+    }
+    
+    return res;
   }
 
 

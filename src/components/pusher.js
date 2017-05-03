@@ -36,7 +36,7 @@ class Pusher {
   /**
    * Creates an instance of Pusher.
    * @param {string} widgetId - The GeckoBoard Widget Key.
-   * @param {Promise} promData - The promise to call for widget data.
+   * @param {Promise} promData - The pending promise for widget data.
    * @param {number} [timeOut] A specific time.
    *
    * @memberOf Pusher
@@ -47,7 +47,7 @@ class Pusher {
     }
 
     if(!promData || !(promData instanceof Promise)) {
-      throw new Error(`[PUSHER] ${this.widgetId_} require a promise`);
+      throw new Error(`[PUSHER] ${widgetId} require a promise`);
     }
 
     this.widgetId_ = widgetId;
@@ -63,7 +63,7 @@ class Pusher {
    */
   async push() {
     try {
-      const data = await this.fnPromData_();
+      const data = await this.fnPromData_;
       request.post(Config.geckoBoard.pushUrl + this.widgetId_)
         .send({'api_key': Config.geckoBoard.apiKey})
         .send({'data': data})

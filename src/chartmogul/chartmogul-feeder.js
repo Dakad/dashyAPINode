@@ -642,12 +642,12 @@ class ChartMogulFeeder extends Feeder {
     const [...customersCountByPlan] = await Promise.all(
       // For each plan, GET the customers' count with this plan
       listPlans.map((plan) => {
-      return this.requestChartMogulFor('/metrics/customer-count', {
-        'start-date': config['start-date'],
-        'end-date': config['end-date'],
-        'plans': plan.name,
-      });
-    })
+        return this.requestChartMogulFor('/metrics/customer-count', {
+          'start-date': config['start-date'],
+          'end-date': config['end-date'],
+          'plans': plan.name,
+        });
+      })
     );
 
     let [lastBiggest, ...biggestCustByPlans] = await Promise.all([
@@ -692,7 +692,7 @@ class ChartMogulFeeder extends Feeder {
           }
         }
       }
-      return item;
+      return [item.label, item.value, item['previous_rank']];
     });
 
     this.setInCache(keyForCache, biggestCustByPlans);

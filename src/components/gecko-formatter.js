@@ -50,7 +50,7 @@ class GeckoBoardFormatter {
     }
 
     const data = {
-      'item': items.map(({label, value}) => ({
+      'item': items.map(([label, value]) => ({
         label,
         value,
       })),
@@ -83,7 +83,7 @@ class GeckoBoardFormatter {
     const data = {
       'format': format,
       'unit': unit,
-      'items': items.map(({label, value, prevRank}) => ({
+      'items': items.map(([label, value, prevRank]) => ({
         label,
         value,
         'previous_rank': prevRank,

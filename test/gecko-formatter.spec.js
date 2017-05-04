@@ -69,12 +69,13 @@ describe('Component : GeckoFormatter', () => {
             "value": 4815162342,
           }
         ],
+        "percentage": "hide"
       });
 
       expect(resp(GeckoFormatter.toFunnel([
         ['Item1', 12345],
         ['Lost', 4815162342]
-      ], true))).eql({
+      ],false))).eql({
         "item": [{
             "label": "Item1",
             "value": 12345,
@@ -84,7 +85,6 @@ describe('Component : GeckoFormatter', () => {
             "value": 4815162342,
           }
         ],
-        "percentage": "hide"
       });
 
 
@@ -96,7 +96,7 @@ describe('Component : GeckoFormatter', () => {
         ['Lost', 4815162342]
       ]))).eql({
         "format": "decimal",
-        "item": [{
+        "items": [{
             "label": "Item1",
             "value": 12345,
           },
@@ -112,7 +112,7 @@ describe('Component : GeckoFormatter', () => {
       ], 'decimal', '$'))).eql({
         "format": "currency",
         "unit": "$",
-        "item": [{
+        "items": [{
             "label": "Item1",
             "value": 12345,
           },
@@ -129,7 +129,7 @@ describe('Component : GeckoFormatter', () => {
       ], 'currency'))).eql({
         "format": "currency",
         "unit": '€',
-        "item": [{
+        "items": [{
             "label": "Item1",
             "value": 12345,
           },
@@ -190,6 +190,54 @@ describe('Component : GeckoFormatter', () => {
         "downTime": "13 days ago",
         "responseTime": "567 s"
       });
+
+    });
+
+    it('Text widget', () => {
+      expect(resp(GeckoFormatter.toText(
+        "production-web-1: NOT RESPONDING"
+      ))).to.eql({
+        "item": [
+          {
+            "text": "production-web-1: NOT RESPONDING",
+            "type" : 0
+          }
+        ]
+      });
+            
+      expect(resp(GeckoFormatter.toText({
+        "text": "As you might know, I am a full time Internet",
+        "type": 1
+      }))).to.eql({
+        "item": [
+          {
+            "text": "As you might know, I am a full time Internet",
+            "type": 1
+          }
+        ]
+      });
+            
+      expect(resp(GeckoFormatter.toText([
+        {
+          "text": "3 to-do items are due next week",
+          "type": 2
+        },{
+          "text": "production-web-1: NOT RESPONDING",
+          "type": 1
+        }
+      ]))).to.eql({
+        "item": [
+          {
+            "text": "3 to-do items are due next week",
+            "type": 2
+          },{
+            "text": "production-web-1: NOT RESPONDING",
+            "type": 1
+          }
+        ]
+      });
+
+
 
     });
 

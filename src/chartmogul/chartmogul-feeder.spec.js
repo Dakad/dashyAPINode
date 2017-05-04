@@ -280,7 +280,7 @@ describe('ChartMogul : Feeder', () => {
 
       it(`feed.${fetch.name}() should fill data with items`, () => {
         return fetch.call(feed, config)
-          .then((item) => {
+          .then(({item}) => {
             expect(item).to.not.be.undefined.and.null;
             expect(item).to.be.a('array').and.to.not.be.empty;
             expect(item).to.have.lengthOf(2);

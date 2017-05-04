@@ -142,7 +142,7 @@ describe('Component : Util', () => {
       expect(hhmmss).to.be.a('object');
       expect(hhmmss).to.contains.all.keys(['time','h','m','s','format']);
       expect(hhmmss.time).to.match(/(\d{2}):(\d{2}):(\d{2})/);
-      expect(hhmmss.format).to.match(/(\d{1,}h)? (\d{1,}m)? (\d{1,}s)?/);
+      expect(hhmmss.format).to.match(/(((\d{1,2}(h|m|s))| ))+/);
     });
         
     it('should return obj ', () =>{

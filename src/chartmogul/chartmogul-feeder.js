@@ -545,15 +545,17 @@ class ChartMogulFeeder extends Feeder {
 
     const otherMrr = entries.pop();
 
+console.log(otherMrr);
+
     switch(config.out) {
       case 'list':
         return GeckoFormatter.toLeaderboard({
           'format': 'currency',
           'unit': 'EUR',
-          'items': mrrsEntries.map((item) => ({
-            'label': item.label,
-            'value': otherMrr[item.entrie] / 100,
-          })),
+          'items': mrrsEntries.map((item) => [
+            item.label,
+            otherMrr[item.entrie] / 100,
+          ]),
         });
 
       case 'html':

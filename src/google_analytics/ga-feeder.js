@@ -16,7 +16,7 @@
 // npm package
 const Config = require('config');
 // const Promise = require('bluebird');
-const request = require('superagent');
+// const request = require('superagent');
 const googleToken = require('gtoken');
 
 
@@ -74,16 +74,16 @@ class GoogleAnalyticsFeeder extends Feeder {
   /** @override */
   cacheResponse(key, resp) {
     const {
-      columnHeaders : headers,
-      totalsForAllResults : totals,
-      rows : rows,
+      columnHeaders: headers,
+      totalsForAllResults: totals,
+      rows: rows,
     } = resp;
     if (!Util.isEmptyOrNull(key)) { // ? Defined a key for the store ?
       // If got a defined key, this resp must be cached
-      super.setInCache(key, {headers,totals,rows});
+      super.setInCache(key, {headers, totals, rows});
     }
 
-    return {headers,totals,rows};
+    return {headers, totals, rows};
   }
 
 
@@ -203,7 +203,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
       query['access_token'] = await this.getAccessToken();
 
-      return super.requestAPI('',query,keyForCache);
+      return super.requestAPI('', query, keyForCache);
     } catch (error) {
       const {
         response: res,

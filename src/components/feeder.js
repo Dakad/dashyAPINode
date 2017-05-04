@@ -114,7 +114,6 @@ class Feeder {
    * @memberOf Feeder
    */
   async requestAPI(destination, query, keyForCache) {
-    
     // Get The cached response for this request
     if (keyForCache) {
       const cachedResp = await this.getCached(keyForCache);

@@ -114,20 +114,24 @@ class Feeder {
    * @memberOf Feeder
    */
   async requestAPI(destination, query, keyForCache) {
+    
     // Get The cached response for this request
-    const cachedResp = await this.getCached(query);
+    if (keyForCache) {
+      const cachedResp = await this.getCached(keyForCache);
+      if (cachedResp !== null) {
+        return cachedResp;
+      }
+    }
 
-    if (cachedResp !== null) {
-      return cachedResp;
-    }
-    if (!destination) {
-      return reject(
-        new Error('Missing the destination for ' + this.apiEndPoint_)
-      );
-    }
-    if (!destination.startsWith('/')) {
-      destination = '/' + destination;
-    }
+    // Request No cache-able
+    // no cached response for this req
+
+    // if (!destination) {
+    //   throw new Error('Missing the destination for ' + this.apiEndPoint_);
+    // }
+    // if (!destination.startsWith('/')) {
+    //   destination = '/' + destination;
+    // }
     try {
     // Sending the request to the API
       const {body} = await request

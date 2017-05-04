@@ -73,12 +73,17 @@ class GoogleAnalyticsFeeder extends Feeder {
 
   /** @override */
   cacheResponse(key, resp) {
+    const {
+      columnHeaders : headers,
+      totalsForAllResults : totals,
+      rows : rows,
+    } = resp;
     if (!Util.isEmptyOrNull(key)) { // ? Defined a key for the store ?
       // If got a defined key, this resp must be cached
-      super.setInCache(key, resp);
+      super.setInCache(key, {headers,totals,rows});
     }
 
-    return resp;
+    return {headers,totals,rows};
   }
 
 
@@ -196,30 +201,9 @@ class GoogleAnalyticsFeeder extends Feeder {
       // Key to be hashed for REDIS
       let keyForCache = this.hashQueryForKey(query);
 
-      if(keyForCache != null) {
-        // Get The cached response for this request
-        const cachedResp = await super.getCached(keyForCache);
-        console.log(query['end-date'], keyForCache, (cachedResp === null));
-        if (cachedResp !== null) {
-          return cachedResp;
-        }
-      }
-
-      // Request No cache-able or no cached response for this req
-
       query['access_token'] = await this.getAccessToken();
 
-      // Sending the request to the API
-      const {
-        body: resp,
-      } = await request.get(this.apiEndPoint_).query(query);
-
-      // Send the resp to be cached if necessary.
-      return this.cacheResponse(keyForCache, {
-        'headers': resp.columnHeaders,
-        'totals': resp.totalsForAllResults,
-        'rows': resp.rows,
-      });
+      return super.requestAPI('',query,keyForCache);
     } catch (error) {
       const {
         response: res,
@@ -606,20 +590,19 @@ class GoogleAnalyticsFeeder extends Feeder {
       default:
         return GeckoBoardFormatter.toFunnel(
           tops.map(([title, nbViews]) =>
-            ({
-              'label': title.replace(' - ASO Blog', ''),
-              'value': Number.parseInt(nbViews, 10),
-            })
+            [
+              title.replace(' - ASO Blog', ''),
+             Number.parseInt(nbViews, 10),
+            ]
           )
         );
 
       case 'json':
-          return tops.map(([title, nbViews]) => {
-          return {
+          return tops.map(([title, nbViews]) => ({
             'source': title,
             'newUsers': nbViews,
-          };
-        });
+          })
+        );
 
     }
   }

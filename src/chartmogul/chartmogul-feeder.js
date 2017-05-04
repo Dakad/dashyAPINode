@@ -57,7 +57,7 @@ const leadsNecessaryKeys = [
   'name', 'status', 'company',
   'country', 'state', 'city', 'address',
   'customer-since', 'lead_created_at', 'free_trial_started_at',
-  'mrr',
+  'mrr', 'uuid'
 ];
 
 /**
@@ -390,6 +390,7 @@ class ChartMogulFeeder extends Feeder {
     });
   }
 
+
   /**
    * The middleware in charge of fetching the customers count.
    *
@@ -696,6 +697,7 @@ class ChartMogulFeeder extends Feeder {
     return GeckoFormatter.toLeaderboard(items);
   }
 
+
   /**
    * The middleware in charge of fetching the Latest Leads or Customers.
    *
@@ -705,6 +707,19 @@ class ChartMogulFeeder extends Feeder {
    * @memberOf ChartMogulFeeder
    */
   async fetchLatestCustomers(config) {
+    const requestForCustomerPlan = async (uuid) => {
+      let subscription = {};
+      
+      // Go fetch the subscriptions plans of those cust
+      const dest = `/customers/${uuid}/subscriptions`;
+      const {entries : subscriptions} = await this.requestChartMogulFor(dest);
+      if(!Util.isEmptyOrNull(subscriptions)) {
+        subscription = subscriptions.pop();
+      }
+    
+      return subscription;
+    };
+    
     // Convert to bool if other type then Bool
     const onlyLead = Boolean(config.onlyLead);
     // const today = new Date().setHours(0, 0, 0, 0);
@@ -713,7 +728,7 @@ class ChartMogulFeeder extends Feeder {
       status: (onlyLead) ? 'Lead' : 'Active',
     });
 
-    const latestLeads = leads
+    let latestLeads = leads
       .sort((cust1, cust2) => {
         const cust1DateTime = (onlyLead)
           ? cust1['lead_created_at']
@@ -727,13 +742,22 @@ class ChartMogulFeeder extends Feeder {
         return (cmp !== 0) ? cmp : cust2.mrr - cust1.mrr;
       })
       .slice(0, 5)
+      .map((cust) => {
+        // Go fetch the subscriptions plans of those cust
+        let subscription = {};
+        if (!onlyLead) {
+          // subscription = requestForCustomerPlan(cust.uuid);
+        }
+        cust.plan = subscription.plan;
+        return cust;
+      })
       .map((cust, i) => {
         const when = new Date(
           (onlyLead)
             ? cust['lead_created_at']
             : cust['customer-since']
         );
-
+        
         if (config.out === 'json') {
           return {
             'country': cust.country,
@@ -742,6 +766,7 @@ class ChartMogulFeeder extends Feeder {
             'company': cust.company,
             'date': when.toISOString(),
             'mrr': (!onlyLead) ? cust.mrr : undefined,
+            'plan' : cust.plan
           };
         }
 
@@ -756,6 +781,7 @@ class ChartMogulFeeder extends Feeder {
             'where': cust.country,
             'city': cust.city,
             'mrr': (!onlyLead) ? cust.mrr : undefined,
+            'plan' : cust.plan
           }),
         };
       });

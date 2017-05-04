@@ -365,7 +365,7 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items', () => {
-      return mogulFeed.fetchNetMRRMovement({}).then((item) => {
+      return mogulFeed.fetchNetMRRMovement({}).then(({item}) => {
         expect(item).to.be.a('array').and.to.not.be.empty;
       });
     });
@@ -399,7 +399,7 @@ describe('ChartMogul : Feeder', () => {
         'end-date': Util.convertDate(today),
         'interval': 'month',
       };
-      return feed.fetchNbLeads(conf).then((item) => {
+      return feed.fetchNbLeads(conf).then(({item}) => {
         expect(item).to.be.a('array').and.to.not.be.empty;
         expect(item).to.have.lengthOf(2);
       });
@@ -432,7 +432,7 @@ describe('ChartMogul : Feeder', () => {
         'end-date': Util.convertDate(today),
         'interval': 'month',
       };
-      return feed.fetchNbLeadsToday(conf).then((item) => {
+      return feed.fetchNbLeadsToday(conf).then(({item}) => {
         expect(item).to.be.a('array').and.to.not.be.empty;
         expect(item).to.have.lengthOf(2);
       });
@@ -462,16 +462,15 @@ describe('ChartMogul : Feeder', () => {
       //   'end-date': Util.convertDate(today),
       //   'interval': 'month',
       // };
-      return feed.fetchMostPlansPurchased({}).then((biggestPlans) => {
-        const [best, , , , last] = biggestPlans;
-        expect(biggestPlans).to.be.a('array').and.to.not.be.empty;
-        expect(biggestPlans).to.have.lengthOf(5);
+      return feed.fetchMostPlansPurchased({}).then(({items}) => {
+        const [best, , , , last] = items;
+        expect(items).to.be.a('array').and.to.not.be.empty;
+        expect(items).to.have.lengthOf(5);
         expect(best).to.contains.all.keys('label', 'value');
         expect(last).to.contains.all.keys('label', 'value');
       });
     });
   });
-
 
   describe('Fetcher : fetchLatestCustomers', () => {
     beforeEach(() => {
@@ -489,10 +488,10 @@ describe('ChartMogul : Feeder', () => {
 
     it('should fill data with items', () => {
       return feed.fetchLatestCustomers({onlyLead: false})
-        .then((latestCust) => {
-          const [last, one] = latestCust;
-          expect(latestCust).to.be.a('array').and.to.not.be.empty;
-          // expect(latestCust).to.have.lengthOf(5);
+        .then(({item}) => {
+          const [last, one] = item;
+          expect(item).to.be.a('array').and.to.not.be.empty;
+          // expect(item).to.have.lengthOf(5);
           expect(last).to.contains.all.keys('type', 'text');
           expect(last.type).eq(1);
           expect(one).to.contains.all.keys('type', 'text');
@@ -500,7 +499,6 @@ describe('ChartMogul : Feeder', () => {
         });
     });
   });
-
 
   describe('Fetcher : fetchLatestLeads', () => {
     beforeEach(() => {
@@ -518,9 +516,9 @@ describe('ChartMogul : Feeder', () => {
 
     it('should fill data with items', () => {
       return feed.fetchLatestCustomers({onlyLead: true})
-        .then((latestCust) => {
-          const [last, one] = latestCust;
-          expect(latestCust).to.be.a('array').and.to.not.be.empty;
+        .then(({item}) => {
+          const [last, one] = item;
+          expect(item).to.be.a('array').and.to.not.be.empty;
           // expect(latestCust).to.have.lengthOf(5);
           expect(last).to.contains.all.keys('type', 'text');
           expect(one).to.contains.all.keys('type', 'text');

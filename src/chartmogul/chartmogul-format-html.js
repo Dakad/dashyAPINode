@@ -163,7 +163,7 @@ class CharMogulHTMLFormatter {
     };
 
     return mrrMoves.reduce(
-      (html, mrr, i) => html + toHtml([mrr.label, mrr.value, (i!==0)])
+      (html, [label, value], i) => html + toHtml([label, value, (i!==0)])
      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';
   }

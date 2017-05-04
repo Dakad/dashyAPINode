@@ -57,7 +57,7 @@ const leadsNecessaryKeys = [
   'name', 'status', 'company',
   'country', 'state', 'city', 'address',
   'customer-since', 'lead_created_at', 'free_trial_started_at',
-  'mrr', 'uuid'
+  'mrr', 'uuid',
 ];
 
 /**
@@ -707,19 +707,19 @@ class ChartMogulFeeder extends Feeder {
    * @memberOf ChartMogulFeeder
    */
   async fetchLatestCustomers(config) {
-    const requestForCustomerPlan = async (uuid) => {
-      let subscription = {};
-      
-      // Go fetch the subscriptions plans of those cust
-      const dest = `/customers/${uuid}/subscriptions`;
-      const {entries : subscriptions} = await this.requestChartMogulFor(dest);
-      if(!Util.isEmptyOrNull(subscriptions)) {
-        subscription = subscriptions.pop();
-      }
-    
-      return subscription;
-    };
-    
+    // const requestForCustomerPlan = async (uuid) => {
+    //   let subscription = {};
+
+    //   // Go fetch the subscriptions plans of those cust
+    //   const dest = `/customers/${uuid}/subscriptions`;
+    //   const {entries: subscriptions} = await this.requestChartMogulFor(dest);
+    //   if(!Util.isEmptyOrNull(subscriptions)) {
+    //     subscription = subscriptions.pop();
+    //   }
+
+    //   return subscription;
+    // };
+
     // Convert to bool if other type then Bool
     const onlyLead = Boolean(config.onlyLead);
     // const today = new Date().setHours(0, 0, 0, 0);
@@ -757,7 +757,7 @@ class ChartMogulFeeder extends Feeder {
             ? cust['lead_created_at']
             : cust['customer-since']
         );
-        
+
         if (config.out === 'json') {
           return {
             'country': cust.country,
@@ -766,7 +766,7 @@ class ChartMogulFeeder extends Feeder {
             'company': cust.company,
             'date': when.toISOString(),
             'mrr': (!onlyLead) ? cust.mrr : undefined,
-            'plan' : cust.plan
+            'plan': cust.plan,
           };
         }
 
@@ -781,7 +781,7 @@ class ChartMogulFeeder extends Feeder {
             'where': cust.country,
             'city': cust.city,
             'mrr': (!onlyLead) ? cust.mrr : undefined,
-            'plan' : cust.plan
+            'plan': cust.plan,
           }),
         };
       });

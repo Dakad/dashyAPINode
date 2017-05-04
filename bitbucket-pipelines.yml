@@ -10,8 +10,8 @@ pipelines:
     - step:
         script: # Modify the commands below to build your repository.
           - npm install
+          - redis-cli config set requirepass pwd
           - make setup
-          - ./node_modules/.bin/mocha --bail --colors --timeout 10000 -R spec
           - make test
         services: 
           - redis 

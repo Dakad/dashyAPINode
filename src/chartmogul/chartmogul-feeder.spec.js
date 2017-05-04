@@ -526,7 +526,6 @@ describe('ChartMogul : Feeder', () => {
     });
   });
 
-
   describe('Fetcher : fetchCountriesByCustomers', () => {
     beforeEach(() => {
       spyFeedReqChartMogul = sinon.spy(feed, 'fetchAndFilterCustomers');

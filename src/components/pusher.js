@@ -70,7 +70,7 @@ class Pusher {
         .end((err, {body}) => {
           return (err)
             ? Logger.error('[PUSHER] '+this.widgetId_, body)
-            : Logger.info('[PUSHER] '+this.widgetId_, body);
+            : null;
         });
     } catch (e) {
       Logger.error('[PUSHER] '+this.widgetId_, e);

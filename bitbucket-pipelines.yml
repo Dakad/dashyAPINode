@@ -4,7 +4,6 @@
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
 image: node:7.8.0
-image: pataquets/redis-cli
 
 pipelines:
   branches:
@@ -17,7 +16,10 @@ pipelines:
             - make test
         services: 
           - redis 
+          - redis-cli
 definitions: 
   services: 
     redis: 
       image: redis
+    redis-cli:
+      image: pataquets/redis-cli

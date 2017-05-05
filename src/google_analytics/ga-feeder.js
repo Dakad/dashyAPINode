@@ -230,20 +230,18 @@ class GoogleAnalyticsFeeder extends Feeder {
    */
   async fetchNbUniqueVisitors(config) {
     const metrics = ['ga:newUsers'];
-    const filters = ['ga:visitorType', '=~', 'New'];
-
+    //const filters = ['ga:userType', '=~', 'New'];
+    
     const query = {
       'current': {
         'start-date': config['start-date'],
         'end-date': config['end-date'],
         metrics,
-        filters,
       },
       'last': {
         'start-date': config['last-start-date'],
         'end-date': config['last-end-date'],
         metrics,
-        filters,
       },
     };
 
@@ -299,12 +297,13 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     ]);
 
-    const firstRes = current[metrics[0]];
-    const secondRes = last[metrics[0]];
+    const firstRes = Number.parseFloat(current[metrics[0]]);
+    const secondRes = Number.parseFloat(last[metrics[0]]);
 
     switch (config.out) {
       case 'html':
-        const html = HTMLFormatter.toTextForDuration(firstRes, secondRes);
+        const diff = firstRes - secondRes;
+        const html = HTMLFormatter.toTextForDuration(firstRes, diff);
         return GeckoBoardFormatter.toText(html);
 
       default:
@@ -453,12 +452,12 @@ class GoogleAnalyticsFeeder extends Feeder {
       this.requestGAFor(query.last),
     ]);
 
-    const firstRes = current[metrics[0]];
-    const secondRes = last[metrics[0]];
+    const firstRes = Number.parseFloat(current[metrics[0]]);
+    const secondRes = Number.parseFloat(last[metrics[0]]);
 
     switch (config.out) {
       case 'html':
-        let diff = Number.parseFloat(firstRes) - Number.parseFloat(secondRes);
+        let diff = firstRes - secondRes;
         const html = HTMLFormatter.toTextForDuration(firstRes, diff);
         return GeckoBoardFormatter.toText(html);
 
@@ -469,7 +468,6 @@ class GoogleAnalyticsFeeder extends Feeder {
               'value': firstRes,
             },
             {
-              'type': 'time_duration',
               'value': secondRes,
             }
         );
@@ -496,7 +494,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     } = await this.requestGAFor({
       'start-date': config['start-date'],
       'end-date': config['end-date'],
-      'max-results': 10,
+      'max-results': 4,
       'sort': '-ga:pageviews',
       metrics,
       dimensions,
@@ -535,7 +533,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     switch (config.out) {
       default:
-        const html = HTMLFormatter.toTextForBlogPostViews(tops.slice(0, 4));
+        const html = HTMLFormatter.toTextForBlogPostViews(tops);
         return GeckoBoardFormatter.toText(html);
 
       case 'json':

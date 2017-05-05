@@ -132,7 +132,7 @@ class GoogleAnalyticsFormatter {
    * @memberOf GoogleAnalyticsFormatter
    */
   static toTextForDuration(primary, second) {
-    primary = Number.parseFloat(primary, 10);
+    primary = Math.round(primary, 10);
     const spanUnit = (time) => {
       return Object.keys(time)
         .filter((key) => ['m', 's'].indexOf(key) !== -1)
@@ -150,7 +150,7 @@ class GoogleAnalyticsFormatter {
     html += '</div>';
 
     if (second) {
-      second = Number.parseFloat(second);
+      second = Math.round(second);
       html += '<br>';
       html += '<div class="main-stat t-size-x44 arrow ';
       html += (second !== 0) ? getClassArrow(second) : '';

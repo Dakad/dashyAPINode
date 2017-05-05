@@ -835,7 +835,7 @@ class ChartMogulFeeder extends Feeder {
 
     const countryCount = Object.keys(tmpCountryCount)
       .sort((c1, c2)=> tmpCountryCount[c2] - tmpCountryCount[c1])
-      .slice(0, 10)
+      .slice(0, 4)
       .map((iso)=>[iso, tmpCountryCount[iso]]);
 
     const html = HTMLFormatter.toTextMrrCountryCount(countryCount);

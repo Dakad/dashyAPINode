@@ -230,8 +230,8 @@ class GoogleAnalyticsFeeder extends Feeder {
    */
   async fetchNbUniqueVisitors(config) {
     const metrics = ['ga:newUsers'];
-    //const filters = ['ga:userType', '=~', 'New'];
-    
+    // const filters = ['ga:userType', '=~', 'New'];
+
     const query = {
       'current': {
         'start-date': config['start-date'],

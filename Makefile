@@ -104,8 +104,7 @@ api-doc:
 	@echo "#### ApiDoc-ing ... : DONE";
 
 
-docs: clean test-cover test-doc api-doc
-
+js-doc:
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
 	@$(JSDOC) \
 		-c .jsdocrc.json \
@@ -114,13 +113,15 @@ docs: clean test-cover test-doc api-doc
 		-R README.md \
 		-t $(DOC_TEMPL) \
 		--verbose \
-		$(DIR_SRC) ;
+		$(DIR_SRC);
 
 	#@open $(DIR_DOCS)/doc/index.html
-	
+
+	@echo "#### JsDoc-ing folder ... : DONE";
+
+docs: clean test-cover js-doc test-doc api-doc
 
 	@echo "#####  Generating docs ... : DONE" ;
-
 
 setup:
 	@echo "#####  Setup ..." ;

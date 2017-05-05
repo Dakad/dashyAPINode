@@ -34,11 +34,14 @@ const HTMLFormatter = require('./ga-format-html');
 // -------------------------------------------------------------------
 // Properties
 
-/** @private  @constant {String} The key for the nbLeads in the cache */
+/** @constant {String} The key for the nbLeads in the cache  @private */
 // const KEY_GA_TOKEN = 'GoogleAuthAccessToken';
 
 
-/** @private The required query for the request to GA  */
+/**
+ * @const {Object} requiredKeys The required query for the request to GA
+ * @private
+ * */
 const requiredKeysForQuery = [
   'start-date',
   'end-date',
@@ -116,13 +119,14 @@ class GoogleAnalyticsFeeder extends Feeder {
 
 
   /**
-   * @private
    *
    * Reduce the filters array into a simple string;
    *
    * @param {string[]} filters - The filters
    * @param {String} [combinator='AND'] - The
    * @return {String} All filter concatened
+   *
+   * @private
    *
    * @memberOf GoogleAnalyticsFeed
    */

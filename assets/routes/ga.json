@@ -1,6 +1,6 @@
 
 {
-    "prefix" : "ga",
+    "prefix" : "$API_HOST/ga",
     
     "Nb Unique Visitors" : "GET /visitors/unique",
     

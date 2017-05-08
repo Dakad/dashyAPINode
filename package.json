@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://DavidStage@bitbucket.org/DavidStage/dashy-api-node"
+    "url": "git+https://DavidStage@bitbucket.org/apptweak/dashy-api-node"
   },
   "keywords": [
     "dashboard",

@@ -100,8 +100,8 @@ class ChartMogulRouter extends BaseRouter {
 
     /**
      *
-     * @api {GET} /chartmogul/leads Get the leads
-     * @apiName GetMonthLeads
+     * @api {GET} /chartmogul/leads Get the leads for the month
+     * @apiName GetLeadsMonth
      * @apiGroup ChartMogul
      * @apiVersion  0.1.0
      *
@@ -110,24 +110,24 @@ class ChartMogulRouter extends BaseRouter {
      *
      * @apiSuccessExample  {JSON} Success-Response:
        {
-           {
-            "value" : {number} Current value for this month.
+           "item": [{
+             "value" : {number} Current value for this month.
            },
            {
-            "value" : {number} Value for the previous month.
-           }
+             "value" : {number} Value for the same periode on previous month.
+           }]
        }
      *
      *
      */
-    this.router_.get('/leads', async (ctx, next) => {
+    this.router_.get('/leads', async(ctx, next) => {
       ctx.state.data = await this.feed_.fetchNbLeads(ctx.state.config);
       return next();
     });
 
     /**
      *
-     * @api {GET} /chartmogul/mrr Get the MRR for the month
+     * @api {GET} /chartmogul/mrr Get the MRR
      * @apiName GetMRR
      * @apiGroup ChartMogul
      * @apiVersion  0.1.0
@@ -137,25 +137,26 @@ class ChartMogulRouter extends BaseRouter {
      *
      * @apiSuccessExample  {JSON} Success-Response:
        {
-           "item":{
+           "item":[{
               "value" : {number} Current value for this month.
               "prefix" : "€"
            },
            {
             "value" : {number} Value for the previous month.
-           }
+           }]
        }
      *
      *
      */
-    this.router_.get('/mrr', async ({state}, next) => {
+    this.router_.get('/mrr', async({
+      state}, next) => {
       state.data = await this.feed_.fetchMrr(state.config, next);
       return next();
     });
 
     /**
      *
-     * @api {GET} /chartmogul/customers Get the customers
+     * @api {GET} /chartmogul/customers Get the customers count for the month
      * @apiName GetMonthCustomers
      * @apiGroup ChartMogul
      * @apiVersion  0.1.0
@@ -175,65 +176,69 @@ class ChartMogulRouter extends BaseRouter {
      *
      *
      */
-    this.router_.get('/customers', async ({state}, next) => {
+    this.router_.get('/customers', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchNbCustomers(state.config, next);
       return next();
     });
 
     /**
      *
-     * @api {GET} /chartmogul/mrr/churn Get the Net MRR Churn
-     * @apiName GetMonthNETMRRChurn
+     * @api {GET} /chartmogul/mrr/churn Get Net MRR Churn
+     * @apiName GetMRRNetChurn
      * @apiGroup ChartMogul
      * @apiVersion  0.1.0
      *
      *
-     * @apiSuccess (200) {Object} churn description
+     * @apiSuccess (200) {Object} churn Resuts
      *
      * @apiSuccessExample  {JSON} Success-Response:
        {
-          "item":[
-            "value" : {number} Current value for this month.
-              "prefix" : "%"
-            },
-            {
-              "value" : {number} Value for the previous month.
-            }
-          ],
-          "type" : "Reverse"
+          "item":[{
+            "value" : {number} Current value for this month,
+            "prefix" : "%"
+          },
+          {
+            "value" : {number} Value for the previous month.
+          }],
+          "type" : "reverse"
        }
      *
      *
      */
-    this.router_.get('/mrr/churn', async ({state}, next) => {
+    this.router_.get('/mrr/churn', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchNetMRRChurnRate(state.config, next);
       return next();
     });
 
     /**
      *
-     * @api {GET} /chartmogul/mrr/net Get the Net MRR
-     * @apiName GetMonthNETMRR
+     * @api {GET} /chartmogul/mrr/net Get Net MRR
+     * @apiName GetMRRNet
      * @apiGroup ChartMogul
      * @apiVersion  0.1.0
      *
      *
-     * @apiSuccess (200) {Object} MrrMove description
+     * @apiSuccess (200) html HTML Output
      *
      * @apiSuccessExample  {JSON} Success-Response:
        {
            "item":[
              {
-               "text": HTMLtext with the current value and the beste move
-                       ever made.
+               "text": HTMLtext with the current value
+                      and the best move ever made.
              }
            ],
-           "type" : "Reverse"
        }
      *
      *
      */
-    this.router_.get('/mrr/net', async ({state}, next) => {
+    this.router_.get('/mrr/net', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchNetMRRMovement(state.config, next);
       return next();
     });
@@ -241,8 +246,8 @@ class ChartMogulRouter extends BaseRouter {
 
     /**
      *
-     * @api {GET} /chartmogul/mrr/moves Get the Net MRR
-     * @apiName GetMonthNETMRR
+     * @api {GET} /chartmogul/mrr/moves Get the MRR Movements
+     * @apiName GetMRRMoves
      * @apiGroup ChartMogul
      * @apiVersion  0.1.0
      *
@@ -279,7 +284,9 @@ class ChartMogulRouter extends BaseRouter {
      *
      *
      */
-    this.router_.get('/mrr/move', async ({state}, next) => {
+    this.router_.get('/mrr/move', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchMRRMovements(state.config, next);
       return next();
     });
@@ -309,7 +316,9 @@ class ChartMogulRouter extends BaseRouter {
       *
       *
       */
-    this.router_.get('/arr', async ({state}, next) => {
+    this.router_.get('/arr', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchArr(state.config, next);
       return next();
     });
@@ -339,15 +348,17 @@ class ChartMogulRouter extends BaseRouter {
       *
       *
       */
-    this.router_.get('/arpa', async ({state}, next) => {
+    this.router_.get('/arpa', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchArpa(state.config, next);
       return next();
     });
 
     /**
      *
-     * @api {GET} /chartmogul/leads Get the leads for today
-     * @apiName GetTodayLeads
+     * @api {GET} /chartmogul/leads/today Get the leads for today
+     * @apiName GetLeadsToday
      * @apiGroup ChartMogul
      * @apiVersion  0.1.0
      *
@@ -356,17 +367,19 @@ class ChartMogulRouter extends BaseRouter {
      *
      * @apiSuccessExample  {JSON} Success-Response:
        {
-           {
-            "value" : {number} Current value for today since 00:00:00.
-           },
-           {
+         item :[{
+           "value" : {number} Current value for today since 00:00:00.
+          },
+          {
             "value" : {number} The AVG on the last 30 days without today leads.
-           }
+          }
        }
      *
      *
      */
-    this.router_.get('/leads/today', async ({state}, next) => {
+    this.router_.get('/leads/today', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchNbLeadsToday(state.config);
       return next();
     });
@@ -377,31 +390,36 @@ class ChartMogulRouter extends BaseRouter {
      * @api {GET} /chartmogul/plans/top Get the top plans
      * @apiName GetTopPlansByCustomers
      * @apiGroup ChartMogul
-     * @apiVersion  0.2.0
+     * @apiVersion  0.4.0
      *
      *
      *
      * @apiSuccess (200) {Array} plans The top plans sorted by the customers
      *  count.
      *
+     * @apiParam  {string} [filter] To only keep or add ! before the filter
+     * value to exclude.
      *
      * @apiSuccessExample {JSON} Success-Response:
       {
-          "items": [
-              {
-                  "label": {String} Plan' name,
-                  "value": {number} Plan subscribers
-              }
-          ]
+        "format" : "decimal",
+        "items": [
+          {
+            "label": {String} Plan' name,
+            "value": {number} Plan subscribers
+          }
+        ]
       }
      *
      *
      */
-    this.router_.get('/plans/top', async ({state}, next) => {
+    this.router_.get('/plans/top', async({
+      state,
+    }, next) => {
       const firstInMonth = new Date();
 
-      if(firstInMonth.getDate() === 1) {
-        firstInMonth.setDate(0); // Point it to end last month
+      if (firstInMonth.getDate() === 1) {
+        firstInMonth.setDate(0); // Start from the end last month
       }
       firstInMonth.setDate(1);
       state.config['start-date'] = Util.convertDate(firstInMonth);
@@ -421,9 +439,9 @@ class ChartMogulRouter extends BaseRouter {
      *
      *
      * @apiSuccess (200) {Object} latestCustomers The latest customers sorted
-     *  by their subscription date.
+     *  by their subscription date. limited to 5 customers
      *
-     * @apiParam  {string=html,json} [format="html"] The output format.
+     * @apiParam  {string=html,json} [out="html"] The output format.
      *
      * @apiSuccessExample {JSON} Formatted-JSON:Success-Response:
        [{
@@ -468,7 +486,9 @@ class ChartMogulRouter extends BaseRouter {
         }
      *
      */
-    this.router_.get('/customers/(last|latest)', async ({state}, next) => {
+    this.router_.get('/customers/(last|latest)', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchLatestCustomers(state.config);
       return next();
     });
@@ -484,7 +504,7 @@ class ChartMogulRouter extends BaseRouter {
      *
      *
      * @apiSuccess (200) {Object} latestleads The latest leads sorted
-     *  by their subscription date.
+     *  by their free_tial_started date limited to 5 leads
      *
      * @apiParam  {string=html,json} [format="html"] The output format.
      *
@@ -523,7 +543,9 @@ class ChartMogulRouter extends BaseRouter {
         }
      *
      */
-    this.router_.get('/leads/(last|latest)', async ({state}, next) => {
+    this.router_.get('/leads/(last|latest)', async({
+      state,
+    }, next) => {
       state.config.onlyLead = true;
       state.data = await this.feed_.fetchLatestCustomers(state.config);
       return next();
@@ -531,30 +553,49 @@ class ChartMogulRouter extends BaseRouter {
 
     /**
      *
-     * @api {GET} /chartmogul/mrr/map Get the last Mrr mapping
-     * @apiName GetLastMrrMapping
+     * @api {GET} /chartmogul/customers/country
+     * Get Customer count grouped by their Country
+     * @apiName GetCustomersCountry
      * @apiGroup ChartMogul
-     * @apiVersion  0.2.0
+     * @apiVersion  0.4.0
+     *
+     * @apiParam  {string=html,json} [out="html"] The output format.
+     *
+     * @apiSuccess (200) {Object} list The list of country with the higher
+     *  new customer
      *
      *
+     * @apiSuccessExample {JSON} Formatted-JSON:Success-Response:
+       [{
+         ISO-3611-2 Country : Customer count
+       }]
      *
-     * @apiSuccess (200) {Object} maps The list of last mrr by their countries
-     *
-     * @apiSuccessExample {JSON} Success-Response:
-       [
+     * @apiSuccessExample {JSON} Formatted-HTML:Success-Response:
         {
-            "city": {
-                "city_name": {string} The customer city name,
-                "country_code": {string} The customer Country Code in ISO3611-2
-            },
-            "color": {string} A Color in hexademial based on a hash,
-            "size": 5
+          "item" : [
+            {
+              "text" : "<table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img src="assets/flags/${icon_flag}.png"
+                        alt="Flag of ${country}">
+                    </td>
+                    <td>${country name}</td>
+                    <td >${customer count}</td>
+                  </tr>
+                </tbody>
+              </table>"
+            }
+          ]
         }
 
        ]
      *
      */
-    this.router_.get('/(mrr|customers)/map', async ({state}, next) => {
+    this.router_.get('/customers/country', async({
+      state,
+    }, next) => {
       state.data = await this.feed_.fetchCountriesByCustomers(state.config);
       return next();
     });
@@ -580,14 +621,14 @@ class ChartMogulRouter extends BaseRouter {
       [
         widgets.latestCustomers.id, // Last Customers Month
         this.feed_.fetchLatestCustomers({
-            onlyLead: false,
+          onlyLead: false,
         }),
         widgets.latestCustomers.fetchTime,
       ],
       [
         widgets.latestLeads.id, // Last Leads Month
         this.feed_.fetchLatestCustomers({
-            onlyLead: true,
+          onlyLead: true,
         }),
         widgets.latestLeads.fetchTime,
       ],

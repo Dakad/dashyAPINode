@@ -334,44 +334,43 @@ class GoogleAnalyticsRouter extends BaseRouter {
     /**
      *
      * @api {GET} /ga/blog/most
-     *  Get the AVG Duration of session on apptweak.com/aso-blog
-     * @apiName GetBlogSessionDuration
+     *  Get the Most popular post on apptweak.com/aso-blog
+     * @apiName GetBlogMostPost
      * @apiGroup Google Analytics
      * @apiVersion  0.4.0
      *
+     * @apiParam  {string=json} [out] The output format of Response
      *
      * @apiSuccess (200) {Object} values
-     * The values for the month and previous one.
      *
-     * @apiSuccessExample  {JSON} Success-Response:
-       {
-           "item": [{
-             "type" : "time_duration"
-             "value" : {number} Current value for this month.
-           },
+     * @apiSuccessExample  {JSON} FormattedJSON:Success-Response:
+       [
            {
-             "value" : {number} Value for the previous month.
-           }],
+             "title" : Post title,
+             "path" : The path f the post on apptweak.com/aso-blog,
+             "nbViews" : Nb views made for this month,
+             "oldViews" : Nb views made on the previous month
+           },
            "absolute" : true
-       }
+       ]
      *
      *
-     * @apiSuccessExample {JSON} Formatted-HTML:Success-Response:
+     * @apiSuccessExample {JSON} Success-Response:
      {
        "item" : [
          {
           "type" : 0,
-          "text" : "<div class="main-stat t-size-x52">
-                      ${min}<span class="unit">m</span>
-                      ${sec}<span class="unit">s</span>
-                    </div>
-                    <br>
-                    <div class="main-stat t-size-x44
-                        arrow arrow-(down|up) (negative|positive)"
-                    >
-                      ${diff-min}<span class="unit">m</span>
-                      ${diff-sec}<span class="unit">s</span>
-                    </div>
+          "text" : "
+            <table>
+              <tr>
+                <td>
+                  <i class='t-size-x30 arrow arrow-up  positive '>${arrow}</i>
+                </td>
+                <td>${post title}</td>
+                <td>${post nbviews}</td>
+                <td >${post oldviews}</td>
+              </tr>
+            </table>
           "
          }
        ]

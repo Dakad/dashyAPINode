@@ -3,10 +3,13 @@
 /**
  * For all feeder who can only be pushed to the widget.
  *
- * @module  components/pusher
- * @requires config
- * @requires winston
+ * @module components/pusher
  *
+ * @requires config
+ * @requires request
+ * @requires components/logger
+ *
+ * @export components/pusher
  */
 
 // -------------------------------------------------------------------
@@ -30,7 +33,6 @@ const Logger = require('./logger');
  * Use to push data into a GeckoWidget.
  * Require the widget ID, the promise Function
  *
- * @class Pusher
  */
 class Pusher {
   /**
@@ -39,14 +41,13 @@ class Pusher {
    * @param {Promise} promData - The pending promise for widget data.
    * @param {number} [timeOut] A specific time.
    *
-   * @memberOf Pusher
    */
   constructor(widgetId, promData, timeOut) {
-    if(!widgetId) {
+    if (!widgetId) {
       throw new Error('Required the Widget ID for pushing');
     }
 
-    if(!promData || !(promData instanceof Promise)) {
+    if (!promData || !(promData instanceof Promise)) {
       throw new Error(`[PUSHER] ${widgetId} require a promise`);
     }
 
@@ -56,46 +57,32 @@ class Pusher {
   }
 
 
-  /**
-   * Push the data to the Gecko Widget.
-   *
-   * @memberOf Pusher
-   */
+  /** Push the data to the Gecko Widget.*/
   async push() {
     try {
       const data = await this.fnPromData_;
-      request.post(Config.geckoBoard.pushUrl + this.widgetId_)
-        .send({'api_key': Config.geckoBoard.apiKey})
-        .send({'data': data})
-        .end((err, {body}) => {
-          return (err)
-            ? Logger.error('[PUSHER] '+this.widgetId_, body)
-            : null;
+      try {
+      await request.post(Config.geckoBoard.pushUrl + this.widgetId_)
+        .send({
+          'api_key': Config.geckoBoard.apiKey,
+          'data': data,
         });
+      } catch (err) {
+        throw (err.response.body);
+      }
     } catch (e) {
-      Logger.error('[PUSHER] '+this.widgetId_, e);
+      Logger.error('[PUSHER] ' + this.widgetId_, e);
     }
   }
 
 
-  /**
-  * Get the widget ID.
-  * @return {string} The widget ID.
-  *
-  * @memberOf Pusher
-  */
+  /** @return {string} The widget ID */
   getWidget() {
     return this.widgetId_;
   }
 
 
-  /**
-   * Get the intervall timeout.
-   *
-   * @return {number} The timeout;
-   *
-   * @memberOf Pusher
-   */
+  /** @return {number} The intervall timeout*/
   getTimeOut() {
     return this.timeOut_;
   }
@@ -107,4 +94,3 @@ class Pusher {
 // Exports
 
 module.exports = Pusher;
-

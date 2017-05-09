@@ -1,10 +1,10 @@
 'use strict';
 
 /**
- * Logger to log messages for the application.
- *
+ * @overview Logger to log messages for the application.
  * This is a simple wrapper for the "winston" logger.
  * Contains the same method accessible on Winston.loggerInstance
+ *
  * @module  components/logger
  * @requires config
  * @requires winston
@@ -24,10 +24,7 @@ const Winston = require('winston');
 Winston.emitErrs = true;
 
 
-/**
- * Initialized Winston logger.
- * @private
- */
+/** @const {Winston.Logger} Initialized Winston logger @private */
 const logger = new Winston.Logger({
     transports: [
         new Winston.transports.File({

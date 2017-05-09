@@ -6,13 +6,13 @@
  * Use promise to handle the async flow.
  *
  * @module  components/boot
- * @exports components/boot
+ * @requires fs
  * @requires config
  * @requires bluebird
- * @requires fs
  * @requires components/logger
  * @requires components/server
  *
+ * @exports components/boot
  *
  */
 
@@ -44,10 +44,12 @@ const GAFeeder = require('../google_analytics/ga-feeder');
 
 
 /**
+ *
  * Routes Containers
- * @type {Array<Router>} routers - All routers handled by servers
+ * @const {module:base/baserouter~BaseRouter[]} routers
+ *  - All routers handled by servers
  *  with their feeder.
- * @private
+ * @inner
  */
 const routes_ = [
   BaseRouter.getInstance(),
@@ -82,14 +84,14 @@ const checkIfSetup = (err, isDir) => {
  *  -   Finally, just fork itself.
  *
  * Otherwise, just start the server (on the given or not) port in the config.
- * @see components/boot
  */
 class Boot {
 
   /**
    * Init the boot action.
    *
-   * @return {Promise} pending with nothing or reject with the error.
+   * @return {Promise} a pending Promise
+   *  with nothing or reject with the error.
    */
   static async start() {
     const server = new Server(Config.api.port);

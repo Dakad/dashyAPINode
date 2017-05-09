@@ -5,8 +5,11 @@
  *
  * @module  components/cache
  * @requires config
+ * @requires bluebird
  * @requires redis
+ * @requires components/logger
  *
+ * @export  components/cache
  */
 
 // -------------------------------------------------------------------
@@ -28,16 +31,11 @@ const Logger = require('./logger');
 Promise.promisifyAll(Redis.RedisClient.prototype);
 Promise.promisifyAll(Redis.Multi.prototype);
 
-
-/**
- * The Cache
- *
- */
+/** */
 class Cache {
   /**
    * Creates an instance of Cache.
    *
-   * @memberOf Pusher
    */
   constructor() {
     this.cache_ = Redis.createClient(Config.redis);
@@ -47,11 +45,10 @@ class Cache {
   /**
    *
    * @param {any} key The key used to store in cache.
-   * @return {Promise} A Promise resolved containing the object in cache
-   *  with the query provided.
-   *  Or **null** if the query doesn't exist.
+   * @return {Promise} A resolved Promise containing the object in cache
+   *  with the given key.
+   *  Or **null** if the given key doesn't exist.
    *
-   * @memberOf Cache
    */
   get(key) {
     return this.cache_.getAsync(key).then(JSON.parse);
@@ -62,13 +59,12 @@ class Cache {
 
    * @param {string} key The key to used to get/put in cache.
    * @param {Object} obj The Object to store in cache.
-   * @param {Object} [exp] The expire time
-   *  - {Number|Date} **at** - The UNIX Timestamp `date.getTime()`
-   *  - {Number} **in** - Specified in milliseconds
+   * @param {Object} [exp={}] The expire time
+   * @param {number|Date} exp.at The UNIX Timestamp `date.getTime()`
+   * @param {number} exp.in The expire time in milliseconds.
    *
-   * @return {Boolean} If the object has been put in the cache or not
+   * @return {Boolean} **true|false** If the object has been put in the cache
    *
-   * @memberOf Cache
    */
   store(key, obj, exp={}) {
     if(exp.at) {
@@ -86,7 +82,6 @@ class Cache {
    *
    * @return {Redis.Client} The created Redis.Client
    *
-   * @memberOf Cache
    */
   getClient() {
     return this.cache_.multi();

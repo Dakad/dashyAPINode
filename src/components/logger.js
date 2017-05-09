@@ -9,6 +9,7 @@
  * @requires config
  * @requires winston
  *
+ * @export  components/logger
  */
 
 // -------------------------------------------------------------------
@@ -24,7 +25,7 @@ const Winston = require('winston');
 Winston.emitErrs = true;
 
 
-/** @const {Winston.Logger} Initialized Winston logger @private */
+/** @const {Winston.Logger} logger_ - Initialized Winston logger*/
 const logger = new Winston.Logger({
     transports: [
         new Winston.transports.File({

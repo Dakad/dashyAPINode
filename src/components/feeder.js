@@ -8,8 +8,12 @@
  * @module  components/feeder
  *
  * @requires config
+ * @requires superagent
+ * @requires components/cache
+ * @requires components/util
  *
  *
+ * @module  components/feeder
  */
 
 // -------------------------------------------------------------------
@@ -34,7 +38,6 @@ const Util = require('./util');
 /**
  * The feeder by excellence.
  *
- * @class Feeder
  */
 class Feeder {
 
@@ -42,7 +45,6 @@ class Feeder {
    * Creates an instance of Feeder.
    * @param {string} [apiUrl=''] The APIURl from whom to feed.
    *
-   * @memberOf Feeder
    */
   constructor(apiUrl = '') {
     this.apiEndPoint_ = apiUrl;
@@ -56,10 +58,9 @@ class Feeder {
    * @protected
    *
    * @param {Object} query - The query used as hash.
-   * @return {Promise|null} A Promise resolved containing the object in cache
-   *  with the query provided.
-   *  Or **null** if the query does'nt exist.
-   * @memberOf Feeder
+   * @return {Promise|null} A pending Promise containing the object in cache
+   *  with the given key.
+   *  Or **null** if the given key does'nt exist.
    */
   getCached(query) {
     return this.cache_.get(Util.hashCode(query));
@@ -73,7 +74,6 @@ class Feeder {
    * @param {Object} objToCache - The Object to put in cache.
    * @return {Boolean} If the object has been put in the cache or not
    *
-   * @memberOf Feeder
    */
   setInCache(query, objToCache) {
     // Only Keep the data in cache until Tomorrow Midnight 00:00
@@ -95,7 +95,6 @@ class Feeder {
    * @param {Object} key - The key to use for the cache
    * @param {any} resp - The response Body.
    * @return {any} - The cache resp
-   * @memberOf Feeder
    */
   cacheResponse(key, resp) {
     throw new TypeError('You have to implement the method !');
@@ -103,15 +102,14 @@ class Feeder {
 
 
   /**
-   * Send a request to ChartMogul API.
+   * Send a request to endpoint API.
    *
    * @protected
    * @param {string} destination - The endpoint in this API
-   * @param {Object} query The query params to send to ChartMogul
+   * @param {Object} query The query params to send to API
    * @param {string|Array|Object} keyForCache The key to use to cache the body
-   * @return {Promise}
+   * @return {Promise} a pending Promise
    *
-   * @memberOf Feeder
    */
   async requestAPI(destination, query, keyForCache) {
     // Get The cached response for this request

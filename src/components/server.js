@@ -1,11 +1,9 @@
 'use strict';
 
 /**
- *
  * @fileoverview  Modules for the server.
  * Init the server by setting all necessary middlewares
  * Start the server.
- * @name Server
  * @module  components/server
  * @requires bluebird
  * @requires koa
@@ -15,6 +13,10 @@
  * @requires koa-cors
  * @requires koa-json
  *
+ * @requires components/logger
+ * @requires components/util
+ *
+ * @export  components/server
  */
 
 // -------------------------------------------------------------------
@@ -39,10 +41,9 @@ const path = require('path');
 const Logger = require('./logger');
 const Util = require('./util');
 
-// -------------------------------------------------------------------
-// Exports
+/** */
+class Server {
 
-module.exports = class Server {
   /**
    * Creates an instance of Server.
    * @param {number} port - Where the server must listen for connection.
@@ -109,7 +110,7 @@ module.exports = class Server {
    * Init the routers for this server.
    *
    * @param {Array<Router>} routers - All routes handled by the server.
-   * @private
+   * @inner
    */
   initRouters(routers) {
     if (Array.isArray(routers)) {
@@ -157,3 +158,7 @@ module.exports = class Server {
     });
   }
 };
+
+// -------------------------------------------------------------------
+// Exports
+module.exports = Server;

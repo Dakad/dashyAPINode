@@ -4,10 +4,11 @@
  * @overview Router Handler
  *
  * Handle the different routes possbiles;
- * @module  components/router
+ * @module components/router
+ * @exports components/router
  * @requires config
  * @requires Koa
- * @requires ./components/logger
+ * @requires components/logger
  *
  */
 
@@ -33,25 +34,21 @@ const defPushTimeOut = 1000 * 100; // 1min40
 
 
 /**
- * Use to create subRouter to handle a specific root path.
+ * Used to create subRouter to handle a specific root path.
+ * is **ABSTRACT**, cannot be instanciated directly.
  *
- * is ABSTRACT, cannot be instanciated directly.
- * Only inherited (extends);
- * @abstract
- * @class Router
  */
 class Router {
 
-
   /**
-   * Creates an instance of Router.
-   * @param {CharMogulFeed} feeder The Feeder allocated to this router.
-   * @param {string} url The prefix URL to handle. By default, it's on /.
-   * @param {number} pushTimeOut The intervall of sec before the pushing
+   * @protected
    *
-   * @memberOf Router
+   * @param {module:components/feeder} feeder What feed this router.
+   * @param {string} [url='/'] The prefix URL to handle. By default, it's /.
+   * @param {number} [pushTimeOut=100000] The intervall of sec before pushing
+   *
    */
-  constructor(feeder, url = '/', pushTimeOut=defPushTimeOut) {
+  constructor(feeder, url = '/', pushTimeOut = defPushTimeOut) {
     this.url_ = url;
     this.feed_ = feeder;
     this.pushTimeOut_ = 1000 * pushTimeOut;
@@ -60,17 +57,16 @@ class Router {
     this.router_ = new KoaRouter();
 
     /**
-     * List of Pusher. Will be filled with pusher on child Router.
-     * @private
-     * @typedef {Pusher[]} pusher
+     * @const {module:components/pusher[]} pushers - List of Pusher.
+     * Filled with pusher on child Router.
      */
     this.listPushers_ = [];
   }
 
   /**
+   * Get the URL of this router.
    * @return {string} the URL handled this router.
    *
-   * @memberof Router
    */
   getURL() {
     return this.url_;
@@ -78,9 +74,9 @@ class Router {
 
 
   /**
-   * Collect all route assigned to this router.
+   * Collect all routes assigned to this router.
    *
-   * @return {KoaRouter} the router;
+   * @return {KoaRouter} the router
    */
   init() {
     this.router_.use((ctx, next) => {
@@ -95,35 +91,35 @@ class Router {
   }
 
   /**
-   * Collect all pushed added to the list.
-   * Call the pusher action on
+   * Collect all {@link module:components/pusher|pushers} added to the list.
+   *
+   * Call the pusher action in a defined timeout intervall.
    */
   initPusher() {
     this.handlerPusher(); // Collect pushers in other Child Router
-    if(this.listPushers_.length === 0)
+    if (this.listPushers_.length === 0)
       return;
     this.listPushers_.forEach((pusher) => {
       setInterval(
         pusher.push.bind(pusher),
-        pusher.getTimeOut()|| this.pushTimeOut_
+        (pusher.getTimeOut() || this.pushTimeOut_)
       );
     });
   }
 
 
   /**
-   * Here goes the jointure of the middle into the router.
+   * Here goes the jointure of the middle for the router.
    *
    * ** Only 2 rules must be observed and respected. **
+   * Otherwise, the middlewares defined in parent class will take over.
    *
    *  1. The first middleware added, must be the error handler.
    *  2. After that, it's the middleware to send the response.
-   *  3. Otherwise, the middlewares defined on parent class will take over.
    *
    * @protected
    * @abstract
    * @throws {TypeError} Must implement this method in the child class.
-   * @memberof Router
    */
   handler() {
     // TODO Add error Component like Factory APIError.getAbstractError();
@@ -132,8 +128,10 @@ class Router {
 
   /**
    * Use to add Pusher into the list of Pushers.
+   * @protected
+   * @abstract
+   * @throws {TypeError} Must implement this method in the child class.
    *
-   * @memberOf Router
    */
   handlerPusher() {
     throw new TypeError('You have to implement the method !');
@@ -146,7 +144,6 @@ class Router {
    * @protected
    * @abstract
    * @throws {TypeError} Must implement this method in the child class.
-   * @memberof Router
    *
    * @param {Application.Context} ctx The context of the request and response.
    * @param {Function} next The next middleware to call.
@@ -161,8 +158,9 @@ class Router {
    * The midldleware in charge of sending the error.
    *
    * @abstract
+   * @protected
+   *
    * @throws {TypeError} Must implement this method in the child.
-   * @memberof Router
    *
    * @param {Error} err
    * @param {Application.Context} ctx The context of the request and response.
@@ -175,7 +173,8 @@ class Router {
 };
 
 /**
- * @constant {number} The default timeout between each pushing.
+ * @constant {number} PUSH_TIME_OUT - The default timeout between each pushing.
+ * @default 100000
  */
 Router.PUSH_TIME_OUT = defPushTimeOut;
 

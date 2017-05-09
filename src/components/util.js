@@ -1,6 +1,8 @@
 /**
  * @overview  The Util Conponent.
  * @module components/util
+ *
+ * @export components/util
  */
 
 

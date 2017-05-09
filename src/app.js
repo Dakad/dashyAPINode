@@ -2,6 +2,8 @@
 
 /**
  * @fileoverview  This is the main file, wich init the boot of the app.
+ *
+ * @module main
  * @requires components/boot
  */
 

@@ -7,7 +7,7 @@
  * @module  base/baserouter
  * @requires config
  * @requires components/router
- * @requires ./components/logger
+ * @requires components/logger
  *
  */
 
@@ -47,6 +47,7 @@ const Singleton = {
  *
  * is SINGLETON.
  * @class BaseRouter
+ * @extends module:components/router~Router
  */
 class BaseRouter extends Router {
 
@@ -57,8 +58,6 @@ class BaseRouter extends Router {
    * @param {string} url The prefix URL to handle. By default, it's on /.
    * @param {number} timeOut The intervall of sec before the pushing
    * @private
-   * @constructor
-   * @memberOf Router
    */
   constructor(feeder, url = '/', timeOut) {
     super(feeder, url, timeOut);
@@ -104,9 +103,7 @@ class BaseRouter extends Router {
   }
 
 
-  /**
-   * @override
-   */
+  /** @override */
   async sendResponse(ctx, next) {
     Config.api.host = ctx.origin;
     ctx.state.data = {};
@@ -117,9 +114,7 @@ class BaseRouter extends Router {
   }
 
 
-  /**
-   * @override
-   */
+  /** @override */
   sendErr(err, ctx, next) {
     Logger.error(err);
     ctx.status = 500;
@@ -128,8 +123,8 @@ class BaseRouter extends Router {
 
 
   /**
-   * @static
-   * @return {BaseRouter} a instance of {@see BaseRouter}.
+   * @return {module:base/baserouter}
+   * an instance of {@link module:base/baserouter BaseRouter}.
    */
   static getInstance() {
     if (!Singleton.INSTANCE) {
@@ -145,7 +140,7 @@ class BaseRouter extends Router {
    *  2. Insert a config Object in the req
    *  3. Insert a data Object into the req containnig the geckoBoard ApiKey.
    *
-   * @param {any} ctx The context of the request and response.
+   * @param {Application.Context} ctx The context of the request and response.
    * @param {Function} next The next middleware to call;
    * @return {Function} the next middleware()
    */

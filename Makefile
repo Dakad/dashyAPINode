@@ -107,12 +107,13 @@ api-doc:
 js-doc:
 	@echo "#### JsDoc-ing folder: $(DIR_SRC)";
 	@$(JSDOC) \
-		-c .jsdocrc.json \
-		-d $(DIR_DOCS)/doc \
-		-r \
+		--configure .jsdocrc.json \
+		--private \
+		--recurse \
 		-R README.md \
-		-t $(DOC_TEMPL) \
+		--template $(DOC_TEMPL) \
 		--verbose \
+		--destination $(DIR_DOCS)/doc \
 		$(DIR_SRC);
 
 	#@open $(DIR_DOCS)/doc/index.html

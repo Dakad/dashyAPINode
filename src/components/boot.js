@@ -46,7 +46,7 @@ const GAFeeder = require('../google_analytics/ga-feeder');
 /**
  *
  * Routes Containers
- * @const {module:base/baserouter~BaseRouter[]} routers
+ * @const {module:router/baserouter~BaseRouter[]} routers
  *  - All routers handled by servers
  *  with their feeder.
  * @inner

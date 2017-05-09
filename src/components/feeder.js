@@ -5,7 +5,7 @@
  *
  * @param {any} next The next middleware to call;
  *
- * @module  components/feeder
+ * @module components/feeder
  *
  * @requires config
  * @requires superagent
@@ -13,7 +13,6 @@
  * @requires components/util
  *
  *
- * @module  components/feeder
  */
 
 // -------------------------------------------------------------------
@@ -51,6 +50,21 @@ class Feeder {
     this.cache_ = new Cache();
 
     this.getApiUrl = () => this.apiEndPoint_;
+  }
+
+
+  /**
+   * Check if the params sent is valid.
+   * If valid, using it to fill the req.config
+   * Otherwise, sent a error with the corresponding message.
+   *
+   * @param {any} ctx - Context of the request and response
+   * @param {Function} next The next middleware to call.
+   * @return {Promise} The next middleware
+   */
+  checkParams(ctx, next) {
+    // TODO If not future check, remove it;
+    return next();
   }
 
 
@@ -95,6 +109,8 @@ class Feeder {
    * @param {Object} key - The key to use for the cache
    * @param {any} resp - The response Body.
    * @return {any} - The cache resp
+   *
+   * @throws {TypeError} Must implement this method in the child class.
    */
   cacheResponse(key, resp) {
     throw new TypeError('You have to implement the method !');
@@ -130,32 +146,19 @@ class Feeder {
     //   destination = '/' + destination;
     // }
     try {
-    // Sending the request to the API
-      const {body} = await request
+      // Sending the request to the API
+      const {
+        body,
+      } = await request
         .get(this.apiEndPoint_ + destination)
         .query(query);
 
       // Store the resp in cache if necessary.
       return this.cacheResponse(keyForCache, body);
     } catch (err) {
-        throw err;
+      throw err;
     }
-}
-
-
-/**
- * Check if the params sent is valid.
- * If valid, using it to fill the req.config
- * Otherwise, sent a error with the corresponding message.
- *
- * @param {any} ctx - Context of the request and response
- * @param {Function} next The next middleware to call.
- * @return {Promise} The next middleware
- */
-checkParams(ctx, next) {
-  // TODO If not future check, remove it;
-  return next();
-}
+  }
 
 };
 

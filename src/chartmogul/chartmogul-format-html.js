@@ -1,9 +1,11 @@
 'use strict';
 /**
- * @overview HTML Formatter for the Feeder.
+ * @overview HTML Formatter for the ChartMogul Feeder.
  *
  *
- * @module  components/feeder
+ * @module  components/formatter/html/chartmogul
+ *
+ * @exports charmogul/HTMLFormatter
  *
  * @requires config
  *
@@ -29,7 +31,8 @@ const Util = require('../components/util');
 /**
  * The feeder by excellence.
  *
- * @class CharMogulHTMLFormatter
+ * @name charmogul/HTMLFormatter
+ *
  */
 class CharMogulHTMLFormatter {
 
@@ -45,7 +48,7 @@ class CharMogulHTMLFormatter {
    *
    * @return {String} A HTML Output.
    *
-   * @memberOf CharMogulHTMLFormatter
+   * @memberOf charmogul/HTMLFormatter
    */
   static generateFlagImg(isoCountry, width=150, height=150) {
     const srcLink = Config.api.host + '/assets/img/flags';

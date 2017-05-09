@@ -1,7 +1,7 @@
 /**
  * @overview Feeder for the chartmogul router.
  *
- * @module components/feeder/ChartMogulFeeder
+ * @module feeder/ChartMogulFeeder
  * @requires config
  * @requires bluebird
  * @requires superagent
@@ -33,13 +33,16 @@ const HTMLFormatter = require('./chartmogul-format-html');
 // -------------------------------------------------------------------
 // Properties
 
-/** @constant {Number} The key for the nbLeads in the cache */
+/** @constant {string} KEY_NB_LEADS_LAST_MONTH
+ * The key for the nbLeads in the cache */
 const KEY_NB_LEADS_LAST_MONTH = 'nbLeadsLastMonth';
 
-/** @constant {Number} The key for the last Month AVG in the cache */
+/** @constant {string} KEY_AVG_LEADS_LAST_MONTH
+ * The key for the last Month AVG in the cache */
 const KEY_AVG_LEADS_LAST_MONTH = 'avgLeadsLastMonth';
 
-/** @constant {Number} The key for the biggest plans in the cache */
+/** @constant {string} KEY_BIGGEST_PLANS
+ * The key for the biggest plans in the cache */
 const KEY_BIGGEST_PLANS = '5BiggestPlansPerCustomers';
 
 
@@ -76,7 +79,7 @@ const leadsNecessaryKeys = [
 /**
  * Feeder for ChartMogul route
  *
- * @extends module:components/feeder
+ * @extends module:components/feeder~Feeder
  */
 class ChartMogulFeeder extends Feeder {
 
@@ -268,7 +271,7 @@ class ChartMogulFeeder extends Feeder {
    * The middleware in chargin of fetch the leads.
    *
    * @param {Object} config - The config require for the fetch
-   * @return {Promise} - The promisified geckoFormatted result of the fetch
+   * @return {Promise} - The promisified geckoFormatted result of the fetch.
    *
    */
   async fetchNbLeads(config) {
@@ -332,7 +335,7 @@ class ChartMogulFeeder extends Feeder {
    * The middleware in chargin of fetch the leads for today.
    *
    * @param {Object} config - The config require for the fetch
-   * @return {Promise} - The promisified geckoFormatted result of the fetch
+   * @return {Promise} - The promisified geckoFormatted result of the fetch.
    *
    */
   async fetchNbLeadsToday(config) {

@@ -5,11 +5,11 @@
   },
   "source": {
     "includePattern": ".+\\.js(doc|x)?$",
-    "excludePattern": "(^|\\/|\\\\)_"
+    "excludePattern": "(^|\\/|\\\\|.+mock.*)_"
   },
   "plugins": ["plugins/markdown","node_modules/jsdoc-strip-async-await"],
   "templates": {
-    "systemName": "dashBoardAPINode",
+    "systemName": "dashyAPINode",
     "dateFormat": "ddd DD MMMM YYYY",
     "navType": "inline",
     "theme": "united",
@@ -19,7 +19,7 @@
     "outputSourceFiles": "true",
     "outputSourcePath": "true",  
     "syntaxTheme": "default",
-    "sort": "true",
+    "sort": false,
     "search": "true"
   }
 }

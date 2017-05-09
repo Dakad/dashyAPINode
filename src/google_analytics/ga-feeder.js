@@ -1,12 +1,15 @@
 /**
  * @overview Feeder for the chartmogul router.
  *
+ * @module feeder/GAFeeder
  * @requires config
- * @requires bluebird/Promise
- * @requires superagent
- *
+ * @requires gtoken
+ * @requires components/logger
+ * @requires components/util
  * @requires components/feeder
- * @module {Feeder} feeds/google-analytics
+ * @requires components/formatter/gecko
+ * @requires components/formatter/html/ga
+ *
  */
 
 
@@ -34,9 +37,6 @@ const HTMLFormatter = require('./ga-format-html');
 // -------------------------------------------------------------------
 // Properties
 
-/** @constant {String} The key for the nbLeads in the cache  @private */
-// const KEY_GA_TOKEN = 'GoogleAuthAccessToken';
-
 
 /**
  * @const {Object} requiredKeys The required query for the request to GA
@@ -56,16 +56,14 @@ const {
 /**
  * * Feeder for Google Analytics route
  *
- * @class GoogleAnalyticsFeed
- * @extends {Feeder}
+ * @extends module:components/feeder~Feeder
  */
 class GoogleAnalyticsFeeder extends Feeder {
 
 
   /**
-   * Creates an instance of GoogleAnalyticsFeed.
+   * Creates an instance of GoogleAnalyticsFeeder.
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   constructor() {
     super(ConfigGA.apiUrl);
@@ -128,7 +126,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    *
    * @private
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   flatFilters(filters, combinator) {
     if (Util.isEmptyOrNull(filters) || !Array.isArray(filters)) {
@@ -170,7 +167,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} query - The query params to send to GoogleAnalytics
    * @return {Promise}
    *
-   * @memberOf ChartMogulFeed
    */
   async requestGAFor(query) {
     try {
@@ -230,7 +226,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async fetchNbUniqueVisitors(config) {
     const metrics = ['ga:newUsers'];
@@ -274,7 +269,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async fetchSessionDuration(config) {
     const metrics = ['ga:avgSessionDuration'];
@@ -330,7 +324,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async fetchBounceRate(config) {
     const metrics = ['ga:bounceRate'];
@@ -376,7 +369,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async fetchBlogPageViews(config) {
     const metrics = ['ga:pageviews'];
@@ -426,7 +418,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async fetchBlogPageDuration(config) {
     const metrics = ['ga:avgTimeOnPage'];
@@ -486,7 +477,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async fetchMostBlogPost(config) {
     const metrics = ['ga:pageviews'];
@@ -567,7 +557,6 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async fetchBestAcquisitionSrc(config) {
     const [metrics, dimensions, filters] = [

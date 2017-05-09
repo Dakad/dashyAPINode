@@ -4,7 +4,7 @@
  * @overview Base Router Handler for url /
  *
  * Handle the different routes possbiles;
- * @module  base/baserouter
+ * @module  router/baserouter
  * @requires config
  * @requires components/router
  * @requires components/logger
@@ -46,7 +46,6 @@ const Singleton = {
  * Router for the root path /.
  *
  * is SINGLETON.
- * @class BaseRouter
  * @extends module:components/router~Router
  */
 class BaseRouter extends Router {
@@ -54,7 +53,7 @@ class BaseRouter extends Router {
   /**
    * Creates an instance of Router by providing the URL
    *    and the feeder middleware for this routeur.
-   * @param {Feed} feeder The Feeder allocated to this router.
+   * @param {module:components/feeder} feeder The Feeder allocated to this router.
    * @param {string} url The prefix URL to handle. By default, it's on /.
    * @param {number} timeOut The intervall of sec before the pushing
    * @private

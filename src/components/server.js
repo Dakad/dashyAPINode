@@ -25,7 +25,7 @@
 const Promise = require('bluebird');
 const Koa = require('koa');
 const kMount = require('koa-mount');
-const handleError = require('koa-handle-error');
+const kHandleError = require('koa-handle-error');
 const kMorgan = require('koa-morgan');
 const kCORS = require('kcors');
 const kJSON = require('koa-json');
@@ -45,7 +45,7 @@ const Util = require('./util');
 module.exports = class Server {
   /**
    * Creates an instance of Server.
-   * @param {number} port - Where the server must listen to connection.
+   * @param {number} port - Where the server must listen for connection.
    */
   constructor(port) {
     this.numPort_ = port;
@@ -63,34 +63,40 @@ module.exports = class Server {
    *  - Static serve to /assets
    *
    *  - Finally, actives the routers for the server.
-   * @param {Array<Router>} routers All routes handled by the server.
-   * @return {Promise} a fullfied promise containing the app instance.
+   * @param {Array<Router>} routers - All routes handled by the server.
+   * @return {Promise} a pending promise containing the app instance.
    */
   init(routers = []) {
     return new Promise((resolve, reject) => {
       // Log any req
+      Logger.info('[SERVER]\t Use Middleware : Morgan(short)');
       this.app_.use(kMorgan('short'));
-      // Log in files on error req.
+      // Log error on request in files.
+      Logger.info('[SERVER]\t Use Middleware : Morgan(combined) req:400>file');
       this.app_.use(kMorgan('combined', {
         skip: (ctxt, next) => ctxt.statusCode < 400,
         stream: Logger.fsStream,
       }));
 
+      Logger.info('[SERVER]\t Use Middleware : CORS(GET,POST)');
       this.app_.use(kCORS({
         allowMethods: ['GET', 'POST'],
       }));
 
+      Logger.info('[SERVER]\t Use Middleware : Static Serve(/assets/*)');
       // Serve static files
       const staticFolder = path.join(__dirname, '..', '..', 'assets');
       this.app_.use(kMount('/assets', kStaticServe(staticFolder)));
 
+      Logger.info('[SERVER]\t Use Middleware : JSON(all responses)');
       // JSON all in the ctx.body
       this.app_.use(kJSON());
 
 
       // Default handler for error
       // if not set in the router.
-      this.app_.use(handleError(Logger.error));
+      Logger.info('[SERVER]\t Use Middleware : HandleError(all responses)');
+      this.app_.use(kHandleError(Logger.error));
 
       if (!Util.isEmptyOrNull(routers))
         this.initRouters(routers);
@@ -102,7 +108,8 @@ module.exports = class Server {
   /**
    * Init the routers for this server.
    *
-   * @param {Array<Router>} routers
+   * @param {Array<Router>} routers - All routes handled by the server.
+   * @private
    */
   initRouters(routers) {
     if (Array.isArray(routers)) {
@@ -116,21 +123,18 @@ module.exports = class Server {
    * Start the server by receiving in args the init.
    *  server returned by [init method]{@link components/server#init}
    *  - Listen to the specified port.
-   *  - Attach all necessary listener.
+   *  - Attach all necessary listeners.
    *
-   * @static
    * @param {any} app The Init server returned by
    *  [init method]{@link components/server#init}
    * @return {Promise}
-   *  - a fullfied containing the server address.
-   *  - a rejected with a friendly error message.
+   *  - a pending containing the server address.
+   *  - otherwise, a rejected with a friendly error message.
    */
   start() {
     return new Promise((resolve, reject) => {
       const server = this.app_.listen(this.numPort_);
-      server.on('listening', (err) => {
-        return resolve(server.address());
-      });
+      server.on('listening', (err) => resolve(server.address()));
       server.on('close', () => Logger.warn('Missing fct to close the server'));
       server.on('error', (err) => {
         if (err.syscall !== 'listen') {

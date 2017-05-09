@@ -98,7 +98,7 @@ class GoogleAnalyticsFormatter {
         '<td style=\'font-size:1em\'>' +
         title +
         '</td>' +
-        '<td style=\'' + styleCenter + ';padding:3px;font-weight:bold;\'>' +
+        '<td style=\'' + styleCenter + ';font-weight:bold;\'>' +
         views +
         '</td>' +
         '<td class=\'' + getClassColor(progress) + '\'' +

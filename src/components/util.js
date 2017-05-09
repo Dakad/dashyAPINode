@@ -82,7 +82,7 @@ module.exports = class Util {
    * @return {number} Hashcode value for this object
    */
   static hashCode(str) {
-    if (!str || Util.isEmptyOrNull(src)) {
+    if (!str || Util.isEmptyOrNull(str)) {
       return 0;
     }
 
@@ -273,7 +273,8 @@ module.exports = class Util {
   //             check.errMsg = msg;
   //           }
 
-  //           return !check.isValid; // Stop  the loop if some param is not valid.
+  //           // Stop  the loop if some param is not valid.
+  //           return !check.isValid;
   //         });
   //     }
 

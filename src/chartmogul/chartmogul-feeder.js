@@ -1,13 +1,12 @@
 /**
  * @overview Feeder for the chartmogul router.
  *
+ * @module components/feeder/ChartMogulFeeder
  * @requires config
- * @requires bluebird/Promise
+ * @requires bluebird
  * @requires superagent
  *
  * @requires components/feeder
- * @requires components/feeder
- * @module {Feeder} feeds/chartmogul
  */
 
 
@@ -44,12 +43,26 @@ const KEY_AVG_LEADS_LAST_MONTH = 'avgLeadsLastMonth';
 const KEY_BIGGEST_PLANS = '5BiggestPlansPerCustomers';
 
 
-const mrrsEntries = [
-  {'entrie': 'mrr-new-business', 'label': 'New Business'},
-  {'entrie': 'mrr-expansion', 'label': 'Expansion'},
-  {'entrie': 'mrr-contraction', 'label': 'Contraction'},
-  {'entrie': 'mrr-churn', 'label': 'Churn'},
-  {'entrie': 'mrr-reactivation', 'label': 'Reactivation'},
+const mrrsEntries = [{
+    'entrie': 'mrr-new-business',
+    'label': 'New Business',
+  },
+  {
+    'entrie': 'mrr-expansion',
+    'label': 'Expansion',
+  },
+  {
+    'entrie': 'mrr-contraction',
+    'label': 'Contraction',
+  },
+  {
+    'entrie': 'mrr-churn',
+    'label': 'Churn',
+  },
+  {
+    'entrie': 'mrr-reactivation',
+    'label': 'Reactivation',
+  },
 ];
 
 
@@ -63,15 +76,13 @@ const leadsNecessaryKeys = [
 /**
  * Feeder for ChartMogul route
  *
- * @class ChartMogulFeeder
- * @extends {Feeder}
+ * @extends module:components/feeder
  */
 class ChartMogulFeeder extends Feeder {
 
   /**
    * Creates an instance of ChartMogulFeeder.
    *
-   * @memberOf ChartMogulFeeder
    */
   constructor() {
     super(Config.chartMogul.apiUrl);
@@ -102,15 +113,14 @@ class ChartMogulFeeder extends Feeder {
     }
 
     switch (key.destination) {
-      default:
-        break;
+      default: break;
       case '/customers':
-        if (resp.has_more) {
+          if (resp.has_more) {
           super.setInCache(key, resp);
         }
         break;
       case '/plans':
-        const plans = resp.plans
+          const plans = resp.plans
           .filter((plan, i, plans) => { // Remove duplicate Plan
             return plans.findIndex((p) => (p.name === plan.name)) === i;
           })
@@ -132,12 +142,12 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} query - The query params to send to ChartMogul
    * @return {Promise}
    *
-   * @memberOf ChartMogulFeeder
    */
-  requestChartMogulFor(destination, query) {
+  async requestChartMogulFor(destination, query) {
     if (destination && !destination.startsWith('/')) {
       destination = '/' + destination;
     }
+
     // Create the key to be hash for REDIS
     const key = Object.assign({}, query, {
       'destination': destination,
@@ -146,34 +156,31 @@ class ChartMogulFeeder extends Feeder {
       'interval': undefined,
     });
 
-    return super.getCached(key) // Get The cached response for this request
-      .then((resCached) => {
-        if (resCached != null) {
-          return resCached;
-        }
-        // No cached response for this request
-        // return this.requestAPI(destination, query, key);
-        return new Promise((resolve, reject) => {
-          if (!destination) {
-            return reject(
-              new Error('Missing the destination for ChartMogul API')
-            );
-          }
-          // Send my Request to ChartMogul API
-          request.get(Config.chartMogul.apiUrl + destination)
-            .auth(Config.chartMogul.apiToken, Config.chartMogul.apiSecret)
-            .query(query)
-            .end((err, res) => {
-              if (err) {
-                return reject(err);
-              }
-              // Any-way, check if thsi resp must be stored in cache
-              // Send back the processed|transformed resp for cache
-              // Otherwise, will send back res.body
-              return resolve(this.cacheResponse(key, res.body));
-            });
-        });
-      });
+    // Get The cached response for this request
+    const resCached = await super.getCached(key);
+    if (resCached != null) {
+      return resCached;
+    }
+    // No cached response for this request
+    // return this.requestAPI(destination, query, key);
+    if (!destination) {
+      throw new Error('Missing the destination for ChartMogul API');
+    }
+
+    try {
+      // Send my Request to ChartMogul API
+      const {
+        body,
+      } = await request.get(Config.chartMogul.apiUrl + destination)
+        .auth(Config.chartMogul.apiToken, Config.chartMogul.apiSecret)
+        .query(query);
+      // Any-way, check if this resp must be stored in cache
+      // Send back the processed|transformed resp for cache
+      // Otherwise, will send back res.body
+      return this.cacheResponse(key, body);
+    } catch (err) {
+      throw err;
+    }
   }
 
 
@@ -185,7 +192,6 @@ class ChartMogulFeeder extends Feeder {
    * @param {boolean} [onlyLead=false] - Which kind of customer must be kept.
    * @return {Array<Object>} All customers filtered.
    *
-   * @memberOf ChartMogulFeeder
    */
   filterCustomers(customers, onlyLead = false) {
     if (!Array.isArray(customers)) {
@@ -233,10 +239,11 @@ class ChartMogulFeeder extends Feeder {
    *
    * @return {Array<Object>} - All customers||leads filtered.
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchAndFilterCustomers(startingPage = 1, opts = {}) {
-    const {onlyLead = false, status} = opts;
+    const {
+      onlyLead = false, status,
+    } = opts;
     const reqCustomers = await this.requestChartMogulFor('/customers', {
       page: startingPage,
       status: status,
@@ -263,7 +270,6 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchNbLeads(config) {
     // The first day in this month at 00:00:00:00
@@ -283,7 +289,9 @@ class ChartMogulFeeder extends Feeder {
     const dateInPastMonth = new Date(dte.setMonth(month - 1));
 
     const [leads, nbLastMonth] = await Promise.all([
-      this.fetchAndFilterCustomers(this.leads_.startPage, {onlyLead: true}),
+      this.fetchAndFilterCustomers(this.leads_.startPage, {
+        onlyLead: true,
+      }),
       this.getCached(KEY_NB_LEADS_LAST_MONTH),
     ]);
 
@@ -298,15 +306,19 @@ class ChartMogulFeeder extends Feeder {
       // ? No cached value for the lastMonth ?
       if (nbLastMonth === null
         // Only the Leads made within the previous month
-        && leadDateInMs >= firstInPastMonth
-        && leadDateInMs <= dateInPastMonth) {
+        &&
+        leadDateInMs >= firstInPastMonth &&
+        leadDateInMs <= dateInPastMonth) {
         item[1].value += 1;
       }
       return item;
-    }, [
-        {'value': 0},
-        {'value': (nbLastMonth) ? Number.parseInt(nbLastMonth) : 0},
-      ]);
+    }, [{
+        'value': 0,
+      },
+      {
+        'value': (nbLastMonth) ? Number.parseInt(nbLastMonth) : 0,
+      },
+    ]);
 
     if (nbLastMonth === null) { // ? Nothing in cache ?
       super.setInCache(KEY_NB_LEADS_LAST_MONTH, item[1].value);
@@ -322,7 +334,6 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchNbLeadsToday(config) {
     const today = new Date();
@@ -332,13 +343,19 @@ class ChartMogulFeeder extends Feeder {
     last30Days.setDate(today.getDate() - 30);
     last30Days.setHours(0, 0, 0, 0);
 
-    const item = [
-      {'value': 0, 'absolute': true},
-      {'value': 0},
+    const item = [{
+        'value': 0,
+        'absolute': true,
+      },
+      {
+        'value': 0,
+      },
     ];
 
     const [leads, avgLeadsLastMonth] = await Promise.all([
-      this.fetchAndFilterCustomers(1, {onlyLead: true}),
+      this.fetchAndFilterCustomers(1, {
+        onlyLead: true,
+      }),
       this.getCached(KEY_AVG_LEADS_LAST_MONTH),
     ]);
     // console.log('Nb Filtered : ' + leads.length, avgLeadsLastMonth);
@@ -352,8 +369,9 @@ class ChartMogulFeeder extends Feeder {
       }
       if (avgLeadsLastMonth === null
         // Only the Leads made within the previous month
-        && leadDateInMs >= last30Days.getTime()
-        && leadDateInMs < today.getTime()) {
+        &&
+        leadDateInMs >= last30Days.getTime() &&
+        leadDateInMs < today.getTime()) {
         item[1].value += 1;
       }
     });
@@ -375,18 +393,18 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchMrr(config) {
     const req = await this.requestChartMogulFor('/metrics/mrr', config);
-    const {entries: [previous, current]} = req;
+    const {
+      entries: [previous, current],
+    } = req;
 
     return GeckoFormatter.toNumberAndSecondStat({
-        'value': Math.round(current.mrr / 100),
-        'prefix': '€',
-      },
-      { // Take the first one because it'll be for the end of month
-        'value': Math.round(previous.mrr / 100),
+      'value': Math.round(current.mrr / 100),
+      'prefix': '€',
+    }, { // Take the first one because it'll be for the end of month
+      'value': Math.round(previous.mrr / 100),
     });
   }
 
@@ -397,17 +415,19 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchNbCustomers(config) {
-    const {entries: [previous, current]} = await this.requestChartMogulFor(
+    const {
+      entries: [previous, current],
+    } = await this.requestChartMogulFor(
       '/metrics/customer-count',
       config
     );
     return GeckoFormatter.toNumberAndSecondStat({
-      value: current['customers']},
-      {value: previous['customers']}
-    );
+      value: current['customers'],
+    }, {
+      value: previous['customers'],
+    });
   }
 
 
@@ -417,10 +437,11 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchNetMRRChurnRate(config) {
-    const {entries: [previous, current]} = await this.requestChartMogulFor(
+    const {
+      entries: [previous, current],
+    } = await this.requestChartMogulFor(
       '/metrics/mrr-churn-rate',
       config
     );
@@ -428,9 +449,9 @@ class ChartMogulFeeder extends Feeder {
       reverse: true,
       prefix: '%',
       value: current['mrr-churn-rate'],
-    },
-      {value: previous['mrr-churn-rate']}
-    );
+    }, {
+      value: previous['mrr-churn-rate'],
+    });
   }
 
 
@@ -444,7 +465,6 @@ class ChartMogulFeeder extends Feeder {
    *
    * @return {number} - The NET MRR
    *
-   * @memberOf ChartMogulFeeder
    */
   calcNetMRR(mrrs = []) {
     if (!mrrs) {
@@ -469,7 +489,6 @@ class ChartMogulFeeder extends Feeder {
    *
    * @return {number} - The MAX NET
    *
-   * @memberOf ChartMogulFeeder
    */
   findMaxNetMRR(mrrs) {
     if (!Array.isArray(mrrs)) {
@@ -495,16 +514,17 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchNetMRRMovement(config) {
     // 1,000 ms * 60 secs * 60 mins * 24 hrs * 7 days
     const weekInMS = 1000 * 60 * 60 * 24 * 7;
     const hasFetchInWeek =
-      (new Date().getTime() - new Date(this.bestNetMRR_.lastFetch).getTime())
-      < weekInMS;
+      (new Date().getTime() - new Date(this.bestNetMRR_.lastFetch).getTime()) <
+      weekInMS;
 
-    const {entries} = await this.requestChartMogulFor('/metrics/mrr', {
+    const {
+      entries,
+    } = await this.requestChartMogulFor('/metrics/mrr', {
       'start-date': Util.convertDate(this.bestNetMRR_.startDate),
       'end-date': config['end-date'],
       'interval': config['interval'],
@@ -513,7 +533,8 @@ class ChartMogulFeeder extends Feeder {
     // ? Never made the fetch for the max. ?
     if (!this.bestNetMRR_.lastFetch || this.bestNetMRR_.val === 0
       // ? Last fetch for the Max was more thna 1 weeek ago ?
-      || !hasFetchInWeek) {
+      ||
+      !hasFetchInWeek) {
       this.bestNetMRR_.lastFetch = new Date().getTime();
       this.findMaxNetMRR(entries);
     }
@@ -521,11 +542,11 @@ class ChartMogulFeeder extends Feeder {
     const netMrr = this.calcNetMRR(entries.pop());
     return {
       'item': [{
-      'text': HTMLFormatter.toTextNetMrr(
-        Util.toMoneyFormat(netMrr, ',', '.')
-        , Util.toMoneyFormat(this.bestNetMRR_.val, ',', '.')
-      ),
-    }]};
+        'text': HTMLFormatter.toTextNetMrr(
+          Util.toMoneyFormat(netMrr, ',', '.'), Util.toMoneyFormat(this.bestNetMRR_.val, ',', '.')
+        ),
+      }],
+    };
   }
 
   /**
@@ -535,10 +556,11 @@ class ChartMogulFeeder extends Feeder {
    *
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchMRRMovements(config) {
-    const {entries} = await this.requestChartMogulFor('/metrics/mrr', {
+    const {
+      entries,
+    } = await this.requestChartMogulFor('/metrics/mrr', {
       'start-date': config['start-date'],
       'end-date': config['end-date'],
       'interval': config['interval'],
@@ -546,7 +568,7 @@ class ChartMogulFeeder extends Feeder {
 
     const otherMrr = entries.pop();
 
-    switch(config.out) {
+    switch (config.out) {
       case 'list':
         const items = mrrsEntries.map((item) => [
           item.label,
@@ -557,9 +579,9 @@ class ChartMogulFeeder extends Feeder {
       case 'html':
       default:
         const mrrMoves = mrrsEntries.map((item) => [
-            item.label,
-            otherMrr[item.entrie] / 100,
-          ]);
+          item.label,
+          otherMrr[item.entrie] / 100,
+        ]);
 
         mrrMoves.pop();
 
@@ -568,7 +590,7 @@ class ChartMogulFeeder extends Feeder {
             'text': HTMLFormatter.toTextMRRMovements(mrrMoves),
           }],
         };
-      }
+    }
   }
 
   /**
@@ -577,17 +599,20 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchArr(config) {
-    const {entries: [previous, current]} = await this.requestChartMogulFor(
+    const {
+      entries: [previous, current],
+    } = await this.requestChartMogulFor(
       '/metrics/arr',
       config
     );
-    return GeckoFormatter.toNumberAndSecondStat(
-      {value: Math.round(current.arr) / 100, prefix: '€'},
-      {value: Math.round(previous.arr) / 100}
-    );
+    return GeckoFormatter.toNumberAndSecondStat({
+      value: Math.round(current.arr) / 100,
+      prefix: '€',
+    }, {
+      value: Math.round(previous.arr) / 100,
+    });
   }
 
   /**
@@ -596,17 +621,20 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchArpa(config) {
-    const {entries: [previous, current]} = await this.requestChartMogulFor(
+    const {
+      entries: [previous, current],
+    } = await this.requestChartMogulFor(
       '/metrics/arpa',
       config
     );
-    return GeckoFormatter.toNumberAndSecondStat(
-      {value: Math.round(current.arpa / 100), prefix: '€'},
-      {value: Math.round(previous.arpa / 100)}
-    );
+    return GeckoFormatter.toNumberAndSecondStat({
+      value: Math.round(current.arpa / 100),
+      prefix: '€',
+    }, {
+      value: Math.round(previous.arpa / 100),
+    });
   }
 
 
@@ -616,7 +644,6 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config - The config require for the fetch
    * @return {Promise} The promisified geckoFormatted result of the fetch
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchMostPlansPurchased(config) {
     // Recup all plans
@@ -625,7 +652,7 @@ class ChartMogulFeeder extends Feeder {
     let reqPlans = await this.requestChartMogulFor('/plans');
     let listPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
 
-    if(config.filter) {
+    if (config.filter) {
       let filter = config.filter.toLowerCase();
       const onExclude = filter.startsWith('!');
       filter = (onExclude) ? filter.substr(1) : filter;
@@ -652,14 +679,20 @@ class ChartMogulFeeder extends Feeder {
       this.getCached(keyForCache),
 
       // Sum, filter & sort plansCustomerCount
-      ...customersCountByPlan.map(({entries}, i) => {
+      ...customersCountByPlan.map(({
+        entries,
+      }, i) => {
         return {
           'plan': listPlans[i],
-          'total': entries.reduce((tot, {customers: c}) => tot += c, 0),
+          'total': entries.reduce((tot, {
+            customers: c,
+          }) => tot += c, 0),
         };
-      }).filter(({total}) => total > 1) // Keep out the customised plans
-        .sort((p1, p2) => p2.total - p1.total)
-        .slice(0, 5),
+      }).filter(({
+        total,
+      }) => total > 1) // Keep out the customised plans
+      .sort((p1, p2) => p2.total - p1.total)
+      .slice(0, 5),
     ]);
 
     if (lastBiggest === null) { // First fresh fetch
@@ -667,14 +700,19 @@ class ChartMogulFeeder extends Feeder {
     }
 
     // Format the result for the LeaderBoard Widget
-    const items = biggestCustByPlans.map(({total, plan}) => {
+    const items = biggestCustByPlans.map(({
+      total,
+      plan,
+    }) => {
       const item = {
         'label': plan.name,
         'value': total,
       };
       // Check the previous rank
       const prevRank = lastBiggest.findIndex(
-        ({plan: old}) => old.uuid === plan.uuid
+        ({
+          plan: old,
+        }) => old.uuid === plan.uuid
       );
 
       if (prevRank !== -1) {
@@ -686,7 +724,7 @@ class ChartMogulFeeder extends Feeder {
           // Set to 10 randomly, could have been [6 : Wiser choice :-)]
         } else {
           if (diff < 0) {
-            item['previous_rank'] = 1;// Drop DOWN
+            item['previous_rank'] = 1; // Drop DOWN
           }
         }
       }
@@ -704,7 +742,6 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchLatestCustomers(config) {
     // const requestForCustomerPlan = async (uuid) => {
@@ -730,12 +767,12 @@ class ChartMogulFeeder extends Feeder {
 
     let latestLeads = leads
       .sort((cust1, cust2) => {
-        const cust1DateTime = (onlyLead)
-          ? cust1['lead_created_at']
-          : cust1['customer-since'];
-        const cust2DateTime = (onlyLead)
-          ? cust2['lead_created_at']
-          : cust2['customer-since'];
+        const cust1DateTime = (onlyLead) ?
+          cust1['lead_created_at'] :
+          cust1['customer-since'];
+        const cust2DateTime = (onlyLead) ?
+          cust2['lead_created_at'] :
+          cust2['customer-since'];
 
         const cmp = new Date(cust2DateTime).getTime() -
           new Date(cust1DateTime).getTime();
@@ -753,9 +790,9 @@ class ChartMogulFeeder extends Feeder {
       })
       .map((cust, i) => {
         const when = new Date(
-          (onlyLead)
-            ? cust['lead_created_at']
-            : cust['customer-since']
+          (onlyLead) ?
+          cust['lead_created_at'] :
+          cust['customer-since']
         );
 
         if (config.out === 'json') {
@@ -786,11 +823,11 @@ class ChartMogulFeeder extends Feeder {
         };
       });
 
-      if (config.out === 'json') {
-       return latestLeads;
-      }
+    if (config.out === 'json') {
+      return latestLeads;
+    }
 
-      return GeckoFormatter.toText(latestLeads);
+    return GeckoFormatter.toText(latestLeads);
   }
 
 
@@ -800,7 +837,6 @@ class ChartMogulFeeder extends Feeder {
    * @param {Object} config The context of the request and response.
    * @return {Promise} the next middleware()
    *
-   * @memberOf ChartMogulFeeder
    */
   async fetchCountriesByCustomers(config) {
     const customers = await this.fetchAndFilterCustomers(1, {
@@ -809,34 +845,35 @@ class ChartMogulFeeder extends Feeder {
 
     const firstInMonth = new Date();
 
-    if(firstInMonth.getDate() === 1) {
+    if (firstInMonth.getDate() === 1) {
       firstInMonth.setDate(0); // Point it to end last month
     }
 
     firstInMonth.setDate(1);
 
     const tmpCountryCount = await customers.filter((cust) => {
-      return new Date(cust['customer-since']).getTime()
-        >= firstInMonth.getTime();
-    })
-    .reduce(
-      (countryCount, {country}) => {
-        let count = countryCount[country];
-        countryCount[country] = (!count) ? 1 : ++count;
-        return countryCount;
-      }
-      , {}
-    );
+        return new Date(cust['customer-since']).getTime() >=
+          firstInMonth.getTime();
+      })
+      .reduce(
+        (countryCount, {
+          country,
+        }) => {
+          let count = countryCount[country];
+          countryCount[country] = (!count) ? 1 : ++count;
+          return countryCount;
+        }, {}
+      );
 
 
-    if(config.out === 'json') {
+    if (config.out === 'json') {
       return tmpCountryCount;
     }
 
     const countryCount = Object.keys(tmpCountryCount)
-      .sort((c1, c2)=> tmpCountryCount[c2] - tmpCountryCount[c1])
+      .sort((c1, c2) => tmpCountryCount[c2] - tmpCountryCount[c1])
       .slice(0, 4)
-      .map((iso)=>[iso, tmpCountryCount[iso]]);
+      .map((iso) => [iso, tmpCountryCount[iso]]);
 
     const html = HTMLFormatter.toTextMrrCountryCount(countryCount);
     return GeckoFormatter.toText(html);

@@ -13,13 +13,13 @@
     "dateFormat": "ddd DD MMMM YYYY",
     "navType": "inline",
     "theme": "united",
-    "linenums": "true",
-    "collapseSymbols": "true",
-    "inverseNav": "false",
-    "outputSourceFiles": "true",
-    "outputSourcePath": "true",  
+    "linenums": true,
+    "collapseSymbols": false,
+    "inverseNav": true,
+    "outputSourceFiles": true,
+    "outputSourcePath": true,  
     "syntaxTheme": "default",
-    "sort": false,
-    "search": "true"
+    "sort": true,
+    "search": true
   }
 }

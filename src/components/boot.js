@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview  The booting module for the app.
- * Can only be called by the main {@see main}.
+ * Can only be called by the {@link module:app/main main}.
  * Use promise to handle the async flow.
  *
  * @module  components/boot
@@ -46,7 +46,7 @@ const GAFeeder = require('../google_analytics/ga-feeder');
 /**
  *
  * Routes Containers
- * @const {module:router/baserouter~BaseRouter[]} routers
+ * @const {module:router/base[]} routers
  *  - All routers handled by servers
  *  with their feeder.
  * @inner
@@ -77,6 +77,7 @@ const checkIfSetup = (err, isDir) => {
 
 
 /**
+ *
  * Boot for the app.
  * If is Launch from the master process, call the init();
  *  -   Init the core component.

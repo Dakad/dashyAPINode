@@ -556,7 +556,8 @@ class ChartMogulFeeder extends Feeder {
     return {
       'item': [{
         'text': HTMLFormatter.toTextNetMrr(
-          Util.toMoneyFormat(netMrr, ',', '.'), Util.toMoneyFormat(this.bestNetMRR_.val, ',', '.')
+          Util.toMoneyFormat(netMrr, ',', '.'),
+          Util.toMoneyFormat(this.bestNetMRR_.val, ',', '.')
         ),
       }],
     };

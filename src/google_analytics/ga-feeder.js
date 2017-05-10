@@ -1,14 +1,14 @@
 /**
  * @overview Feeder for the chartmogul router.
  *
- * @module feeder/GAFeeder
+ * @module feeder/google-analytics
  * @requires config
  * @requires gtoken
  * @requires components/logger
  * @requires components/util
  * @requires components/feeder
- * @requires components/formatter/gecko
- * @requires components/formatter/html/ga
+ * @requires formatter/gecko
+ * @requires formatter/html/google-analytics
  *
  */
 

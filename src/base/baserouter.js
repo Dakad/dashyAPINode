@@ -4,7 +4,7 @@
  * @overview Base Router Handler for url /
  *
  * Handle the different routes possbiles;
- * @module  router/baserouter
+ * @module  router/base
  * @requires config
  * @requires components/router
  * @requires components/logger

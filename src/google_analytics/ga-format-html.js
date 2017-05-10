@@ -1,11 +1,14 @@
 'use strict';
 /**
- * @overview HTML Formatter for the Feeder.
+ * @overview HTML Formatter for the Google Analytics Feeder.
  *
  *
- * @module  components/formatter
+ * @module  formatter/html/google-analytics
  *
  * @requires config
+ *
+ * @requires components/util
+ *
  *
  *
  */
@@ -39,7 +42,7 @@ class GoogleAnalyticsFormatter {
 
 
   /**
-   * Generate <img> with the corresponding country.
+   * Generate ``<img src='assets/img/${src}.png'>``
    *
    * @private
    * @static
@@ -52,7 +55,6 @@ class GoogleAnalyticsFormatter {
    *
    * @return {String} A HTML Output.
    *
-   * @memberOf CharMogulHTMLFormatter
    */
   static generateImg({
     src,
@@ -76,7 +78,6 @@ class GoogleAnalyticsFormatter {
    * @param {Array} blogsViews - The blog post views
    *
    * @return {String} A HTML Output.
-   * @memberOf GoogleAnalyticsFormatter
    */
   static toTextForBlogPostViews(blogsViews = []) {
     const styleCenter = 'vertical-align:middle;text-align:center';
@@ -119,7 +120,7 @@ class GoogleAnalyticsFormatter {
 
   /**
    *
-   * Generate a HTML text for the durations for AVG Sessions and Blog Post.
+   * Generate a HTML text for the durations of AVG Sessions and Blog Post.
    *
    *
    * @static
@@ -129,7 +130,6 @@ class GoogleAnalyticsFormatter {
    *
    * @return {String} A HTML Output.
    *
-   * @memberOf GoogleAnalyticsFormatter
    */
   static toTextForDuration(primary, second) {
     primary = Math.round(primary, 10);

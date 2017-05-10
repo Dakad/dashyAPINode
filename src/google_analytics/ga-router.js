@@ -1,9 +1,12 @@
 /**
  * @overview SubRouter to handle the all path related to /ga
  *
- * @module {Router} router/google-analytics
- * @requires baserouter
- * @requires GoogleAnalyticsFeed
+ * @module router/google-analytics
+ * @requires router/base
+ * @requires feeder/chartmogul
+ * @requires components/util
+ *
+ *
  */
 
 
@@ -25,18 +28,16 @@ const BaseRouter = require('../base/baserouter');
 // Properties
 
 /**
+ * SubRouter to handle the all path related to /ga
  *
- *
- * @class GoogleAnalyticsRouter
- * @extends {BaseRouter}
+ * @extends module:router/base
  */
 class GoogleAnalyticsRouter extends BaseRouter {
 
   /**
    * Creates an instance of GoogleAnalyticsRouter.
-   * @param {GoogleAnalyticsFeed} feed
+   * @param {module:feeder/google-analytics} feed - The feeder for this router.
    *
-   * @memberOf GoogleAnalyticsRouter
    */
   constructor(feed) {
     super(feed, '/ga', 75);
@@ -51,7 +52,6 @@ class GoogleAnalyticsRouter extends BaseRouter {
    * @param {Function} next The next middleware to call.
    * @return {Function} the next middleware()
    *
-   * @memberOf GoogleAnalyticsFeed
    */
   async configByParams(ctx, next) {
     const dates = Util.getAllDates();
@@ -69,7 +69,6 @@ class GoogleAnalyticsRouter extends BaseRouter {
    *
    * @override
    *
-   * @memberOf GoogleAnalyticsRouter
    */
   handler() {
     super.handler();

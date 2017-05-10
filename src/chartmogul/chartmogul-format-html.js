@@ -3,11 +3,11 @@
  * @overview HTML Formatter for the ChartMogul Feeder.
  *
  *
- * @module  components/formatter/html/chartmogul
- *
- * @exports charmogul/HTMLFormatter
+ * @module  formatter/html/chartmogul
  *
  * @requires config
+ *
+ * @requires components/util
  *
  *
  */
@@ -28,16 +28,12 @@ const Util = require('../components/util');
 // Properties
 
 
-/**
- * The feeder by excellence.
- *
- * @name charmogul/HTMLFormatter
- *
- */
-class CharMogulHTMLFormatter {
+/** The feeder by excellence */
+class ChartMogulHTMLFormatter {
 
   /**
-   * Generate <img> with the corresponding country.
+   * Generate ``<img src='assets/img/flags/${isoCountry}.png'>``
+   * with the corresponding country.
    *
    * @private
    * @static
@@ -48,7 +44,6 @@ class CharMogulHTMLFormatter {
    *
    * @return {String} A HTML Output.
    *
-   * @memberOf charmogul/HTMLFormatter
    */
   static generateFlagImg(isoCountry, width=150, height=150) {
     const srcLink = Config.api.host + '/assets/img/flags';
@@ -70,10 +65,9 @@ class CharMogulHTMLFormatter {
    *    If, defined ISO-3166-2, an <img> will be rendered with the corresponding
    *    coutry fullname.
    * @param {Number|string} customer.[mrr] The customer MRR
-   *    If defined, will be formatted to Money Value with € ....
+   *    if defined, will be formatted to € Money
    *
    * @return {String} A HTML Output.
-   * @memberOf CharMogulHTMLFormatter
    */
   static toListCustomer({who, when, where='', mrr, city}) {
     const isISO3166 = (when) => where.length === 2;
@@ -88,7 +82,7 @@ class CharMogulHTMLFormatter {
     }
     return `<div>
                 ${isISO3166(where)
-                  ? CharMogulHTMLFormatter.generateFlagImg(where)
+                  ? ChartMogulHTMLFormatter.generateFlagImg(where)
                   :''
                 }
                 <h1 style='margin:0 10px 15px 0;'>
@@ -131,7 +125,6 @@ class CharMogulHTMLFormatter {
    *
    * @return {string} A HTML Output.
    *
-   * @memberOf CharMogulHTMLFormatter
    */
   static toTextNetMrr(current, best) {
     return `<p style='font-size:1.3em'>${(''+current).trim()}</p>`+
@@ -151,7 +144,6 @@ class CharMogulHTMLFormatter {
    * @param {Array} mrrMoves - The MRR Movements
    *
    * @return {String} A HTML Output.
-   * @memberOf CharMogulHTMLFormatter
    */
   static toTextMRRMovements(mrrMoves = []) {
     const toHtml = ([label, mrr, hasSeparator]) =>{
@@ -181,13 +173,12 @@ class CharMogulHTMLFormatter {
    * @param {Array} countryCount - The countries<Key> with the count<Value>
    *
    * @return {String} A HTML Output.
-   * @memberOf CharMogulHTMLFormatter
    */
   static toTextMrrCountryCount(countryCount) {
     const toHtml = (iso, count) => {
       return '<tr style=\'border-bottom: 1px solid;\'>'
         +'<td style=\'vertical-align:middle\'>'
-        + CharMogulHTMLFormatter.generateFlagImg(iso, 32, 32)
+        + ChartMogulHTMLFormatter.generateFlagImg(iso, 32, 32)
         +'</td>'
         +'<td style=\'font-size:1em;vertical-align:middle\'>'
         + Countries[iso].name
@@ -209,4 +200,4 @@ class CharMogulHTMLFormatter {
 // -------------------------------------------------------------------
 // Exports
 
-module.exports = CharMogulHTMLFormatter;
+module.exports = ChartMogulHTMLFormatter;

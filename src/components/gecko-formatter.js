@@ -3,7 +3,7 @@
 /**
  * Formatter for the GeckoBoard Widget.
  *
- * @module  components/formatter/gecko
+ * @module  formatter/gecko
  * @requires config
  * @requires components/util
  *

@@ -1,9 +1,13 @@
 /**
  * @overview SubRouter to handle the all path related to /chartmogul
  *
- * @module {Router} router/chartmogul
- * @requires baserouter
- * @requires chartmogul-feed
+ * @module router/chartmogul
+ * @requires config
+ * @requires components/util
+ * @requires components/pusher
+ * @requires router/base
+ * @requires feeder/chartmogul
+ *
  */
 
 
@@ -25,21 +29,18 @@ const BaseRouter = require('../base/baserouter');
 // Properties
 
 /**
+ * SubRouter to handle the all path related to /chartmogul
  *
- *
- * @class ChartMogulRouter
- * @extends {BaseRouter}
+ * @extends router/baase
  */
 class ChartMogulRouter extends BaseRouter {
 
   /**
    * Creates an instance of ChartMogulRouter.
-   * @param {ChartMogulFeed} feed
-   *
-   * @memberOf ChartMogulRouter
+   * @param {module:feeder/chartmogul} feed - The feeder for this router.
    */
   constructor(feed) {
-    super(feed, '/chartmogul', 75);
+    super(feed, '/chartmogul', 90);
   }
 
 
@@ -47,11 +48,10 @@ class ChartMogulRouter extends BaseRouter {
    * The firstMiddleware where the request must go first.
    * Config the request for ChartMogul depending on theparams received.
    *
-   * @param {any} ctx The context of the request and response.
+   * @param {Application.Context} ctx The context of the request and response.
    * @param {Function} next The next middleware to call.
    * @return {Function} the next middleware()
    *
-   * @memberOf ChartMogulFeed
    */
   async configByParams(ctx, next) {
     const today = new Date();
@@ -69,12 +69,7 @@ class ChartMogulRouter extends BaseRouter {
   }
 
 
-  /**
-   *
-   * @override
-   *
-   * @memberOf ChartMogulRouter
-   */
+  /** @override */
   handler() {
     super.handler();
 
@@ -601,9 +596,7 @@ class ChartMogulRouter extends BaseRouter {
     });
   }
 
-  /**
-   * @override
-   */
+  /** @override */
   handlerPusher() {
     const widgets = Config.geckoBoard.widgets;
 

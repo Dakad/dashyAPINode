@@ -3,7 +3,7 @@
 /**
  * @fileoverview  This is the main file, wich init the boot of the app.
  *
- * @module main
+ * @module app/main
  * @requires components/boot
  */
 

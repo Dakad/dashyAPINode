@@ -1,12 +1,16 @@
 /**
  * @overview Feeder for the chartmogul router.
  *
- * @module feeder/ChartMogulFeeder
- * @requires config
+ * @module feeder/chartmogul
+ * @requires config @see https:google.com
  * @requires bluebird
  * @requires superagent
  *
  * @requires components/feeder
+ * @requires components/util
+ * @requires formatter/gecko
+ * @requires formatter/html/chartmogul
+ *
  */
 
 
@@ -34,15 +38,18 @@ const HTMLFormatter = require('./chartmogul-format-html');
 // Properties
 
 /** @constant {string} KEY_NB_LEADS_LAST_MONTH
- * The key for the nbLeads in the cache */
+ * The key for the nbLeads in the cache
+ * @private */
 const KEY_NB_LEADS_LAST_MONTH = 'nbLeadsLastMonth';
 
 /** @constant {string} KEY_AVG_LEADS_LAST_MONTH
- * The key for the last Month AVG in the cache */
+ * The key for the last Month AVG in the cache
+ * @private */
 const KEY_AVG_LEADS_LAST_MONTH = 'avgLeadsLastMonth';
 
 /** @constant {string} KEY_BIGGEST_PLANS
- * The key for the biggest plans in the cache */
+ * The key for the biggest plans in the cache
+ * @private */
 const KEY_BIGGEST_PLANS = '5BiggestPlansPerCustomers';
 
 
@@ -68,7 +75,10 @@ const mrrsEntries = [{
   },
 ];
 
-
+/**
+ * @const {Object} requiredKeys The only to keeps from customers data.
+ * @private
+ * */
 const leadsNecessaryKeys = [
   'name', 'status', 'company',
   'country', 'state', 'city', 'address',

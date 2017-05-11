@@ -554,7 +554,7 @@ class GoogleAnalyticsFeeder extends Feeder {
    *
    * Recursive fetcher for the best Acquisition src on /apptweak.com/aso-blog.
    *
-   * @param {Object} config - The config require for the fetch
+   * @param {Object} config - The config require for the fetch.
    * @return {Promise} - The promisified geckoFormatted result of the fetch
    *
    */

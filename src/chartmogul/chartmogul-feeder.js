@@ -662,8 +662,7 @@ class ChartMogulFeeder extends Feeder {
     // Recup all plans
     let keyForCache = KEY_BIGGEST_PLANS;
 
-    let reqPlans = await this.requestChartMogulFor('/plans');
-    let listPlans = (reqPlans.plans) ? reqPlans.plans : reqPlans;
+    let listPlans = await this.requestChartMogulFor('/plans');
 
     if (config.filter) {
       let filter = config.filter.toLowerCase();
@@ -757,24 +756,25 @@ class ChartMogulFeeder extends Feeder {
    *
    */
   async fetchLatestCustomers(config) {
-    // const requestForCustomerPlan = async (uuid) => {
-    //   let subscription = {};
+    const requestForCustomerPlan = async(uuid) => {
+      let subscription = {};
 
-    //   // Go fetch the subscriptions plans of those cust
-    //   const dest = `/customers/${uuid}/subscriptions`;
-    //   const {entries: subscriptions} = await this.requestChartMogulFor(dest);
-    //   if(!Util.isEmptyOrNull(subscriptions)) {
-    //     subscription = subscriptions.pop();
-    //   }
-
-    //   return subscription;
-    // };
+      // Go fetch the subscriptions plans of those cust
+      const dest = `/customers/${uuid}/subscriptions`;
+      const {
+        entries: subscriptions,
+      } = await this.requestChartMogulFor(dest);
+      if (!Util.isEmptyOrNull(subscriptions)) {
+        subscription = subscriptions.pop();
+      }
+      return subscription;
+    };
 
     // Convert to bool if other type then Bool
     const onlyLead = Boolean(config.onlyLead);
     // const today = new Date().setHours(0, 0, 0, 0);
-    let startingPage = (onlyLead)
-      ? this.leads_.startPage : this.customers_.startPage;
+    let startingPage = (onlyLead) ?
+      this.leads_.startPage : this.customers_.startPage;
 
     const leads = await this.fetchAndFilterCustomers(startingPage, {
       onlyLead: onlyLead,
@@ -794,50 +794,58 @@ class ChartMogulFeeder extends Feeder {
           new Date(cust1DateTime).getTime();
         return (cmp !== 0) ? cmp : cust2.mrr - cust1.mrr;
       })
-      .slice(0, 5)
-      .map((cust) => {
-        // Go fetch the subscriptions plans of those cust
-        let subscription = {};
-        if (!onlyLead) {
-          // subscription = requestForCustomerPlan(cust.uuid);
-        }
-        cust.plan = subscription.plan;
-        return cust;
-      })
-      .map((cust, i) => {
-        const when = new Date(
-          (onlyLead) ?
-          cust['lead_created_at'] :
-          cust['customer-since']
-        );
+      .slice(0, 5);
 
-        if (config.out === 'json') {
-          return {
-            'country': cust.country,
-            'country_full': Util.getCountryFromISOCode(cust.country),
-            'name': cust.name,
-            'company': cust.company,
-            'date': when.toISOString(),
-            'mrr': (!onlyLead) ? cust.mrr : undefined,
-            'plan': cust.plan,
-          };
-        }
+    if (!onlyLead) {
+      // Go fetch the subscriptions plans of those cust
+      for (let cust of latestLeads) {
+        cust.plan = await requestForCustomerPlan(cust.uuid);
+      }
+    }
 
+    latestLeads = latestLeads.map((cust) => {
+      let subscription = {};
+      if (!onlyLead) {
+        // subscription = requestForCustomerPlan(cust.uuid);
+      }
+      cust.plan = subscription.plan;
+      return cust;
+    });
+
+    latestLeads = latestLeads.map((cust, i) => {
+      const when = new Date(
+        (onlyLead) ?
+        cust['lead_created_at'] :
+        cust['customer-since']
+      );
+
+      if (config.out === 'json') {
         return {
-          'type': ((i === 0) ? 1 : 0),
-          // 'text': (company || name)+' at '+
-          //   new Date(cust.lead_created_at).toLocaleString('fr-FR')
-          //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
-          'text': HTMLFormatter.toListCustomer({
-            'who': cust.company || cust.name,
-            'when': when,
-            'where': cust.country,
-            'city': cust.city,
-            'mrr': (!onlyLead) ? cust.mrr : undefined,
-            'plan': cust.plan,
-          }),
+          'country': cust.country,
+          'country_full': Util.getCountryFromISOCode(cust.country),
+          'name': cust.name,
+          'company': cust.company,
+          'date': when.toISOString(),
+          'mrr': (!onlyLead) ? cust.mrr : undefined,
+          'plan': cust.plan,
         };
-      });
+      }
+
+      return {
+        'type': ((i === 0) ? 1 : 0),
+        // 'text': (company || name)+' at '+
+        //   new Date(cust.lead_created_at).toLocaleString('fr-FR')
+        //   +' incomming MRR : '+Util.toMoneyFormat(mrr/100),
+        'text': HTMLFormatter.toListCustomer({
+          'who': cust.company || cust.name,
+          'when': when,
+          'where': cust.country,
+          'city': cust.city,
+          'mrr': (!onlyLead) ? cust.mrr : undefined,
+          'plan': cust.plan,
+        }),
+      };
+    });
 
     if (config.out === 'json') {
       return latestLeads;

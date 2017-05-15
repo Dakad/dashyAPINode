@@ -48,7 +48,6 @@ exports = module.exports = [{
     if (match[1].startsWith('/customers')) {
       if(match[2]) {
         const sub = match[2].replace('/', '');
-        console.log(sub);
         return request.chartMogul.subscriptions[sub];
       }
       const maxCustomers = request.chartMogul.customers.length;

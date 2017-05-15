@@ -122,7 +122,7 @@ class Boot {
       Logger.info(`[BOOT]\t Server Listening on http://${address}:${port}`);
       Logger.info('[BOOT]\t App ready');
       return app;
-    } catch (error) {
+    } catch (err) {
       if (err.code === 'EADDRINUSE') {
         Logger.error('[BOOT]\t Address already in use');
       }

@@ -502,11 +502,13 @@ describe('ChartMogul : Feeder', () => {
     it('should fill data with items formatted', () => {
       return feed.fetchLatestCustomers({})
         .then(({item}) => {
-          const [last] = item;
+          const [last, one] = item;
           expect(item).to.be.a('array').and.to.not.be.empty;
           // expect(item).to.have.lengthOf(5);
           expect(last).to.contains.all.keys('type', 'text');
           expect(last.type).eq(1);
+          expect(last).to.contains.all.keys('type', 'text');
+          expect(one).to.contains.all.keys('type', 'text');
         });
     });
   });
@@ -519,13 +521,25 @@ describe('ChartMogul : Feeder', () => {
     afterEach(() => spyFeedReqChartMogul.restore());
 
     it('should call fetchAndFilterCustomers', () => {
-      return feed.fetchLatestCustomers({onlyLead: true}).then(() => {
+      return feed.fetchLatestCustomers({onlyLead: true, out: 'json'})
+      .then(() => {
         expect(spyFeedReqChartMogul.called).to.be.true;
         // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
       });
     });
 
     it('should fill data with items', () => {
+      return feed.fetchLatestCustomers({onlyLead: true, out: 'json'})
+      .then(([last]) => {
+        // expect(spyFeedReqChartMogul.callCount).to.be.above(2);
+        expect(last).to.contains.all.keys([
+          'country', 'country', 'name', 'company', 'date',
+          'mrr', 'plan',
+        ]);
+      });
+    });
+
+    it('should fill data with items formatted', () => {
       return feed.fetchLatestCustomers({onlyLead: true})
         .then(({item}) => {
           const [last, one] = item;

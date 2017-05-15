@@ -45,6 +45,9 @@ module.exports = {
     'leads': {
       'startPage': 1,
     },
+    'customers': {
+      'startPage': 1,
+    },
   },
   'google-analytics': {
     'apiUrl': 'https://www.googleapis.mock/analytics/v3/data/ga',

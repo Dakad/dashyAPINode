@@ -38,6 +38,7 @@ dev:
 	@echo "###  Resetting Redis cache ..." ;
 	$(REDIS_CLI) FLUSHALL;
 	@DEBUG=* \
+	TZ=Europe/Brussels \
 	NODE_ENV=production \
 	$(NODEMON) $(DIR_SRC)/app.js;
 	@echo "##### Launch over" ;

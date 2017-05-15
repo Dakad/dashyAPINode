@@ -66,6 +66,9 @@
     },
     "leads": {
       "startPage": 8
+    },
+    "customers" : {
+      "startPage" : 2
     }
   },
   "google-analytics": {

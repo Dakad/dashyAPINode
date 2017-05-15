@@ -120,6 +120,7 @@ module.exports = class Util {
    * @return {Object} dates - All dates.
    * @return {Object} dates.firstInPastMonth - The 1st day in previous month.
    * @return {Object} dates.dateInPastMonth - The same date in previous month.
+   * @return {Object} dates.last30Days - The 30 last days.
    * @return {Object} dates.endInPastMonth - The last day in previous month.
    * @return {Object} dates.firstInMonth - The 1st day in this month.
    * @return {Object} dates.today - The today date.
@@ -148,8 +149,13 @@ module.exports = class Util {
     const dateInPastMonth = new Date(dte.setMonth(month - 1));
     // dateInPastMonth.setDate(today.getDate() - 30);
 
+    const last30Days = new Date();
+    last30Days.setDate(today.getDate() - 30);
+
+
     const dates = {
       firstInPastMonth,
+      last30Days,
       dateInPastMonth,
       endInPastMonth,
       firstInMonth,

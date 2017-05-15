@@ -67,10 +67,19 @@ class ChartMogulHTMLFormatter {
    * @param {Number|string} customer.[mrr] The customer MRR
    *    if defined, will be formatted to € Money
    *
+   * @param {Object} customer.[plan] The customer plan subscribed
+   *
    * @return {String} A HTML Output.
    */
-  static toListCustomer({who, when, where='', mrr, city}) {
+  static toListCustomer({who, when, where='', mrr, city, plan}) {
     const isISO3166 = (when) => where.length === 2;
+    const {
+      plan: name,
+      quantity: qte,
+      'billing-cycle': cycle,
+      'billing-cycle-count': cycleCount,
+      'currency-sign': currency,
+    } = plan;
 
     if (when instanceof Date) {
       when = new Intl.DateTimeFormat('fr-BE', {
@@ -110,7 +119,10 @@ class ChartMogulHTMLFormatter {
                         alt='MRR'
                         style='float:left;width:25px;height:25px;margin:0 5px;'
                   />
-                  ${(mrr / 100)}/Month
+                  ${(qte > 1) ? qte+'x' : ''} 
+                  ${name} 
+                  ${(cycleCount > 1) ? `(${cycleCount} ${cycleCount})`: ''} 
+                  : ${currency}${(mrr / 100)}/${cycle}
                 </h2>`
               : ''}
               </div>`.replace(/[\r\n]/g, ' ');

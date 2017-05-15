@@ -416,7 +416,7 @@ describe('ChartMogul : Feeder', () => {
 
 
     it('should call fetchAndFilterCustomers', () => {
-      return feed.fetchNbLeadsToday({}).then((item) => {
+      return feed.fetchNbLeadsToday({}).then(() => {
         expect(spyFetchAndFilter.called).to.be.true;
         expect(spyFetchAndFilter.calledWith(Config.chartMogul.leads.startPage))
           .to.be.true;

@@ -100,13 +100,12 @@ class ChartMogulFeeder extends Feeder {
   constructor() {
     super(Config.chartMogul.apiUrl);
 
-    /** @private */
     this.bestNetMRR_ = {
       'lastFetch': null,
       'startDate': new Date(Config.chartMogul.bestNetMRR.startDate),
       'val': 0,
     };
-    /** @private */
+
     this.leads_ = {
       'lastFetch': null,
       'startPage': Config.chartMogul.leads.startPage,
@@ -114,7 +113,7 @@ class ChartMogulFeeder extends Feeder {
 
     this.customers_ = {
       'lastFetch': null,
-      'startPage': 1,
+      'startPage': Config.chartMogul.customers.startPage,
     };
   }
 
@@ -774,7 +773,10 @@ class ChartMogulFeeder extends Feeder {
     // Convert to bool if other type then Bool
     const onlyLead = Boolean(config.onlyLead);
     // const today = new Date().setHours(0, 0, 0, 0);
-    const leads = await this.fetchAndFilterCustomers(1, {
+    let startingPage = (onlyLead)
+      ? this.leads_.startPage : this.customers_.startPage;
+
+    const leads = await this.fetchAndFilterCustomers(startingPage, {
       onlyLead: onlyLead,
       status: (onlyLead) ? 'Lead' : 'Active',
     });

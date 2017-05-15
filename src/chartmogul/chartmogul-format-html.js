@@ -71,7 +71,7 @@ class ChartMogulHTMLFormatter {
    *
    * @return {String} A HTML Output.
    */
-  static toListCustomer({who, when, where='', mrr, city, plan}) {
+  static toListCustomer({who, when, where='', mrr, city, plan={}}) {
     const isISO3166 = (when) => where.length === 2;
     const {
       plan: name,

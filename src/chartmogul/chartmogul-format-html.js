@@ -75,7 +75,7 @@ class ChartMogulHTMLFormatter {
     if (when instanceof Date) {
       when = new Intl.DateTimeFormat('fr-BE', {
         month: 'short', day: 'numeric', weekday: 'short',
-        hour: 'numeric', minute: '2-digit', second: 'numeric',
+        hour: 'numeric', minute: '2-digit',
         hour12: false,
 
       }).format(when);

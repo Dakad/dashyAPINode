@@ -486,10 +486,9 @@ describe('ChartMogul : Feeder', () => {
       });
     });
 
-    it.only('should fill data with items', () => {
+    it('should fill data with items', () => {
       return feed.fetchLatestCustomers({onlyLead: false, out: 'json'})
         .then((item) => {
-          console.log(item);
           const [last] = item;
           expect(item).to.be.a('array').and.to.not.be.empty;
           // expect(item).to.have.lengthOf(5);
@@ -501,16 +500,13 @@ describe('ChartMogul : Feeder', () => {
     });
 
     it('should fill data with items formatted', () => {
-      return feed.fetchLatestCustomers({onlyLead: false})
+      return feed.fetchLatestCustomers({})
         .then(({item}) => {
-          console.log(item);
-          const [last, one] = item;
+          const [last] = item;
           expect(item).to.be.a('array').and.to.not.be.empty;
           // expect(item).to.have.lengthOf(5);
           expect(last).to.contains.all.keys('type', 'text');
           expect(last.type).eq(1);
-          expect(one).to.contains.all.keys('type', 'text');
-          expect(one.type).eq(0);
         });
     });
   });

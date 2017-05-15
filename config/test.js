@@ -413,7 +413,7 @@ module.exports = {
       },
       'customers': [{
           'entries': [{
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Iva Warner',
               'status': 'Lead',
               'customer-since': '',
@@ -433,7 +433,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"TmLykDPpNhqUpp5a",
+              "uuid": "TmLykDPpNhqUpp5a",
               'name': 'Maria Isabella Bonechi',
               'status': 'Cancelled',
               'customer-since': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
@@ -452,7 +452,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Ola Katie Nunez ',
               'status': 'Active',
               'customer-since': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
@@ -471,7 +471,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Dollie Daisy',
               'status': 'Cancelled',
               'customer-since': new Date(dateLastMonth.setDate(getRandomInt(1, 29))).toISOString(),
@@ -489,7 +489,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Christian Craig Fitzgerald',
               'status': 'Lead',
               'customer-since': firstInPrevMonth.toISOString(),
@@ -508,7 +508,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"TmLykDPpNhqUpp5a",
+              "uuid": "TmLykDPpNhqUpp5a",
               'name': 'Francis Eliza',
               'status': 'Lead',
               'customer-since': today.toISOString(),
@@ -527,7 +527,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Ida Lizzie Garrett',
               'status': 'Lead',
               'customer-since': '2014-01-12T14:42:19+00:00',
@@ -554,7 +554,7 @@ module.exports = {
         },
         {
           'entries': [{
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "TmLykDPpNhqUpp5a",
               'name': 'Ray Coleman',
               'status': 'Lead',
               'customer-since': today.toISOString(),
@@ -574,7 +574,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Edwin Young',
               'status': 'Lead',
               'customer-since': null,
@@ -592,7 +592,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "TmLykDPpNhqUpp5a",
               'name': 'Cristiano Santucci Elia',
               'status': 'Lead',
               'customer-since': null,
@@ -612,7 +612,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Gianna Rossella Cellini',
               'status': 'Lead',
               'customer-since': null,
@@ -632,7 +632,7 @@ module.exports = {
               },
             },
             {
-              "uuid" :"kZVfJxGSdvLDP4rn",
+              "uuid": "kZVfJxGSdvLDP4rn",
               'name': 'Gianna Rossella Stone',
               'status': 'Lead',
               'customer-since': null,
@@ -667,10 +667,45 @@ module.exports = {
           'page': 123,
         },
       ],
+      'subscriptions': {
+        'kZVfJxGSdvLDP4rn': {
+          "entries": [{
+            "id": 23456789,
+            "external_id": "253970e88750737249a995968e295a",
+            "plan": "Guru",
+            "quantity": 1,
+            "mrr": 20122,
+            "arr": 241464,
+            "status": "active",
+            "billing-cycle": "month",
+            "billing-cycle-count": getRandomInt(1, 12),
+            "start-date": "2017-05-13T00:00:00+00:00",
+            "end-date": "2017-06-13T17:56:24+00:00",
+            "currency": "EUR",
+            "currency-sign": "€"
+          }]
+        },
+        'TmLykDPpNhqUpp5a': {
+          "entries": [{
+            "id": 12345,
+            "external_id": "66354ec0b204ea41a931338",
+            "plan": "Starter",
+            "quantity": 1,
+            "mrr": 4900,
+            "arr": 58800,
+            "status": "active",
+            "billing-cycle": "month",
+            "billing-cycle-count": getRandomInt(1, 10),
+            "start-date": "2017-05-12T00:00:00+00:00",
+            "end-date": "2017-06-12T08:33:14+00:00",
+            "currency": "EUR",
+            "currency-sign": "€"
+          }]
+        }
+      },
     },
-    'ga' : {
-      'newUsers' : {
-      }
+    'ga': {
+      'newUsers': {}
     },
     'pipedrive': {
       'pipelines': [{

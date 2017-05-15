@@ -803,15 +803,6 @@ class ChartMogulFeeder extends Feeder {
       }
     }
 
-    latestLeads = latestLeads.map((cust) => {
-      let subscription = {};
-      if (!onlyLead) {
-        // subscription = requestForCustomerPlan(cust.uuid);
-      }
-      cust.plan = subscription.plan;
-      return cust;
-    });
-
     latestLeads = latestLeads.map((cust, i) => {
       const when = new Date(
         (onlyLead) ?

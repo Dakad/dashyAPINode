@@ -210,14 +210,16 @@ class GeckoBoardFormatter {
       'type': (reverse) ? 'reverse' : undefined,
     };
 
-    if (Array.isArray(sec)) {
-      data.item.push(sec);
-    } else {
-      data.item.push({
-        'value': (sec['value']) ? sec.value : sec,
-        type,
-        prefix,
-      });
+    if(sec) {
+      if (Array.isArray(sec)) {
+        data.item.push(sec);
+      } else {
+        data.item.push({
+          'value': (sec['value']) ? sec.value : sec,
+          type,
+          prefix,
+        });
+      }
     }
 
     return data;

@@ -100,7 +100,7 @@ class GoogleAnalyticsFeeder extends Feeder {
    *
    * @return {string} - The corresponding hash or null.
    */
-  hashQueryForKey(q,destination='/ga') {
+  hashQueryForKey(q, destination='/ga') {
     if (Util.isEmptyOrNull(q) || destination !== '/ga') {
       return null;
     }

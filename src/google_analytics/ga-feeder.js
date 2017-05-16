@@ -165,21 +165,26 @@ class GoogleAnalyticsFeeder extends Feeder {
    * Send a request to GoogleAnalytics API.
    *
    * @param {Object} query - The query params to send to GoogleAnalytics
+   * @param {string} [destination='/ga'] The endpoint to reach. /(ga|realtime)
+   *
    * @return {Promise}
    *
    */
-  async requestGAFor(query) {
+  async requestGAFor(query, destination = '/ga') {
     try {
       if (Util.isEmptyOrNull(query)) {
         throw new Error('Arguments:query must be defined');
       }
 
-      // Check if got all required key into the query
-      requiredKeysForQuery.forEach((requiredKey) => {
-        if (!query[requiredKey]) {
-          throw (new Error(`Missing ${requiredKey} in the query`));
-        }
-      });
+      if(destination === '/ga') {
+        // Check if got all required key into the query
+        requiredKeysForQuery.forEach((requiredKey) => {
+          if (!query[requiredKey]) {
+            throw (new Error(`Missing ${requiredKey} in the query`));
+          }
+        });
+      }
+
       // ['ga:time','ga:views'] => 'ga:time,ga:views'
       if (Array.isArray(query.metrics)) {
         query.metrics = query.metrics.join();
@@ -203,7 +208,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
       query['access_token'] = await this.getAccessToken();
 
-      return super.requestAPI('', query, keyForCache);
+      return super.requestAPI(destination, query, keyForCache);
     } catch (error) {
       const {
         response: res,
@@ -221,7 +226,28 @@ class GoogleAnalyticsFeeder extends Feeder {
 
   /**
    *
-   * Recursive fetcher for the visitors on /apptweak.com.
+   * Fetcher for the visitors on /apptweak.com.
+   *
+   * @param {Object} config - The config require for the fetch
+   * @return {Promise} - The promisified geckoFormatted result of the fetch
+   *
+   */
+  async fetchRealTimeVisitors(config) {
+    const {
+      rows: [[activeUsers=0]],
+    } = await this.requestGAFor({metrics}, '/realtime');
+
+    return GeckoBoardFormatter.toNumberAndSecondStat({
+      'value': Number.parseInt(activeUsers),
+    }, {
+      'value': 'Current Active Users on apptweak.com',
+    });
+  }
+
+
+  /**
+   *
+   * Fetcher for the visitors on /apptweak.com.
    *
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
@@ -254,17 +280,16 @@ class GoogleAnalyticsFeeder extends Feeder {
     ]);
 
     return GeckoBoardFormatter.toNumberAndSecondStat({
-          'value': Number.parseInt(current[metrics[0]]),
-        },
-        {
-          'value': Number.parseInt(last[metrics[0]]),
+      'value': Number.parseInt(current[metrics[0]]),
+    }, {
+      'value': Number.parseInt(last[metrics[0]]),
     });
   }
 
 
   /**
    *
-   * Recursive fetcher for the AVG Session Duration on /apptweak.com.
+   * Fetcher for the AVG Session Duration on /apptweak.com.
    *
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
@@ -306,12 +331,12 @@ class GoogleAnalyticsFeeder extends Feeder {
 
       default:
         return GeckoBoardFormatter.toNumberAndSecondStat({
-            'absolute': true,
-            'type': 'time_duration',
-            'value': Number.parseFloat(firstRes) * 1000,
-          }, {
-            'type': 'time_duration',
-            'value': Number.parseFloat(secondRes) * 1000,
+          'absolute': true,
+          'type': 'time_duration',
+          'value': Number.parseFloat(firstRes) * 1000,
+        }, {
+          'type': 'time_duration',
+          'value': Number.parseFloat(secondRes) * 1000,
         });
     }
   }
@@ -319,7 +344,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
   /**
    *
-   * Recursive fetcher for the Bounce Rate on /apptweak.com.
+   * Fetcher for the Bounce Rate on /apptweak.com.
    *
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
@@ -355,16 +380,15 @@ class GoogleAnalyticsFeeder extends Feeder {
       'reverse': true,
       'value': Math.round(current[metrics[0]]),
       'prefix': '%',
-      },
-      {
-        'value': Math.round(last[metrics[0]]),
-      });
+    }, {
+      'value': Math.round(last[metrics[0]]),
+    });
   }
 
 
   /**
    *
-   * Recursive fetcher for the PageViews on /apptweak.com/aso-blog.
+   * Fetcher for the PageViews on /apptweak.com/aso-blog.
    *
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
@@ -402,18 +426,16 @@ class GoogleAnalyticsFeeder extends Feeder {
     ]);
 
     return GeckoBoardFormatter.toNumberAndSecondStat({
-          'value': Number.parseInt(current[metrics[0]]),
-        },
-        {
-          'value': Number.parseInt(last[metrics[0]]),
-        }
-    );
+      'value': Number.parseInt(current[metrics[0]]),
+    }, {
+      'value': Number.parseInt(last[metrics[0]]),
+    });
   }
 
 
   /**
    *
-   * Recursive fetcher for the PageDuration on /apptweak.com/aso-blog.
+   * Fetcher for the PageDuration on /apptweak.com/aso-blog.
    *
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
@@ -459,20 +481,18 @@ class GoogleAnalyticsFeeder extends Feeder {
       default:
         return GeckoBoardFormatter.toNumberAndSecondStat({
           'absolute': true,
-              'type': 'time_duration',
-              'value': firstRes,
-            },
-            {
-              'value': secondRes,
-            }
-        );
+          'type': 'time_duration',
+          'value': firstRes,
+        }, {
+          'value': secondRes,
+        });
     }
   }
 
 
   /**
    *
-   * Recursive fetcher for the most popular articles on /apptweak.com/aso-blog.
+   * Fetcher for the most popular articles on /apptweak.com/aso-blog.
    *
    * @param {Object} config - The config require for the fetch
    * @return {Promise} - The promisified geckoFormatted result of the fetch
@@ -508,11 +528,13 @@ class GoogleAnalyticsFeeder extends Feeder {
 
 
     // CANNOT be stored in cache coz the most post can change in the month.
-    oldTopValue = oldTopValue.map(({rows})=> (rows) ? rows.pop() : [])
-    .reduce((old, [path='',, nbViews=0]) => {
-      old[path] = nbViews;
-      return old;
-    }, {});
+    oldTopValue = oldTopValue.map(({
+        rows,
+      }) => (rows) ? rows.pop() : [])
+      .reduce((old, [path = '', , nbViews = 0]) => {
+        old[path] = nbViews;
+        return old;
+      }, {});
 
 
     // Insert the old value into tops
@@ -520,7 +542,7 @@ class GoogleAnalyticsFeeder extends Feeder {
       return [
         title.replace(' - ASO Blog', ''),
         nbViews,
-        (oldTopValue[path]||0),
+        (oldTopValue[path] || 0),
         path,
       ];
     });
@@ -528,10 +550,10 @@ class GoogleAnalyticsFeeder extends Feeder {
     switch (config.out) {
       default:
         const html = HTMLFormatter.toTextForBlogPostViews(tops);
-        return GeckoBoardFormatter.toText(html);
+      return GeckoBoardFormatter.toText(html);
 
       case 'json':
-        return tops.map(([title, nbViews, oldViews, path]) => ({
+          return tops.map(([title, nbViews, oldViews, path]) => ({
           title,
           path,
           nbViews,
@@ -540,11 +562,11 @@ class GoogleAnalyticsFeeder extends Feeder {
 
       case 'list':
           return GeckoBoardFormatter.toLeaderboard(
-            tops.map(([title, nbViews]) =>
-              ({
-                'label': title,
-                'value': nbViews,
-              })
+          tops.map(([title, nbViews]) =>
+            ({
+              'label': title,
+              'value': nbViews,
+            })
           ));
     }
   }
@@ -552,7 +574,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
   /**
    *
-   * Recursive fetcher for the best Acquisition src on /apptweak.com/aso-blog.
+   * Fetcher for the best Acquisition src on /apptweak.com/aso-blog.
    *
    * @param {Object} config - The config require for the fetch.
    * @return {Promise} - The promisified geckoFormatted result of the fetch
@@ -578,22 +600,18 @@ class GoogleAnalyticsFeeder extends Feeder {
     });
 
     switch (config.out) {
-      default:
-        return GeckoBoardFormatter.toFunnel(
-          tops.map(([title, nbViews]) =>
-            [
-              title.replace(' - ASO Blog', ''),
-             Number.parseInt(nbViews, 10),
-            ]
-          )
-        );
+      default: return GeckoBoardFormatter.toFunnel(
+        tops.map(([title, nbViews]) => [
+          title.replace(' - ASO Blog', ''),
+          Number.parseInt(nbViews, 10),
+        ])
+      );
 
       case 'json':
           return tops.map(([title, nbViews]) => ({
-            'source': title,
-            'newUsers': nbViews,
-          })
-        );
+          'source': title,
+          'newUsers': nbViews,
+        }));
 
     }
   }

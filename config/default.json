@@ -72,7 +72,7 @@
     }
   },
   "google-analytics": {
-    "apiUrl": "https://www.googleapis.com/analytics/v3/data/ga",
+    "apiUrl": "https://www.googleapis.com/analytics/v3/data",
     "auth": {
       "iss": "761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com",
       "scope": "https://www.googleapis.com/auth/analytics.readonly",

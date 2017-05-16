@@ -602,26 +602,26 @@ class ChartMogulRouter extends BaseRouter {
       [
         widgets.leadsMonth.id, // Leads Month
         this.feed_.fetchNbLeads(),
-        widgets.leadsMonth.fetchTime,
+        widgets.leadsMonth.pushTime,
       ],
       [
         widgets.leadsToday.id, // Leads Today
         this.feed_.fetchNbLeadsToday(),
-        widgets.leadsToday.fetchTime,
+        widgets.leadsToday.pushTime,
       ],
       [
         widgets.latestCustomers.id, // Last Customers Month
         this.feed_.fetchLatestCustomers({
           onlyLead: false,
         }),
-        widgets.latestCustomers.fetchTime,
+        widgets.latestCustomers.pushTime,
       ],
       [
         widgets.latestLeads.id, // Last Leads Month
         this.feed_.fetchLatestCustomers({
           onlyLead: true,
         }),
-        widgets.latestLeads.fetchTime,
+        widgets.latestLeads.pushTime,
       ],
     ].forEach((p) => this.listPushers_.push(new Pusher(...p)));
   };

@@ -385,7 +385,17 @@ class GoogleAnalyticsRouter extends BaseRouter {
   /**
    * @override
    */
-  handlerPusher() {};
+  handlerPusher() {
+    const widgets = Config.geckoBoard.widgets.currentActiveUsers;
+
+    [
+      [
+        widgets.currentActiveUsers.id, // Current Active users on apptweak.com
+        this.feed_.fetchRealTimeVisitors(),
+        widgets.currentActiveUsers.pushTime,
+      ],
+    ].forEach((p) => this.listPushers_.push(new Pusher(...p)));
+  };
 
 };
 

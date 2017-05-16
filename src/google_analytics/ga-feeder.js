@@ -100,7 +100,7 @@ class GoogleAnalyticsFeeder extends Feeder {
    *
    * @return {string} - The corresponding hash or null.
    */
-  hashQueryForKey(q,destination='/ga') {
+  hashQueryForKey(q, destination='/ga') {
     if (Util.isEmptyOrNull(q) || destination !== '/ga') {
       return null;
     }
@@ -205,7 +205,7 @@ class GoogleAnalyticsFeeder extends Feeder {
       query['ids'] = 'ga:' + ConfigGA.viewId;
 
       // Key to be hashed for REDIS
-      let keyForCache = this.hashQueryForKey(query,destination);
+      let keyForCache = this.hashQueryForKey(query, destination);
 
       query['access_token'] = await this.getAccessToken();
 

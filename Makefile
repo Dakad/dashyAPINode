@@ -150,7 +150,7 @@ build: test docs
 
 	@echo "##### Clear the logs folder .... ";
 	@rm -rf $(DIR_LOGS)/*;
-	@NODE_ENV=production node --harmony $(DIR_SRC)/app.js;
+	@TZ='Europe/Brussels' NODE_ENV=production node --harmony $(DIR_SRC)/app.js;
 
 clean:
 

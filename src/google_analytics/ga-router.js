@@ -5,6 +5,9 @@
  * @requires router/base
  * @requires feeder/chartmogul
  * @requires components/util
+ * @requires components/pusher
+ *
+ * @requires config
  *
  *
  */
@@ -14,13 +17,13 @@
 // Dependencies
 
 // npm
-// const Config = require('config');
+const Config = require('config');
 
 // Built-in
 
 // Mine
 const Util = require('../components/util');
-// const Pusher = require('../components/pusher');
+const Pusher = require('../components/pusher');
 const BaseRouter = require('../base/baserouter');
 
 
@@ -386,7 +389,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
    * @override
    */
   handlerPusher() {
-    const widgets = Config.geckoBoard.widgets.currentActiveUsers;
+    const widgets = Config.geckoBoard.widgets;
 
     [
       [

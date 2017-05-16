@@ -235,7 +235,7 @@ class GoogleAnalyticsFeeder extends Feeder {
   async fetchRealTimeVisitors(config) {
     const {
       rows: [[activeUsers=0]],
-    } = await this.requestGAFor({metrics}, '/realtime');
+    } = await this.requestGAFor({metrics: 'rt:activeUsers'}, '/realtime');
 
     return GeckoBoardFormatter.toNumberAndSecondStat({
       'value': Number.parseInt(activeUsers),

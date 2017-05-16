@@ -96,11 +96,12 @@ class GoogleAnalyticsFeeder extends Feeder {
    * @private
    *
    * @param {Object} q - The query params to be send.
+   * @param {string} [destination='/ga'] The endpoint to reach. /(ga|realtime)
    *
    * @return {string} - The corresponding hash or null.
    */
-  hashQueryForKey(q) {
-    if (Util.isEmptyOrNull(q)) {
+  hashQueryForKey(q,destination='/ga') {
+    if (Util.isEmptyOrNull(q) || destination !== '/ga') {
       return null;
     }
     const firstInMonth = new Date();
@@ -204,7 +205,7 @@ class GoogleAnalyticsFeeder extends Feeder {
       query['ids'] = 'ga:' + ConfigGA.viewId;
 
       // Key to be hashed for REDIS
-      let keyForCache = this.hashQueryForKey(query);
+      let keyForCache = this.hashQueryForKey(query,destination);
 
       query['access_token'] = await this.getAccessToken();
 

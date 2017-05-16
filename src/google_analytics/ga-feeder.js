@@ -205,7 +205,7 @@ class GoogleAnalyticsFeeder extends Feeder {
       query['ids'] = 'ga:' + ConfigGA.viewId;
 
       // Key to be hashed for REDIS
-      let keyForCache = this.hashQueryForKey(query,destination);
+      let keyForCache = this.hashQueryForKey(query, destination);
 
       query['access_token'] = await this.getAccessToken();
 
@@ -240,8 +240,7 @@ class GoogleAnalyticsFeeder extends Feeder {
 
     return GeckoBoardFormatter.toNumberAndSecondStat({
       'value': Number.parseInt(activeUsers),
-    }, {
-      'value': 'Current Active Users on apptweak.com',
+      'label': 'Current Active Users on apptweak.com'
     });
   }
 

@@ -394,10 +394,10 @@ class GoogleAnalyticsRouter extends BaseRouter {
     [
       [
         widgets.currentActiveUsers.id, // Current Active users on apptweak.com
-        this.feed_.fetchRealTimeVisitors(),
+        this.feed_.fetchRealTimeVisitors,
         widgets.currentActiveUsers.pushTime,
       ],
-    ].forEach((p) => this.listPushers_.push(new Pusher(...p)));
+    ].forEach((p) => this.listPushers_.push(new Pusher(...p,this.feed_)));
   };
 
 };

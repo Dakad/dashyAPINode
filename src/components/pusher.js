@@ -31,36 +31,56 @@ const Logger = require('./logger');
 
 /**
  * Use to push data into a GeckoWidget.
- * Require the widget ID, the promise Function
+ * Require the widget ID, the function
  *
  */
 class Pusher {
   /**
    * Creates an instance of Pusher.
    * @param {string} widgetId - The GeckoBoard Widget Key.
-   * @param {Promise} promData - The pending promise for widget data.
+   * @param {Function|Array} promData - The function for widget data.
+   * If array, must contains in order : [fn, ...args]
    * @param {number} [timeOut] A specific time.
    *
    */
-  constructor(widgetId, promData, timeOut) {
+  constructor(widgetId, fnData, timeOut,feeder) {
     if (!widgetId) {
       throw new Error('Required the Widget ID for pushing');
     }
 
-    if (!promData || !(promData instanceof Promise)) {
-      throw new Error(`[PUSHER] ${widgetId} require a promise`);
+    if (!fnData) {
+      throw new Error(`[PUSHER] ${widgetId} requires a fct for the data !`);
     }
 
     this.widgetId_ = widgetId;
-    this.fnPromData_ = promData;
+    
     this.timeOut_ = timeOut;
+
+    // ? fnData come with args ?
+    if(Array.isArray(fnData)){
+      const [fn, ...args] = fnData;
+      if (!(fn instanceof Function)) {
+        throw new Error(`[PUSHER] ${widgetId} requires a FUNCTION !`);
+      }
+
+      this.fnForData_ = fn;
+      this.fnForDataArgs_ = args;
+    }else{
+      this.fnForData_ = fnData;
+      this.fnForDataArgs_ = [];
+    }
+    if(feeder){
+      this.feed_ = feeder;
+      this.fnForData_.bind(this.feed_,...this.fnForDataArgs_);
+    }
   }
 
 
   /** Push the data to the Gecko Widget.*/
   async push() {
     try {
-      const data = await this.fnPromData_;
+      const data = await this.fnForData_.call(this.feed_, ...this.fnForDataArgs_);
+
       try {
       await request.post(Config.geckoBoard.pushUrl + this.widgetId_)
         .send({

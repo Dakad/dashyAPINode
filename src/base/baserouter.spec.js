@@ -57,6 +57,18 @@ describe('Base : BaseRouter', () => {
       };
       BaseRouter.checkMiddleware(ctx, next);
     });
+    
+    it.skip('should get config params on camel case', () => {
+      ctx.query = {
+        'some-foo' : '_sd_dsd-weqe',
+        'ab-cd-ef' : 'abCdEf',
+        'ab-cd-ef--': 'abCdEf',
+        'ab-cd--ef--': 'abCdEf',
+        'ab-cd-ef-': 'abCdEf',
+        '-ab-cd--ef--': 'AbCdEf',
+        '--ab-cd-__-ef--': 'AbCdEf',
+      };
+    });
   });
 
 

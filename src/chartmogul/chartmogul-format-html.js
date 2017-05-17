@@ -47,8 +47,9 @@ class ChartMogulHTMLFormatter {
    */
   static generateFlagImg(isoCountry, width=150, height=150) {
     const srcLink = Config.api.host + '/assets/img/flags';
+    const country = Countries[isoCountry];
     return `<img src='${srcLink}/${isoCountry}.png' `+
-             `alt='Flag of ${Countries[isoCountry]['name']}' `+
+             `alt='Flag of ${(country) ? country['name'] : 'World'}' `+
              'style=\'float:left;margin: 0 5px;'
               +`width:${width}px;height:${height}px;'>`;
   }
@@ -72,7 +73,11 @@ class ChartMogulHTMLFormatter {
    * @return {String} A HTML Output.
    */
   static toListCustomer({who, when, where='', mrr, city, plan={}}) {
-    const isISO3166 = (when) => where.length === 2;
+    const isISO3166 = (where) => (where && where.length === 2);
+    const location = (city||where) 
+      ? (city || Countries[where]['name'].toUpperCase())
+      : 'Undefined';
+
     const {
       plan: name,
       quantity: qte,
@@ -92,7 +97,7 @@ class ChartMogulHTMLFormatter {
     return `<div>
                 ${isISO3166(where)
                   ? ChartMogulHTMLFormatter.generateFlagImg(where)
-                  :''
+                  : ChartMogulHTMLFormatter.generateFlagImg('world')
                 }
                 <h1 style='margin:0 10px 15px 0;'>
                   <u>${(who.length>21) ? who.substr(0, 21)+'....' : who}</u>
@@ -110,7 +115,7 @@ class ChartMogulHTMLFormatter {
                         alt='City'
                         style='float:left;width:30px;height:30px;margin:0 5px;'
                   />
-                ${city || Countries[where]['name'].toUpperCase()}
+                ${location}
                 </h2>
 
               ${ (mrr)

@@ -239,7 +239,7 @@ class GoogleAnalyticsFeeder extends Feeder {
     } = await this.requestGAFor({metrics: 'rt:activeUsers'}, '/realtime');
 
     return GeckoBoardFormatter.toNumberAndSecondStat({
-      'value': Number.parseInt(activeUsers)
+      'value': Number.parseInt(activeUsers),
     });
   }
 

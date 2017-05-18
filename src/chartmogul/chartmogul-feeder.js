@@ -754,7 +754,7 @@ class ChartMogulFeeder extends Feeder {
 
     // Convert to bool if other type then Bool
     const onlyLead = Boolean(config.onlyLead);
-    
+
     let startingPage = (onlyLead) ?
       this.leads_.startPage : this.customers_.startPage;
 

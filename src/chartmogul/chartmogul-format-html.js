@@ -74,7 +74,7 @@ class ChartMogulHTMLFormatter {
    */
   static toListCustomer({who, when, where='', mrr, city, plan={}}) {
     const isISO3166 = (where) => (where && where.length === 2);
-    const location = (city||where) 
+    const location = (city||where)
       ? (city || Countries[where]['name'].toUpperCase())
       : 'Undefined';
 

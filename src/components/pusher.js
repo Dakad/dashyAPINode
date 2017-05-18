@@ -38,12 +38,13 @@ class Pusher {
   /**
    * Creates an instance of Pusher.
    * @param {string} widgetId - The GeckoBoard Widget Key.
-   * @param {Function|Array} promData - The function for widget data.
+   * @param {Function|Array} fnData - The function for widget data.
    * If array, must contains in order : [fn, ...args]
    * @param {number} [timeOut] A specific time.
+   * @param {module:components/feeder} [feeder] The feeder for the binding.
    *
    */
-  constructor(widgetId, fnData, timeOut,feeder) {
+  constructor(widgetId, fnData, timeOut, feeder) {
     if (!widgetId) {
       throw new Error('Required the Widget ID for pushing');
     }
@@ -53,25 +54,25 @@ class Pusher {
     }
 
     this.widgetId_ = widgetId;
-    
+
     this.timeOut_ = timeOut;
 
     // ? fnData come with args ?
-    if(Array.isArray(fnData)){
+    if(Array.isArray(fnData)) {
       const [fn, ...args] = fnData;
       if (!(fn instanceof Function)) {
         throw new Error(`[PUSHER] ${widgetId} requires a FUNCTION !`);
       }
-
       this.fnForData_ = fn;
       this.fnForDataArgs_ = args;
     }else{
       this.fnForData_ = fnData;
       this.fnForDataArgs_ = [];
     }
-    if(feeder){
+
+    if(feeder) {
       this.feed_ = feeder;
-      this.fnForData_.bind(this.feed_,...this.fnForDataArgs_);
+      this.fnForData_.bind(this.feed_, ...this.fnForDataArgs_);
     }
   }
 
@@ -79,7 +80,7 @@ class Pusher {
   /** Push the data to the Gecko Widget.*/
   async push() {
     try {
-      const data = await this.fnForData_.call(this.feed_, ...this.fnForDataArgs_);
+      const data = await this.fnForData_.apply(this.feed_, this.fnForDataArgs_);
 
       try {
       await request.post(Config.geckoBoard.pushUrl + this.widgetId_)

@@ -145,16 +145,15 @@ class BaseRouter extends Router {
    * @return {Function} the next middleware()
    */
   static checkMiddleware(ctx, next) {
-    //const camelCased = (s) => s.replace(/[-_]([a-z])/g, ([,m]) => m.toUpperCase());
     const camelCased = (s) => s.replace(
-      /[-_]+(.)?/g, (m,g='') => g.toUpperCase()
+      /[-_]+(.)?/g, (m, g='') => g.toUpperCase()
     );
-    // Camel Case all query parameters 
+    // Camel Case all query parameters
     const query = Object.keys(ctx.query||{}).reduce((res, q)=>{
       res[camelCased(q)] = ctx.query[q];
       return res;
-    },{});
-    
+    }, {});
+
     ctx.state.config = Object.assign({}, query);
     return next();
   };

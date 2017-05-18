@@ -397,7 +397,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
         this.feed_.fetchRealTimeVisitors,
         widgets.currentActiveUsers.pushTime,
       ],
-    ].forEach((p) => this.listPushers_.push(new Pusher(...p,this.feed_)));
+    ].forEach((p) => this.listPushers_.push(new Pusher(...p, this.feed_)));
   };
 
 };

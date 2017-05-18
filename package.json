@@ -91,6 +91,7 @@
   },
   "scripts": {
     "test": "make test",
+    "dev":"TZ=Europe\\Brussels NODE_ENV=production nodemon src/app.js",
     "start": "TZ=Europe\\Brussels NODE_ENV=production ./node_modules/.bin/pm2 start .pm2.json"
   }
 }

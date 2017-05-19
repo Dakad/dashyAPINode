@@ -13,7 +13,6 @@
   "geckoBoard": {
     "apiKey": "GECKO_API_KEY",
     "widgets": {
-      "pushTime" : 60,
       "leadsMonth": {
         "id": "WIDGET_LEADS_MONTH",
         "pushTime" : "WIDGET_LEADS_MONTH_TIME"

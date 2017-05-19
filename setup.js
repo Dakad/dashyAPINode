@@ -33,9 +33,3 @@ fs.mkdir(dirConfig, function(err, folder) {
     console.info("*** Logs folder created");
 });
 
-console.info('****** Installing packages dependencies ....');
-exec('npm install', function(err, version) {
-    if (err) throw err;
-    console.info("*** npm packages Installed");
-    console.info("*** Setup completed.");
-});

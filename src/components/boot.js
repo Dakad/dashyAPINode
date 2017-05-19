@@ -95,7 +95,7 @@ class Boot {
    *  with nothing or reject with the error.
    */
   static async start() {
-    const server = new Server(Config.api.port);
+    const server = new Server(process.env.PORT || Config.api.port);
     let stats;
 
     try {

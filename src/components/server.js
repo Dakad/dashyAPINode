@@ -48,7 +48,7 @@ class Server {
    * Creates an instance of Server.
    * @param {number} port - Where the server must listen for connection.
    */
-  constructor(port) {
+  constructor(port=0) {
     this.numPort_ = port;
     this.app_ = new Koa();
 

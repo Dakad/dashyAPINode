@@ -82,7 +82,6 @@ class ChartMogulHTMLFormatter {
       plan: name,
       quantity: qte,
       'billing-cycle': cycle,
-      'billing-cycle-count': cycleCount,
       'currency-sign': currency,
     } = plan;
 

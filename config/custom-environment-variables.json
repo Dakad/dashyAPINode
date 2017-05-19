@@ -13,18 +13,28 @@
   "geckoBoard": {
     "apiKey": "GECKO_API_KEY",
     "widgets": {
+      "pushTime" : 60,
       "leadsMonth": {
-        "id": "WIDGET_LEADS_MONTH"
+        "id": "WIDGET_LEADS_MONTH",
+        "pushTime" : "WIDGET_LEADS_MONTH_TIME"
       },
       "leadsToday": {
-        "id": "WIDGET_LEADS_TODAY"
+        "id": "WIDGET_LEADS_TODAY",
+        "pushTime": "WIDGET_LEADS_TODAY_TIME"
       },
       "latestCustomers": {
-        "id": "WIDGET_LAST_CUSTOMERS"
+        "id": "WIDGET_LAST_CUSTOMERS",
+        "pushTime": "WIDGET_LAST_CUSTOMERS_TIME"
       },
       "latestLeads": {
-        "id": "WIDGET_LAST_LEADS"
+        "id": "WIDGET_LAST_LEADS",
+        "pushTime": "WIDGET_LAST_LEADS_TIME"
+      },      
+      "currentActiveUsers": {
+        "id": "WIDGET_CURRENT_ACTIVE_USERS",
+        "pushTime": "WIDGET_CURRENT_ACTIVE_USERS_TIME"
       }
+
     }
   },
   "chartMogul": {

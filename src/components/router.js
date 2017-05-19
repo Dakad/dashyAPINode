@@ -17,7 +17,7 @@
 // Dependencies
 
 // Package npm
-const Config = require("config");
+const Config = require('config');
 const KoaRouter = require('koa-trie-router');
 const mount = require('koa-mount');
 
@@ -28,7 +28,7 @@ const mount = require('koa-mount');
 
 // -------------------------------------------------------------------
 // Properties
-const defPushTimeOut = Config.geckoBoard.widgets.pushTime; // 1min
+const defPushTimeOut = Config.geckoBoard.pushTime; // 1min
 
 // -------------------------------------------------------------------
 // Methods

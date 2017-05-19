@@ -55,10 +55,10 @@ class Pusher {
 
     this.widgetId_ = widgetId;
 
-    if(timeOut){
+    if(timeOut) {
       this.timeOut_ = timeOut * 1000;
     }
-      
+
 
     // ? fnData come with args ?
     if(Array.isArray(fnData)) {

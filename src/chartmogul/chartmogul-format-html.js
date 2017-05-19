@@ -124,10 +124,8 @@ class ChartMogulHTMLFormatter {
                         alt='MRR'
                         style='float:left;width:25px;height:25px;margin:0 5px;'
                   />
-                  ${(qte > 1) ? qte+'x' : ''} 
-                  ${name} 
-                  ${(cycleCount > 1) ? `(${cycleCount} ${cycleCount})`: ''} 
-                  : ${currency}${(mrr / 100)}/${cycle}
+                  ${(qte > 1) ? qte+'x' : ''}
+                  ${name} : ${currency}${(mrr / 100)}/${cycle}
                 </h2>`
               : ''}
               </div>`.replace(/[\r\n]/g, ' ');

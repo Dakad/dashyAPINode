@@ -78,7 +78,7 @@
       "iss": "761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com",
       "scope": "https://www.googleapis.com/auth/analytics.readonly",
       "aud": "https://www.googleapis.com/oauth2/v4/token",
-      "keyFile" : "./google-credentials.pem"
+      "keyFile" : "./config/google-credentials.pem"
     },
     "viewId": 1234567890
   },

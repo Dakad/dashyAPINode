@@ -26,6 +26,9 @@
       },
       "latestLeads": {
         "id": ""
+      },      
+      "currentActiveUsers": {
+        "id": ""
       }
     }
   },

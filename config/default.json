@@ -2,45 +2,16 @@
   "api": {
     "port": 8080,
     "token": "TOKEN_FOR_API",
-    "dirLogs": "./logs",
-    "msg": {
-      "err": {
-        "check": {
-          "param": "Missing or invalid parameter for the filtering !",
-          "_def": "The parameter '%s' is invalid - Got '%s'"
-        }
-      }
-    },
-    "validParams": {
-      "begin": [
-        "last_year",
-        "this_year",
-        "last_month",
-        "this_month"
-      ],
-      "value": [
-        "money",
-        "count"
-      ],
-      "type": [
-        "all",
-        "open",
-        "closed",
-        "won",
-        "lost",
-        "avg"
-      ],
-      "for": ""
-    }
+    "dirLogs": "./logs"
   },
   "redis": {
     "host": "127.0.0.1",
     "port": 6379,
     "password": "pwd",
-    "db": 5
+    "db": 0
   },
   "geckoBoard": {
-    "apiKey": "0ecc2de9f3229af5d555b1b14f357ade",
+    "apiKey": "GECKO_API_KEY",
     "pushUrl": "https://push.geckoboard.com/v1/send/",
     "pushTime" : 60,
     "widgets": {
@@ -60,8 +31,8 @@
   },
   "chartMogul": {
     "apiUrl": "https://api.chartmogul.com/v1",
-    "apiToken": "3ff446dfa7017e72bc43c2bf1418007f",
-    "apiSecret": "3ff446dfa7017e72bc43c2bf1418007f",
+    "apiToken": "TOKEN_FOR_CHARTMOGUL_API",
+    "apiSecret": "SECRET_FOR_CHARTMOGUL_API",
     "bestNetMRR": {
       "startDate": "2014-09-01"
     },
@@ -75,64 +46,14 @@
   "google-analytics": {
     "apiUrl": "https://www.googleapis.com/analytics/v3/data",
     "auth": {
-      "iss": "761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com",
+      "iss": "GA_SERVICE_EMAIL",
       "scope": "https://www.googleapis.com/auth/analytics.readonly",
       "aud": "https://www.googleapis.com/oauth2/v4/token",
-      "keyFile" : "./config/google-credentials.pem"
+      "keyFile" : "./config/google-credentials.p12"
     },
     "viewId": 1234567890
   },
-  "pipeDrive": {
-    "apiUrl": "https://api.pipedrive.com/v1",
-    "pipeline": "The inbound",
-    "apiToken": "e357296778fe1aa578dba69f17997fabecad4cab",
-    "deals": {
-      "fieldKey": "add_time",
-      "currency": "€",
-      "currencyFormat": "EUR",
-      // The kind of data to fetch depend on the query parameter : ?format (money | count)
-      "formats": {
-        "money": "values",
-        "count": "count"
-      },
-      // The key for each types is the query parameter : ?type (all)
-      "types": {
-        "all": "new_deals",
-        "open": "deals_left_open",
-        "closed": "won_values",
-        "won": "won_deals",
-        "lost": "lost_deals"
-      }
-    },
-    "msg": {
-      "all": {
-        "count": "Total deals",
-        "money": "Total opportunity"
-      },
-      "open": {
-        "count": "Open deals",
-        "money": "Total open deals"
-      },
-      "won": {
-        "count": "Won deals",
-        "money": "Amount won deals"
-      },
-      "lost": {
-        "count": "lost deals",
-        "money": "Amount lost deals"
-      }
-    },
-    "defaultParams": {
-      "begin": "this_year",
-      "value": "count",
-      "type": "all"
-    }
-  },
-  "quora": {
-    "urlPrefix": "http://quora.com",
-    "urlASOQuestion": "https://www.quora.com/topic/App-Store-Optimization/all_questions",
-    "urlASOQuestionRSS": "https://www.quora.com/topic/App-Store-Optimization/rss"
-  },
+
   "zen": [
     "Two bytes meet. The first byte asks, 'Are you ill?' The second byte replies, 'No, just feeling a bit off.'",
     "Old C programmers don't die, they're just cast into void.",

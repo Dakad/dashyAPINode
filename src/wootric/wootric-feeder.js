@@ -39,8 +39,32 @@ const GeckoBoardFormatter = require('../components/gecko-formatter');
  * @private */
 const KEY_TOKEN_FOR_WOOTRIC = 'tokenForWootric';
 
+
 /**
- * * Feeder for wootric route
+ * @const {Object} requiredKeys The only to keeps from customers data.
+ * @private
+ * */
+const npsNecessaryKeys = [{
+    entrie: 'nps',
+    label: 'NPS',
+  },
+  {
+    entrie: 'promoters',
+    label: 'Promoters',
+  },
+  {
+    entrie: 'passives',
+    label: 'Passives',
+  },
+  {
+    entrie: 'detractors',
+    label: 'Detractors',
+  },
+];
+
+
+/**
+ * Feeder for wootric route
  *
  * @extends module:components/feeder~Feeder
  */
@@ -169,40 +193,34 @@ class WootricFeeder extends Feeder {
    *
    */
   async fetchNPS(config) {
-    const sendReqForNPS = (start, end) => this.requestWootricFor(
-      '/nps_summary', {
-        'date[start]': Util.convertDate(start),
-        'date[end]': Util.convertDate(end),
-      }
-    );
-
     const {
-      firstInPastMonth,
-      endInPastMonth,
-      firstInMonth,
+      last30Days,
       today,
     } = Util.getAllDates();
 
 
-    const [{
-        nps: oldNps,
-      },
-      {
-        nps,
-      },
-    ] =
-    await Promise.all([
-      sendReqForNPS(firstInPastMonth, endInPastMonth),
-      sendReqForNPS(firstInMonth, today),
-    ]);
+    const nps = await this.requestWootricFor(
+      '/nps_summary', {
+        'date[start]': Util.convertDate(last30Days),
+        'date[end]': Util.convertDate(today),
+      }
+    );
+    const items = npsNecessaryKeys.reduce((items, {label, entrie}) => {
+      items.push([
+        label, nps[entrie],
+      ]);
+      return items;
+    }, []);
 
-
-    return GeckoBoardFormatter.toNumberAndSecondStat({
-      'absolute': true,
-      'value': Number.parseInt(nps),
-    }, {
-      'value': Number.parseInt(oldNps),
-    });
+    return GeckoBoardFormatter.toLeaderboard(items);
+    /*
+        return GeckoBoardFormatter.toNumberAndSecondStat({
+          'absolute': true,
+          'value': Number.parseInt(nps),
+        }, {
+          'value': Number.parseInt(oldNps),
+        });
+    */
   }
 
 

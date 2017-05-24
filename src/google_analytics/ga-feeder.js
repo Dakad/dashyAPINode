@@ -208,7 +208,7 @@ class GoogleAnalyticsFeeder extends Feeder {
       let keyForCache = this.hashQueryForKey(query, destination);
 
       query['access_token'] = await this.getAccessToken();
-
+      query['quotaUser'] = Config.api.token;
       return super.requestAPI(destination, query, keyForCache);
     } catch (error) {
       const {

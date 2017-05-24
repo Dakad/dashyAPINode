@@ -1,4 +1,7 @@
-const {request} = require('config');
+const {
+  wootric,
+  request,
+} = require('config');
 
 // const {hashCode} = require('../components/util');
 
@@ -16,7 +19,7 @@ exports = module.exports = [
     /**
      * regular expression of URL for the auth TOKen
      */
-    pattern: /https:\/\/www.api.wootric.mock\/oauth\/token/,
+    pattern: /https:\/\/api.wootric.mock\/oauth\/token/,
 
     /**
      * returns the data
@@ -28,14 +31,20 @@ exports = module.exports = [
      * @return {void} nada
      */
     fixtures: function(match, params, headers, context) {
-      console.log(match);
+      if (params) {
+        const {
+          'client_id': clId,
+          'client_secret': clSecret,
+          'grant_type': grant,
+        } = params;
+        if (grant === wootric.grantType) {
+          if (clId === wootric.clientId && clSecret === wootric.clientSecret) {
+            return request.wootric.auth;
+          }
+        }
+      }
 
-      const query = extractParamsFromQuery(match[2]);
-
-      console.log(query);
-
-
-      return {};
+      throw new Error(400);
     },
 
     /**
@@ -69,7 +78,7 @@ exports = module.exports = [
     /**
      * regular expression of URL
      */
-    pattern: /https:\/\/www.api.wootric.mock\/v1\/(.*)(\?.*)/,
+    pattern: /https:\/\/api.wootric.mock\/v1\/(.*)\?(.*)/,
 
     /**
      * returns the data
@@ -83,42 +92,17 @@ exports = module.exports = [
     fixtures: function(match, params, headers, context) {
       const query = extractParamsFromQuery(match[2]);
 
-      console.log(match, query);
 
       if (!query['access_token']) {
         return '401-Login Required'; // Unauthorized
-      }else{
-        if (query['access_token'] !== request.wootrick.auth.access_token ) {
+      } else {
+        if (query['access_token'] !== request.wootric.auth.access_token) {
           return '401-Unauthorized Wrong token'; // Unauthorized
         }
       }
 
-      if (query.metrics == 'ga:newUsers') {
-        // return request.ga.newUsers;
-        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
-      }
-
-      if (query.metrics == 'ga:avgSessionDuration') {
-        // return request.ga.newUsers;
-        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
-      }
-
-      if (query.metrics == 'ga:bounceRate') {
-        // return request.ga.newUsers;
-        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
-      }
-
-      if (query.metrics == 'ga:pageviews') {
-        // return request.ga.newUsers;
-        if(query.filters === 'ga:pagePathLevel1==/aso-blog/') {
-          return {columnHeaders: [], totalsForAllResults: {}, rows: []};
-        }
-        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
-      }
-
-      if (query.metrics == 'ga:avgTimeOnPage') {
-        // return request.ga.newUsers;
-        return {columnHeaders: [], totalsForAllResults: {}, rows: []};
+      if (match[1] == 'nps_summary') {
+        return request.wootric['nps_summary'];
       }
 
 
@@ -133,7 +117,7 @@ exports = module.exports = [
      */
     get: function(match, data) {
       // Is an Error 401
-      if(typeof data === 'string') {
+      if (typeof data === 'string') {
         data = data.split('-');
         return {
           code: data[0],

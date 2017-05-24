@@ -59,8 +59,9 @@
   "wootric" : {
     "authUrl": "https://api.wootric.com/oauth/token",
     "apiUrl": "https://api.wootric.com/v1",
-    "clientID": "TOKEN_FOR_WOOTRIC_API",
-    "clientSecret": "SECRET_FOR_WOOTRIC_API",
+    "grantType" : "credentials",
+    "clientId": "TOKEN_FOR_WOOTRIC_API",
+    "clientSecret": "SECRET_FOR_WOOTRIC_API"
   },
 
   "zen": [

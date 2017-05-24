@@ -715,6 +715,7 @@ module.exports = {
       'auth' : {
         "access_token":"BEARER_TOKEN_FOR_DASHY",
         "token_type":"bearer",
+        "created_at":1495628127,
         "expires_in":7200,
         "scope":"public"  
       },

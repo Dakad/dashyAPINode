@@ -3,7 +3,7 @@
  *
  * @module router/google-analytics
  * @requires router/base
- * @requires feeder/chartmogul
+ * @requires feeder/google-analytics
  * @requires components/util
  * @requires components/pusher
  *

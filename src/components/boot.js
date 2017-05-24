@@ -39,6 +39,10 @@ const ChartMogulFeeder = require('../chartmogul/chartmogul-feeder');
 const GARouter = require('../google_analytics/ga-router');
 const GAFeeder = require('../google_analytics/ga-feeder');
 
+const WootricRouter = require('../wootric/wootric-router');
+const WootricFeeder = require('../wootric/wootric-feeder');
+
+
 // -------------------------------------------------------------------
 // Properties
 
@@ -55,6 +59,7 @@ const routes_ = [
   BaseRouter.getInstance(),
   new ChartMogulRouter(new ChartMogulFeeder()),
   new GARouter(new GAFeeder()),
+  new WootricRouter(new WootricFeeder()),
 ];
 
 

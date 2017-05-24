@@ -60,10 +60,11 @@ module.exports = {
     },
     'viewId': '4•8•15•16•33•42|4•8•15•16•33•42|4•8•15•16•33•42'
   },
-  'pipeDrive': {
-    'apiUrl': 'https://api.pipedrive.mock/v1',
-    'pipeline': 'The Mocky Pipeline',
-    'apiToken': 'PIPEDRIVE_API_TOKEN',
+  "wootric" : {
+    "authUrl": "https://api.wootric.mock/oauth/token",
+    "apiUrl": "https://api.wootric.mock/v1",
+    "clientID": "WOOTRIC_CLIENT_ID",
+    "clientSecret": "WOOTRIC_CLIENT_SECRET",
   },
   'request': {
     'chartMogul': {
@@ -710,29 +711,22 @@ module.exports = {
     'ga': {
       'newUsers': {}
     },
-    'pipedrive': {
-      'pipelines': [{
-          'id': 123,
-          'name': 'The Mocky Pipeline',
-        },
-        {
-          'id': 57,
-          'name': 'Pipo',
-        },
-      ],
-      'stages': [{
-          'id': 1,
-          'name': 'Sayain',
-        },
-        {
-          'id': 972,
-          'name': 'Super Sayain',
-        },
-        {
-          'id': 164,
-          'name': 'Super Sayain GOD',
-        },
-      ],
-    },
+    'wootric' : {
+      'auth' : {
+        "access_token":"BEARER_TOKEN_FOR_DASHY",
+        "token_type":"bearer",
+        "expires_in":7200,
+        "scope":"public"  
+      },
+      'nps_summary' : {
+        "nps": getRandomInt(10,99),
+        "responses": getRandomInt(0,50),
+        "detractors": getRandomInt(10,50),
+        "passives": getRandomInt(10,50),
+        "promoters": getRandomInt(10,50),
+        "response_rate": getRandomInt(0,50),
+        "email_response_rate": getRandomInt(0,30)
+      }
+    }
   },
 };

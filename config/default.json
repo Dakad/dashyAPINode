@@ -56,6 +56,12 @@
     },
     "viewId": 1234567890
   },
+  "wootric" : {
+    "authUrl": "https://api.wootric.com/oauth/token",
+    "apiUrl": "https://api.wootric.com/v1",
+    "clientID": "TOKEN_FOR_WOOTRIC_API",
+    "clientSecret": "SECRET_FOR_WOOTRIC_API",
+  },
 
   "zen": [
     "Two bytes meet. The first byte asks, 'Are you ill?' The second byte replies, 'No, just feeling a bit off.'",

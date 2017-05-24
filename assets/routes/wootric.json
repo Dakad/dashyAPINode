@@ -1,0 +1,6 @@
+
+{
+    "prefix" : "$API_HOST/wootric",
+    
+    "Net Promoter Score" : "GET /nps"
+}

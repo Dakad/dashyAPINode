@@ -59,7 +59,7 @@
   "wootric" : {
     "authUrl": "https://api.wootric.com/oauth/token",
     "apiUrl": "https://api.wootric.com/v1",
-    "grantType" : "credentials",
+    "grantType" : "client_credentials",
     "clientId": "TOKEN_FOR_WOOTRIC_API",
     "clientSecret": "SECRET_FOR_WOOTRIC_API"
   },

@@ -71,24 +71,29 @@ class WootricFeeder extends Feeder {
    *
    */
   async requestWootricForToken() {
-    const {
-      body,
-    } = await request
-      .post(Config.wootric.authUrl)
-      .send({
-        grant_type: Config.wootric.grantType,
-      })
-      .send({
-        client_id: Config.wootric.clientId,
-      })
-      .send({
-        client_secret: Config.wootric.clientSecret,
-      });
+    try {
+      console.log(Config.wootric);
+      const {
+        body,
+      } = await request
+        .post(Config.wootric.authUrl)
+        .send({
+          'grant_type': Config.wootric.grantType,
+        })
+        .send({
+          'client_id': Config.wootric.clientId,
+        })
+        .send({
+          'client_secret': Config.wootric.clientSecret,
+        });
 
-    this.cache_.store(Util.hashCode(KEY_TOKEN_FOR_WOOTRIC), body, {
-      'in': body.expires_in,
-    });
-    return body;
+      this.cache_.store(Util.hashCode(KEY_TOKEN_FOR_WOOTRIC), body, {
+        'in': body.expires_in,
+      });
+      return body;
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
 

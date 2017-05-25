@@ -30,7 +30,7 @@ The first things to do when cloning this repo, is
 
 This command will launch the setup for this project and make you ready to fully enjoys this application.
 
-- It will check your node version, which must be at least **v7.6**.
+- It will check your node version, which must be at least **v7.8**.
 - It will create the logs folder.
 - It will install all necessary dependency packages.
 

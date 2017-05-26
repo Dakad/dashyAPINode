@@ -96,7 +96,6 @@ class WootricFeeder extends Feeder {
    */
   async requestWootricForToken() {
     try {
-      console.log(Config.wootric);
       const {
         body,
       } = await request

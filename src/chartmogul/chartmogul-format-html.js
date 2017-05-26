@@ -48,6 +48,7 @@ class ChartMogulHTMLFormatter {
   static generateFlagImg(isoCountry, width=150, height=150) {
     const srcLink = Config.api.host + '/assets/img/flags';
     const country = Countries[isoCountry];
+
     return `<img src='${srcLink}/${isoCountry}.png' `+
              `alt='Flag of ${(country) ? country['name'] : 'World'}' `+
              'style=\'float:left;margin: 0 5px;'
@@ -190,12 +191,18 @@ class ChartMogulHTMLFormatter {
    */
   static toTextMrrCountryCount(countryCount) {
     const toHtml = (iso, count) => {
+      let country = Countries[iso]; 
+      if(!Countries[iso]){
+        iso = 'world';
+        country = {name:'Undefined'};
+      }
+
       return '<tr style=\'border-bottom: 1px solid;\'>'
         +'<td style=\'vertical-align:middle\'>'
         + ChartMogulHTMLFormatter.generateFlagImg(iso, 32, 32)
         +'</td>'
         +'<td style=\'font-size:1em;vertical-align:middle\'>'
-        + Countries[iso].name
+        + country.name
         +'</td>'
         +'<td style=\'padding:11px;font-weight:bold;text-align:right;\'>'
         + count
@@ -203,7 +210,7 @@ class ChartMogulHTMLFormatter {
       + '</tr>';
     };
     return countryCount.reduce(
-      (html, [iso, count]) => html + toHtml(iso, count)
+      (html, [codeISO, count]) => html + toHtml(codeISO, count)
      , '<table style=\'border-collapse:collapse;width:100%;font-size:medium\'>'
     ) + '</table>';
   }

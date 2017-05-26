@@ -119,7 +119,7 @@ describe('Wootric : Feeder', () => {
     });
 
 
-    it.only('should return a Promise.fulfilled - /nps_summary', () => {
+    it('should return a Promise.fulfilled - /nps_summary', () => {
       const promise = feed.requestWootricFor('/nps_summary');
       expect(promise).to.eventually.be.fulfilled;
       expect(promise)
@@ -150,15 +150,15 @@ describe('Wootric : Feeder', () => {
       });
     });
 
-    it.only('should fill data with items', () => {
+    it('should fill data with items', () => {
       return feed.fetchNPS({}).then((data) => {
         const {
-        item,
+        items,
       } = data;
         expect(data).to.not.be.empty;
-        expect(data).to.contains.all.keys(['absolute', 'item']);
-        expect(item).to.be.a('array').and.to.not.be.empty;
-        expect(item).to.have.lengthOf(2);
+        expect(data).to.contains.all.keys(['format', 'items']);
+        expect(items).to.be.a('array').and.to.not.be.empty;
+        expect(items).to.have.lengthOf(4);
       });
     });
   });

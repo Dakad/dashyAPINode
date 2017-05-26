@@ -170,7 +170,7 @@ class WootricFeeder extends Feeder {
       }
       // No cached response for this request
       query['access_token'] = await this.getAccessToken();
-      return super.requestAPI(destination, query, keyForCache);
+      return super.requestAPI(destination, query);
     } catch (err) {
       Logger.error(err);
       // if (res && res.body && res.body.error) {

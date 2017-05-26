@@ -87,7 +87,7 @@ describe('Wootric : Router', () => {
     });
 
 
-    it.only('/wootric/nps', (done) => {
+    it('/wootric/nps', (done) => {
       Supertest(openedServer)
         .get('/wootric/nps')
         .expect(200)
@@ -95,8 +95,8 @@ describe('Wootric : Router', () => {
           body,
         }) => {
           expect(body).to.be.a('object');
-          expect(body).to.contains.all.keys('item');
-          expect(body.item).to.be.a('array')
+          expect(body).to.contains.all.keys('items');
+          expect(body.items).to.be.a('array')
             .and.to.have.lengthOf(2);
         })
         .end(done);

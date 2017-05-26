@@ -2,6 +2,8 @@
 {
     "prefix" : "$API_HOST/ga",
     
+    "Nb RealTime Visitors" : "GET /visitors/realtime",
+    
     "Nb Unique Visitors" : "GET /visitors/unique",
     
     "Session Duration" : "GET /session/duration/avg",

@@ -68,11 +68,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
   }
 
 
-  /**
-   *
-   * @override
-   *
-   */
+  /** @override */
   handler() {
     super.handler();
 
@@ -81,7 +77,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
       * @api {GET} /ga Get the list of routes
       * @apiName Get1AllRoutesForGoogleAnalytics
       * @apiGroup Google Analytics
-      * @apiVersion  0.4.0
+      * @apiVersion  0.5.0
       *
       *
       * @apiSuccess (200) {Object} routes All routes callables for /ga
@@ -97,11 +93,39 @@ class GoogleAnalyticsRouter extends BaseRouter {
 
     /**
      *
+     * @api {GET} /ga/visitors/now
+     *  Get the nb of Current Visitors on apptweak.com
+     * @apiName GetRealTimeVisitors
+     * @apiGroup Google Analytics
+     * @apiVersion  0.5.0
+     *
+     * @apiDescription Fetch the realtime today.
+     *
+     * @apiSuccess (200) {Object} value
+     *
+     * @apiSuccessExample  {JSON} Success-Response:
+       {
+           "item": [{
+             "value" : {number} Current value of visitors.
+           }]
+       }
+     *
+     *
+     */
+    this.router_.get('/visitors/(current|now|realtime)',
+      async ({state}, next) => {
+        state.data = await this.feed_.fetchRealTimeVisitors(state.config);
+        return next();
+    });
+
+
+    /**
+     *
      * @api {GET} /ga/visitors/unique
      *  Get the nb of Unique Visitors on apptweak.com
      * @apiName GetUniqueVisitors
      * @apiGroup Google Analytics
-     * @apiVersion  0.4.0
+     * @apiVersion  0.5.0
      *
      * @apiDescription Fetch the primary data by starting on
      * the first in this month until today.
@@ -135,7 +159,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
      *  Get the AVG Duration spent for this month on apptweak.com
      * @apiName GetAVGSessionDuration
      * @apiGroup Google Analytics
-     * @apiVersion  0.4.0
+     * @apiVersion  0.5.0
      *
      * @apiParam  {string=html} [out] The output format of Response
      *
@@ -188,7 +212,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
      *  Get the Bounce Rate for this month on apptweak.com
      * @apiName GetBounceRate
      * @apiGroup Google Analytics
-     * @apiVersion  0.4.0
+     * @apiVersion  0.5.0
      *
      *
      * @apiSuccess (200) {Object} values
@@ -220,7 +244,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
      *  Get the Best Acquisition Source for this month
      * @apiName GetAcqSrc
      * @apiGroup Google Analytics
-     * @apiVersion  0.4.0
+     * @apiVersion  0.5.0
      *
      * @apiParam  {string=json} [out] The output format of Response
      *
@@ -258,7 +282,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
      *  Get the nb page views for this month on apptweak.com/aso-blog
      * @apiName GetBlogPageViews
      * @apiGroup Google Analytics
-     * @apiVersion  0.4.0
+     * @apiVersion  0.5.0
      *
      *
      * @apiSuccess (200) {Object} values
@@ -287,7 +311,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
      *  Get the AVG Duration spent for this month on apptweak.com/aso-blog
      * @apiName GetBlogSessionDuration
      * @apiGroup Google Analytics
-     * @apiVersion  0.4.0
+     * @apiVersion  0.5.0
      *
      *
      * @apiSuccess (200) {Object} values
@@ -339,7 +363,7 @@ class GoogleAnalyticsRouter extends BaseRouter {
      *  Get the Most popular post on apptweak.com/aso-blog
      * @apiName GetBlogMostPost
      * @apiGroup Google Analytics
-     * @apiVersion  0.4.0
+     * @apiVersion  0.5.0
      *
      * @apiParam  {string=json} [out] The output format of Response
      *

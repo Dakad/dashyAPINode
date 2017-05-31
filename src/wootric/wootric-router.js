@@ -52,6 +52,53 @@ class WootricRouter extends BaseRouter {
     super.handler();
 
 
+    /**
+      *
+      * @api {GET} /wootric Get the list of routes
+      * @apiName GetAllRoutesForWootric
+      * @apiGroup Wootric
+      * @apiVersion  0.6.0
+      *
+      *
+      * @apiSuccess (200) {Object} routes All routes callables for /wootric
+      *
+      * @apiSuccessExample  {JSON} routes
+        {
+            title : 'METHOD /url'
+        }
+      *
+      *
+      */
+
+
+
+    // LeaderBoard of 5 Most Plans Subscribed
+    /**
+     *
+     * @api {GET} /wootric/nps Get the NPS Details
+     * @apiName GetWootricNPS
+     * @apiGroup Wootric
+     * @apiVersion  0.6.0
+     *
+     *
+     *
+     * @apiSuccess (200) {Array} plans The NPS Details.
+     *
+     *
+     * @apiSuccessExample {JSON} Success-Response:
+      {
+        "format" : "decimal",
+        "items": [
+          {
+            "label": {String} NPS' details,
+            "value": {number} NPS value
+          }
+        ]
+      }
+     *
+     *
+     */
+
     this.router_.get('/nps', async(ctx, next) => {
       ctx.state.data = await this.feed_.fetchNPS(ctx.state.config);
       return next();

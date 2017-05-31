@@ -110,8 +110,10 @@ class WootricFeeder extends Feeder {
           'client_secret': Config.wootric.clientSecret,
         });
 
+      console.log(body);
+
       this.cache_.store(Util.hashCode(KEY_TOKEN_FOR_WOOTRIC), body, {
-        'in': body.expires_in,
+        'in': Number.parseInt(body.expires_in,10)
       });
       return body;
     } catch (e) {

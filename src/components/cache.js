@@ -61,12 +61,13 @@ class Cache {
    * @param {Object} obj The Object to store in cache.
    * @param {Object} [exp={}] The expire time
    * @param {number|Date} exp.at The UNIX Timestamp `date.getTime()`
-   * @param {number} exp.in The expire time in milliseconds.
+   * @param {number} exp.in The expire time in seconds.
    *
    * @return {Boolean} **true|false** If the object has been put in the cache
    *
    */
   store(key, obj, exp={}) {
+    const isStored = Boolean(this.cache_.set(key, JSON.stringify(obj)));
     if(exp.at) {
       exp.at = (exp.at instanceof Date) ? getTime.call(exp.at) : exp.at;
       this.cache_.expireat(key, exp.at);
@@ -74,7 +75,7 @@ class Cache {
     if(exp.in) {
       this.cache_.expire(key, exp.in);
     }
-    return !!this.cache_.set(key, JSON.stringify(obj));
+    return isStored;
   }
 
 

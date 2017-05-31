@@ -151,20 +151,20 @@ class BaseRouter extends Router {
     );
 
 
-    const {token} = ctx.query;
-    if (Util.isEmptyOrNull(ctx.query) || !token) {
-      // ctx.throw(401,'Token required');
-    }
-
-    if(token !== Config.api.token){
-      // ctx.throw(403,'Invalid Token');
-    }
-
     // Camel Case all query parameters
     const query = Object.keys(ctx.query||{}).reduce((res, q)=>{
       res[camelCased(q)] = ctx.query[q];
       return res;
     }, {});
+
+    const {token} = query;
+    if (Util.isEmptyOrNull(ctx.query) || !token) {
+      // ctx.throw(401,'Token required');
+    }
+
+    if(token !== Config.api.token) {
+      // ctx.throw(403,'Invalid Token');
+    }
 
     ctx.state.config = Object.assign({}, query);
     return next();

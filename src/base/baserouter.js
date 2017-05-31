@@ -21,6 +21,7 @@ const Config = require('config');
 // Built-in
 
 // Mine
+const Util = require('../components/util');
 const Logger = require('../components/logger');
 const Router = require('../components/router');
 
@@ -148,6 +149,17 @@ class BaseRouter extends Router {
     const camelCased = (s) => s.replace(
       /[-_]+(.)?/g, (m, g='') => g.toUpperCase()
     );
+
+
+    const {token} = ctx.query;
+    if (Util.isEmptyOrNull(ctx.query) || !token) {
+      // ctx.throw(401,'Token required');
+    }
+
+    if(token !== Config.api.token){
+      // ctx.throw(403,'Invalid Token');
+    }
+
     // Camel Case all query parameters
     const query = Object.keys(ctx.query||{}).reduce((res, q)=>{
       res[camelCased(q)] = ctx.query[q];

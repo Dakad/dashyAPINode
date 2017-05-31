@@ -97,7 +97,7 @@ describe('Wootric : Router', () => {
           expect(body).to.be.a('object');
           expect(body).to.contains.all.keys('items');
           expect(body.items).to.be.a('array')
-            .and.to.have.lengthOf(2);
+            .and.to.have.lengthOf(4);
         })
         .end(done);
     });

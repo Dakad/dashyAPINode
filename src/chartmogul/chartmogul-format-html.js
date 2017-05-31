@@ -191,10 +191,10 @@ class ChartMogulHTMLFormatter {
    */
   static toTextMrrCountryCount(countryCount) {
     const toHtml = (iso, count) => {
-      let country = Countries[iso]; 
-      if(!Countries[iso]){
+      let country = Countries[iso];
+      if(!Countries[iso]) {
         iso = 'world';
-        country = {name:'Undefined'};
+        country = {name: 'Undefined'};
       }
 
       return '<tr style=\'border-bottom: 1px solid;\'>'

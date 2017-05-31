@@ -71,7 +71,6 @@ class WootricRouter extends BaseRouter {
       */
 
 
-
     // LeaderBoard of 5 Most Plans Subscribed
     /**
      *

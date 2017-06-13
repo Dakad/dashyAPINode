@@ -25,12 +25,11 @@ The first things to do when cloning this repo, is
 
 ``` bash
   # Command to exec on terminal
-    make setup
+    npm install
 ```
 
-This command will launch the setup for this project and make you ready to fully enjoys this application.
+This command will launch the install of all modules required for this project and make you ready to fully enjoys this application.
 
-- It will check your node version, which must be at least **v7.8**.
 - It will create the logs folder.
 - It will install all necessary dependency packages.
 
@@ -57,14 +56,11 @@ This API exploits the following technologies:
 
 
 
-Examples
+Config
 --------
 
+Follow the deployment Document in the folder 'scripts'.
 
-
-
-Default Behaviour
------------------
 
 
 
@@ -73,7 +69,7 @@ Default Behaviour
 License
 ---------------
 
-DashBoardAPINode is licensed under the [MIT][info-license] license.
+DashyAPINode is licensed under the [MIT][info-license] license.
 
 Copyright &copy; 2017, A. David
 

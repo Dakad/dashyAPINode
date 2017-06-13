@@ -47,5 +47,9 @@
       "iss": "GA_SERVICE_EMAIL",
       "keyFile" : "GA_KEY_FILE_PATH"
     }
+  },
+  "wootric": {
+    "clientId": "WOOTRIC_API_ID",
+    "clientSecret": "WOOTRIC_API_SECRET"
   }
 }

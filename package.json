@@ -90,7 +90,6 @@
     "supertest": "^3.0.0"
   },
   "scripts": {
-    "postinstall" : "make setup",
     "test": "make test",
     "app":"TZ=Europe/Brussels NODE_ENV=production nodemon src/app.js",
     "start": "TZ=Europe/Brussels NODE_ENV=production ./node_modules/.bin/pm2 start .pm2.json"
